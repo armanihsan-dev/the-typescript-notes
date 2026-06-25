@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Language & Tooling Platform</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#section-1" class="nav-link">1. What is TypeScript?</a>
+        <a href="#section-2" class="nav-link">2. Why Was It Developed?</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Under The Hood</div>
+        <a href="#section-3" class="nav-link">3. The Tooling Platform</a>
+        <a href="#section-4" class="nav-link">4. How JS Uses TS</a>
+        <a href="#section-5" class="nav-link">5. The QuickInfo Request</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Architecture</div>
+        <a href="#section-6" class="nav-link">6. Communication (HTTP vs IPC)</a>
+        <a href="#section-7" class="nav-link">7. Freezing tsserver</a>
+        <a href="#summary" class="nav-link">Summary Table</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Language & Architecture</span>
+        <h1>TYPESCRIPT INTERNALS</h1>
+        <p>BEYOND THE LANGUAGE: UNDERSTANDING THE TOOLING ECOSYSTEM</p>
+      </section>
+
+      <section id="section-1">
+        <h2>1. What is TypeScript and Who Developed It?</h2>
+        <p>
+          TypeScript is a typed superset of JavaScript that compiles to plain
+          JavaScript.
+        </p>
+        <ul>
+          <li>
+            <strong>Developed by:</strong> Microsoft, specifically led by Anders
+            Hejlsberg (the same person who created C# and Turbo Pascal).
+          </li>
+          <li>
+            <strong>First released:</strong> October 1, 2012 (version 0.8)
+          </li>
+        </ul>
+      </section>
+
+      <section id="section-2">
+        <h2>2. Why Was It Developed?</h2>
+        <p>
+          TypeScript was created to solve scalability problems with JavaScript:
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Problem</th>
+              <th>TypeScript Solution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                JavaScript is dynamically typed → bugs appear only at runtime
+              </td>
+              <td>Static type checking → catch errors during development</td>
+            </tr>
+            <tr>
+              <td>Large codebases become hard to maintain</td>
+              <td>Interfaces, classes, modules → better code organization</td>
+            </tr>
+            <tr>
+              <td>Poor tooling support (autocomplete, refactoring)</td>
+              <td>Rich IDE support via the TypeScript Language Server</td>
+            </tr>
+            <tr>
+              <td>
+                JavaScript evolves slowly (ES6 wasn't fully adopted in 2012)
+              </td>
+              <td>TypeScript could implement future JS features early</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note-box">
+          <span class="note-title"
+            ><i class="fa-solid fa-lightbulb"></i> Core Philosophy</span
+          >
+          <p style="margin-bottom: 0">
+            TypeScript is JavaScript + Types. Every valid JavaScript is valid
+            TypeScript.
+          </p>
+        </div>
+      </section>
+
+      <section id="section-3">
+        <h2>
+          3. TypeScript is Beyond a Language — It's a Tooling Platform. How?
+        </h2>
+        <p>
+          Yes! TypeScript is both a programming language AND a tooling
+          ecosystem. Here's how it's a tooling platform:
+        </p>
+
+        <h3>The Tooling Architecture</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────┐
+│                    TypeScript Compiler                 │
+│  ┌─────────────────┐    ┌──────────────────────────┐  │
+│  │  Parser         │ -> │  Type Checker            │  │
+│  │  (AST Generator)│    │  (Semantic Analysis)     │  │
+│  └─────────────────┘    └──────────────────────────┘  │
+│  ┌─────────────────┐    ┌──────────────────────────┐  │
+│  │  Transformer    │ -> │  Emitter                 │  │
+│  │  (Code Rewriting)│    │  (JavaScript Generator) │  │
+│  └─────────────────┘    └──────────────────────────┘  │
+└─────────────────────────────────────────────────────────┘
+                            ▲
+                            │ (Language Service API)
+                            │
+┌─────────────────────────────────────────────────────────┐
+│              Language Service (tsserver)               │
+│  • Autocomplete      • Go to Definition                 │
+│  • Quick Info        • Find References                 │
+│  • Rename Symbol     • Signature Help                  │
+│  • Diagnostics       • Code Fixes                      │
+└─────────────────────────────────────────────────────────┘
+                            ▲
+                            │ (LSP - Language Server Protocol)
+                            │
+┌─────────────────────────────────────────────────────────┐
+│                 Editor / IDE (VS Code)                 │
+└─────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>What Makes it a Tooling Platform?</h3>
+        <ul>
+          <li>
+            <strong>Language Service API</strong> — Exposes the compiler's type
+            information to external tools.
+          </li>
+          <li>
+            <strong>Standalone Server (tsserver)</strong> — A Node.js process
+            that runs in the background to power IDEs.
+          </li>
+          <li>
+            <strong>Language Server Protocol (LSP)</strong> — Allows any editor
+            (VS Code, Sublime, Vim, etc.) to communicate with TypeScript.
+          </li>
+          <li>
+            <strong>Plugins & AST Manipulation</strong> — You can write
+            transformers to modify code programmatically (e.g., ts-morph,
+            typescript-eslint).
+          </li>
+        </ul>
+      </section>
+
+      <section id="section-4">
+        <h2>4. How Does JavaScript Also Use TypeScript Behind the Scenes?</h2>
+        <p>
+          This is a great observation. JavaScript doesn't literally run
+          TypeScript, but TypeScript's tooling powers JavaScript development
+          too:
+        </p>
+
+        <h3>How VS Code Understands JavaScript</h3>
+        <pre><code class="language-text">┌────────────────────────────────────────────────────────────────┐
+│  VS Code opens app.js (JavaScript file)                      │
+│                                                              │
+│  1. VS Code launches `tsserver` as a background process      │
+│  2. `tsserver` parses the JS file using the same parser      │
+│  3. TypeScript's type inference works on JavaScript too!     │
+│     - It infers `userName` is a `string` from "Arman"        │
+│     - It knows `toUpperCase()` exists on `string`            │
+│  4. `tsserver` sends back the quickinfo response             │
+│  5. VS Code displays the hover tooltip                       │
+└────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <p>
+          So JavaScript gets TypeScript's intelligence even without
+          <code>.ts</code> files!
+        </p>
+        <p>That's exactly what you're seeing with:</p>
+        <pre><code class="language-javascript">const userName = "Arman"
+userName.toUpperCase  // Hover shows method info</code></pre>
+      </section>
+
+      <section id="section-5">
+        <h2>5. What is the QuickInfo Request You're Seeing?</h2>
+        <p>This is the Language Service Protocol in action:</p>
+
+        <pre><code class="language-json">{
+    "file": "app.js",
+    "line": 2,
+    "offset": 16,
+    "verbosityLevel": 0
+}</code></pre>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>file</code></td>
+              <td>Which file you're hovering over</td>
+            </tr>
+            <tr>
+              <td><code>line</code></td>
+              <td>Line number (2)</td>
+            </tr>
+            <tr>
+              <td><code>offset</code></td>
+              <td>Character position (16) = where .toUpperCase starts</td>
+            </tr>
+            <tr>
+              <td><code>verbosityLevel</code></td>
+              <td>How much detail to return</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>The Response:</h3>
+        <pre><code class="language-json">{
+    "kind": "method",
+    "displayString": "(method) String.toUpperCase(): string",
+    "documentation": "Converts all the alphabetic characters in a string to uppercase."
+}</code></pre>
+
+        <p>This tells VS Code:</p>
+        <ul>
+          <li><code>toUpperCase</code> is a method on <code>String</code></li>
+          <li>It returns a <code>string</code></li>
+          <li>Here's the documentation to show in the tooltip</li>
+        </ul>
+      </section>
+
+      <section id="section-6">
+        <h2>6. Is There a Separate HTTP Server Running? Or Is It IPC?</h2>
+        <p>Neither HTTP nor raw IPC in the traditional sense.</p>
+        <p>
+          TypeScript uses
+          <strong>stdio (standard input/output)</strong> communication between
+          VS Code and tsserver.
+        </p>
+
+        <h3>The Actual Communication Flow:</h3>
+        <pre><code class="language-text">┌──────────┐          ┌──────────────────┐          ┌──────────────┐
+│ VS Code  │ ◄─────── │  Standard I/O    │ ───────► │  tsserver    │
+│ (UI)     │          │  (stdin/stdout)  │          │  (Node.js)   │
+└──────────┘          └──────────────────┘          └──────────────┘
+     │                                                      │
+     │                                                      │
+     └────────── LSP Messages (JSON-RPC) ──────────────────┘</code></pre>
+
+        <h3>How It Actually Works:</h3>
+        <ul>
+          <li>
+            VS Code spawns <code>tsserver</code> as a child process of Node.js
+          </li>
+          <li>
+            Communication happens via JSON-RPC messages sent over
+            <code>stdin/stdout</code>
+          </li>
+          <li>It's not HTTP (no ports, no network)</li>
+          <li>It's not raw IPC (not using named pipes or shared memory)</li>
+          <li>
+            It's just two processes talking via standard input/output streams
+          </li>
+        </ul>
+
+        <p>Verify this yourself:</p>
+        <pre><code class="language-bash"># On Windows, you can see the process:
+tasklist | findstr tsserver
+
+# Or in Process Explorer, look for:
+# node.exe -- tsserver.js</code></pre>
+      </section>
+
+      <section id="section-7">
+        <h2>7. Why Did Freezing tsserver Break the Hover?</h2>
+        <p>
+          You froze the VS Code process (which contains tsserver as a child),
+          and the hover stopped working. Here's why:
+        </p>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│ Your Action: Froze the VS Code process                        │
+│                                                               │
+│  ┌───────────────┐                                           │
+│  │  VS Code      │ ← Frozen, can't send messages            │
+│  │  (Main)       │                                           │
+│  └───────┬───────┘                                           │
+│          │ STDIN/STDOUT pipe is now blocked                   │
+│          ▼                                                    │
+│  ┌───────────────┐                                           │
+│  │  tsserver     │ ← Waiting for messages, but none arrive  │
+│  │  (Child)      │                                           │
+│  └───────────────┘                                           │
+│                                                               │
+│ Result: Your request (sequence 8) was sent, but              │
+│         the response never came back because the pipe is     │
+│         frozen. tsserver tries to CANCEL the request after   │
+│         130ms (from 12:20:51 to 12:20:51.226)               │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <p>The logs show:</p>
+        <pre><code class="language-text">12:20:51.096 → Sending request: quickinfo (8)
+12:20:51.226 → TypeScript Server: trying to cancel ongoing request with sequence number 8</code></pre>
+
+        <p>
+          Sequence numbers (1, 2, 8, 92) are used to match requests with
+          responses in the JSON-RPC protocol.
+        </p>
+      </section>
+
+      <section id="summary">
+        <h2>Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Answer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>What is TypeScript?</strong></td>
+              <td>Typed superset of JavaScript that compiles to JS</td>
+            </tr>
+            <tr>
+              <td><strong>Who developed it?</strong></td>
+              <td>Microsoft (Anders Hejlsberg)</td>
+            </tr>
+            <tr>
+              <td><strong>Why?</strong></td>
+              <td>To solve scalability issues in large JS codebases</td>
+            </tr>
+            <tr>
+              <td><strong>Is it tooling?</strong></td>
+              <td>Yes! Language Service, tsserver, LSP, plugins</td>
+            </tr>
+            <tr>
+              <td><strong>How does JS get TS intelligence?</strong></td>
+              <td>tsserver parses JS files too with type inference</td>
+            </tr>
+            <tr>
+              <td><strong>Communication method?</strong></td>
+              <td>stdio (stdin/stdout) with JSON-RPC, NOT HTTP</td>
+            </tr>
+            <tr>
+              <td><strong>Why did freezing break it?</strong></td>
+              <td>Parent process frozen → pipe blocked → no responses</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <footer>
+        <p>TypeScript Internal Architecture Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem">
+          <a
+            href="https://www.linkedin.com/in/arman-khan-5a790430a/"
+            target="_blank"
+            style="
+              color: var(--accent);
+              text-decoration: none;
+              display: inline-flex;
+              align-items: center;
+              gap: 0.5rem;
+              transition: opacity 0.2s;
+            "
+            onmouseover="this.style.opacity = '0.8'"
+            onmouseout="this.style.opacity = '1'"
+          >
+            <i class="fab fa-linkedin" style="font-size: 1.2rem"></i>
+            Connect on LinkedIn
+          </a>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+    <!-- UI Interaction Scripts -->
+    <script src="./script.js"></script>
+  </body>
+</html>
