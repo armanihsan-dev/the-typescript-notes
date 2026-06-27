@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Types and Execution Mechanics</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+   <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Foundation</div>
+        <a href="#section-1" class="nav-link">1. What Are Types?</a>
+        <a href="#section-2" class="nav-link">2. Available Types</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Execution Mechanics</div>
+        <a href="#section-3" class="nav-link">3. Node.js & TS Execution</a>
+        <a href="#section-4" class="nav-link">4. Adding Types to Variables</a>
+        <a href="#section-5" class="nav-link">5. Node vs Browser Execution</a>
+        <a href="#section-6" class="nav-link">6. Compiling vs Direct Run</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Diagnostics & Errors</div>
+        <a href="#section-7" class="nav-link">7. diagnosticMessages.json</a>
+        <a href="#section-8" class="nav-link">8. Error 2363 Explained</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. JS Interop</div>
+        <a href="#section-9" class="nav-link">9. The @ts-check Magic</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Types & Tooling</span>
+        <h1>TYPESCRIPT FUNDAMENTALS</h1>
+        <p>UNDERSTANDING TYPES, EXECUTION, AND ERROR HANDLING</p>
+      </section>
+
+      <section id="section-1">
+        <h2>1. What Are Types?</h2>
+        <p>Types are a way to describe what kind of data a variable can hold and what operations can be performed on it.</p>
+
+        <h3>Simple Analogy:</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────┐
+│  Real World Analogy                                    │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  A "cup" is a type that can hold liquid                │
+│  - You can pour water into it ✅                        │
+│  - You can drink from it ✅                             │
+│  - You can't put a brick in it ❌ (wrong type!)        │
+│                                                         │
+│  A "number" type can hold numeric values               │
+│  - You can add it ✅                                    │
+│  - You can multiply it ✅                               │
+│  - You can't subtract a string from it ❌              │
+│                                                         │
+└─────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>In Programming:</h3>
+        <pre><code class="language-javascript">// Without types (JavaScript) - Anything goes
+let x = 5;        // x is a number
+x = "hello";      // Now x is a string - No error!
+
+// With types (TypeScript) - Strict rules
+let x: number = 5;    // x MUST always be a number
+x = "hello";          // ❌ Error: Type 'string' is not assignable to type 'number'</code></pre>
+        <p>Types act as constraints that prevent you from making mistakes.</p>
+      </section>
+
+      <section id="section-2">
+        <h2>2. How Many Types Are There in TypeScript?</h2>
+        <p>TypeScript has 2 main categories of types:</p>
+
+        <h3>A. Primitive Types (Built-in JavaScript types)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>string</code></td><td>Text</td><td><code>"Hello"</code>, <code>'World'</code>, <code>`Hi`</code></td></tr>
+                <tr><td><code>number</code></td><td>All numbers</td><td><code>42</code>, <code>3.14</code>, <code>-10</code>, <code>0xff</code></td></tr>
+                <tr><td><code>boolean</code></td><td>True/False</td><td><code>true</code>, <code>false</code></td></tr>
+                <tr><td><code>undefined</code></td><td>Not assigned</td><td><code>let x: undefined</code></td></tr>
+                <tr><td><code>null</code></td><td>Intentional absence</td><td><code>let x: null</code></td></tr>
+                <tr><td><code>symbol</code></td><td>Unique identifier</td><td><code>Symbol('id')</code></td></tr>
+                <tr><td><code>bigint</code></td><td>Very large numbers</td><td><code>9007199254740991n</code></td></tr>
+            </tbody>
+        </table>
+
+        <h3>B. TypeScript-Specific Types</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>any</code></td><td>Anything goes (escape hatch)</td><td><code>let x: any = 5</code></td></tr>
+                <tr><td><code>unknown</code></td><td>Unknown type (safe any)</td><td><code>let x: unknown = 5</code></td></tr>
+                <tr><td><code>void</code></td><td>No return value</td><td><code>function f(): void {}</code></td></tr>
+                <tr><td><code>never</code></td><td>Never happens</td><td><code>function f(): never { throw Error() }</code></td></tr>
+                <tr><td><code>object</code></td><td>Non-primitive</td><td><code>let x: object = {}</code></td></tr>
+                <tr><td><code>array</code></td><td>List of items</td><td><code>let x: number[] = [1,2,3]</code></td></tr>
+                <tr><td><code>tuple</code></td><td>Fixed-length array</td><td><code>let x: [string, number] = ['hi', 5]</code></td></tr>
+                <tr><td><code>enum</code></td><td>Named constants</td><td><code>enum Color {Red, Green}</code></td></tr>
+                <tr><td><code>union</code></td><td>One of several</td><td><code>let x: string | number</code></td></tr>
+                <tr><td><code>intersection</code></td><td>Combine types</td><td><code>type A = B & C</code></td></tr>
+                <tr><td><code>type alias</code></td><td>Custom name</td><td><code>type User = {name: string}</code></td></tr>
+                <tr><td><code>interface</code></td><td>Object shape</td><td><code>interface User {name: string}</code></td></tr>
+                <tr><td><code>function</code></td><td>Function signature</td><td><code>(x: number) => string</code></td></tr>
+                <tr><td><code>literal</code></td><td>Specific value</td><td><code>let x: 'hello'</code></td></tr>
+            </tbody>
+        </table>
+        <p>Total Count: 20+ types (growing with each version)</p>
+      </section>
+
+      <section id="section-3">
+        <h2>3. How Does Node.js Execute TypeScript?</h2>
+        
+        <div class="note-box danger">
+            <span class="note-title"><i class="fa-solid fa-triangle-exclamation"></i> IMPORTANT</span>
+            <p style="margin-bottom: 0;">Node.js CANNOT execute TypeScript directly!</p>
+        </div>
+
+        <h3>The Reality:</h3>
+        <pre><code class="language-text">┌────────────────────────────────────────────────────────────────┐
+│                                                               │
+│   Your TypeScript Code (.ts)                                  │
+│   ┌─────────────────────────────────────────┐                │
+│   │ const num: number = 5;                  │                │
+│   │ console.log(num);                       │                │
+│   └─────────────────────────────────────────┘                │
+│                    │                                          │
+│                    ▼                                          │
+│   TypeScript Compiler (tsc)                                   │
+│   ┌─────────────────────────────────────────┐                │
+│   │ Removes all types                       │                │
+│   │ Converts to JavaScript (.js)            │                │
+│   └─────────────────────────────────────────┘                │
+│                    │                                          │
+│                    ▼                                          │
+│   JavaScript Code (.js)                                       │
+│   ┌─────────────────────────────────────────┐                │
+│   │ const num = 5;                         │                │
+│   │ console.log(num);                      │                │
+│   └─────────────────────────────────────────┘                │
+│                    │                                          │
+│                    ▼                                          │
+│   Node.js Executes JavaScript                                │
+│   ┌─────────────────────────────────────────┐                │
+│   │ node app.js                            │                │
+│   └─────────────────────────────────────────┘                │
+│                                                               │
+└────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Two Ways to "Run" TypeScript:</h3>
+        
+        <h4>Method 1: Transpile First (Manual)</h4>
+        <pre><code class="language-bash"># Step 1: Compile TypeScript to JavaScript
+tsc app.ts          # Creates app.js
+
+# Step 2: Run JavaScript with Node
+node app.js         # Executes the compiled JS</code></pre>
+
+        <h4>Method 2: Use a Runtime (tsx / ts-node)</h4>
+        <pre><code class="language-bash"># These tools compile on-the-fly
+npx tsx app.ts      # Compiles and runs in one step
+# OR
+npx ts-node app.ts  # Compiles and runs in one step</code></pre>
+        <p>But remember: They're still compiling to JavaScript first, just doing it automatically!</p>
+      </section>
+
+      <section id="section-4">
+        <h2>4. Syntax of Adding Types to Variables</h2>
+        
+        <h3>Basic Syntax:</h3>
+        <pre><code class="language-typescript">// 1. Type annotation after colon
+let variableName: Type = value;
+
+// Examples:
+let name: string = "Arman";
+let age: number = 25;
+let isStudent: boolean = true;
+let hobbies: string[] = ["coding", "reading"];
+let person: { name: string; age: number } = { name: "Arman", age: 25 };</code></pre>
+
+        <h3>Different Ways to Add Types:</h3>
+        <pre><code class="language-typescript">// 1. Explicit type declaration
+let x: string = "hello";
+
+// 2. Type inference (TypeScript guesses)
+let y = "hello";  // TypeScript infers y is string
+
+// 3. Type assertion (tell TypeScript "trust me")
+let z = "hello" as string;
+// example : data is coming from frontend to backend api. and you are telling ts that trust me it's type looks like this :
+const {name,email, password} = req.body as {name:string,email:string,password:string}
+
+// 4. Function parameters & return types
+function greet(name: string): string {
+    return "Hello " + name;
+}
+
+// 5. Array types
+let numbers: number[] = [1, 2, 3];
+let numbers2: Array<number> = [1, 2, 3];  // Generic syntax
+
+// 6. Union types (multiple possibilities)
+let id: string | number = "ABC123";
+id = 123;  // Valid!</code></pre>
+      </section>
+
+      <section id="section-5">
+        <h2>5. Why Does Node.js 24+ Execute This, But Browser Doesn't?</h2>
+        
+        <p>The Code:</p>
+        <pre><code class="language-javascript">const num: number = 5;
+console.log(typeof num);  // Should print "number"</code></pre>
+
+        <h3>Why Node.js Works:</h3>
+        <p>Node.js does NOT execute TypeScript either! Here's what's happening:</p>
+        <pre><code class="language-text">┌────────────────────────────────────────────────────────────────┐
+│ Actually, you're NOT running TypeScript in Node.js!          │
+│                                                               │
+│ The code you're seeing is either:                            │
+│                                                               │
+│ 1. Transpiled to JavaScript FIRST                            │
+│    ┌────────────────────────────────────────────┐            │
+│    │ Original: const num: number = 5;          │            │
+│    │ Transpiled: const num = 5;                │            │
+│    └────────────────────────────────────────────┘            │
+│                                                               │
+│ 2. OR you're using tsx/ts-node (still transpiles)            │
+│                                                               │
+│ 3. OR you're running in a special environment                │
+│    (like Deno that has built-in TS support)                  │
+│                                                               │
+└────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Why the Browser Fails:</h3>
+        <pre><code class="language-javascript">const num: number = 5;
+console.log(typeof num);
+// ❌ Uncaught SyntaxError: Missing initializer in const declaration</code></pre>
+        <p>The browser only understands JavaScript, not TypeScript syntax. It sees <code>: number</code> and gets confused because:</p>
+        <ul>
+            <li>The colon <code>:</code> is invalid JavaScript syntax (except in object literals)</li>
+            <li>The browser's JavaScript parser throws an error before executing anything</li>
+            <li>It thinks <code>const num: number</code> is trying to be <code>const num</code> with a label or something</li>
+        </ul>
+
+        <h3>Visual Comparison:</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│ JavaScript (What browsers understand)                         │
+├─────────────────────────────────────────────────────────────────┤
+│ const num = 5;        ✅ Valid                               │
+│ const num: number = 5; ❌ Invalid - colon not allowed here!   │
+│                                                                │
+│ In JavaScript, `:` is used for:                               │
+│ - Object properties: { name: "Arman" }                       │
+│ - Ternary operator: x ? y : z                                │
+│ - Labeled statements: label: for(...)                        │
+│ But NOT for type annotations!                                 │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="section-6">
+        <h2>6. "Running TS Directly" vs "Compiling First" - Explained</h2>
+        
+        <h3>Method A: Compile First (Traditional)</h3>
+        <pre><code class="language-text">Step 1: Write app.ts
+Step 2: tsc app.ts → creates app.js
+Step 3: node app.js
+
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   app.ts    │────►│   tsc       │────►│   app.js    │────►│ node app.js
+│ (Types)     │     │ (Compiler)  │     │ (No types)  │
+└─────────────┘     └─────────────┘     └─────────────┘
+     ▲                                       │
+     │                                       │
+     └─── You write this                     └─── Node executes this</code></pre>
+        
+        <p><strong>Pros:</strong></p>
+        <ul>
+            <li>Fast execution (no compiling at runtime)</li>
+            <li>Can optimize the output</li>
+            <li>Works everywhere</li>
+        </ul>
+        <p><strong>Cons:</strong></p>
+        <ul>
+            <li>Need to run <code>tsc</code> every time you change code</li>
+            <li>Extra step in development</li>
+        </ul>
+
+        <h3>Method B: Direct Execution (tsx / ts-node)</h3>
+        <pre><code class="language-text">Step 1: Write app.ts
+Step 2: tsx app.ts → compiles and runs in memory
+
+┌─────────────┐     ┌─────────────────────────────────────┐
+│   app.ts    │────►│ tsx (compiles in memory, executes) │
+│ (Types)     │     └─────────────────────────────────────┘
+└─────────────┘                 │
+     ▲                          │
+     │                          │
+     └─── You write this        └─── Output appears instantly</code></pre>
+
+        <p><strong>Pros:</strong></p>
+        <ul>
+            <li>One command to run</li>
+            <li>Faster development loop</li>
+            <li>No intermediate .js files</li>
+        </ul>
+        <p><strong>Cons:</strong></p>
+        <ul>
+            <li>Slower startup (compiling takes time)</li>
+            <li>Uses more memory</li>
+        </ul>
+
+        <h3>Comparison Table:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Compile First</th>
+                    <th>Direct Execution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Command</td><td><code>tsc && node app.js</code></td><td><code>tsx app.ts</code></td></tr>
+                <tr><td>Files created</td><td>.js files</td><td>None</td></tr>
+                <tr><td>Startup speed</td><td>⚡ Fast (JS only)</td><td>🐢 Slower (compiles first)</td></tr>
+                <tr><td>Production ready</td><td>✅ Yes</td><td>⚠️ Usually not</td></tr>
+                <tr><td>Debugging</td><td>Easier with source maps</td><td>Slightly harder</td></tr>
+                <tr><td>Memory usage</td><td>Lower</td><td>Higher</td></tr>
+            </tbody>
+        </table>
+
+        <h3>How Both Are Executed:</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│ Both methods follow the same pipeline:                            │
+│                                                                    │
+│  ┌────────────┐    ┌─────────────┐    ┌─────────────┐           │
+│  │   .ts File  │───►│   Compile   │───►│   .js File  │───► Node  │
+│  └────────────┘    └─────────────┘    └─────────────┘           │
+│                                                                    │
+│  The only difference is:                                          │
+│  - Method A: Saves the .js file to disk                          │
+│  - Method B: Keeps the .js in memory (doesn't save)              │
+│                                                                    │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="section-7">
+        <h2>7. Purpose of diagnosticMessages.json GitHub Repo</h2>
+        <p>GitHub link: <a href="https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json" target="_blank">diagnosticMessages.json</a></p>
+
+        <h3>What It Is:</h3>
+        <p>This file contains ALL error messages TypeScript can throw, with unique codes.</p>
+
+        <h3>Structure:</h3>
+        <pre><code class="language-json">{
+  "Cannot find name '{0}'.": {
+    "code": 2304,
+    "category": "error"
+  },
+  "Property '{0}' does not exist on type '{1}'.": {
+    "code": 2339,
+    "category": "error"
+  }
+}</code></pre>
+
+        <h3>Why It Exists:</h3>
+        <pre><code class="language-text">┌────────────────────────────────────────────────────────────────┐
+│ This file serves as the SOURCE OF TRUTH for all TS errors   │
+├────────────────────────────────────────────────────────────────┤
+│                                                                │
+│  1. Translation support:                                      │
+│     - The same error can be shown in 40+ languages!          │
+│     - "Cannot find name" → "找不到名称" (Chinese)            │
+│                                                                │
+│  2. Consistency:                                               │
+│     - Every error has a unique number                         │
+│     - You can Google "TS2304" and find help                  │
+│                                                                │
+│  3. Tooling:                                                   │
+│     - VS Code uses these codes to show hints                 │
+│     - ESLint plugins reference these codes                    │
+│     - The TS compiler reads this file                         │
+│                                                                │
+│  4. Developer experience:                                      │
+│     - Quick fixes can target specific codes                   │
+│     - Error filtering possible                                 │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>What the Error 2363 Means:</h3>
+        <p>Your error:</p>
+        <pre><code class="language-text">The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.ts(2363)</code></pre>
+        <p>TS2363 specifically means "Invalid operand in arithmetic operation."</p>
+      </section>
+
+      <section id="section-8">
+        <h2>8. Why Does "hi" in number - "hi" Show Error 2363?</h2>
+        
+        <p>The Code:</p>
+        <pre><code class="language-typescript">const number = 5;
+number - "hi"  // ❌ Error TS2363</code></pre>
+
+        <h3>Why This Error?</h3>
+        <p>In TypeScript, the <code>-</code> operator requires both sides to be numbers:</p>
+
+        <pre><code class="language-text">┌────────────────────────────────────────────────────────────────┐
+│ TypeScript's Rule:                                           │
+├────────────────────────────────────────────────────────────────┤
+│                                                                │
+│   Valid operands for `-`:                                     │
+│   • number - number    ✅                                    │
+│   • number - any       ✅ (any disables type checking)      │
+│   • number - bigint    ✅                                    │
+│   • number - enum      ✅ (enums are numbers behind scenes) │
+│                                                                │
+│   Invalid operands for `-`:                                   │
+│   • number - string    ❌  ← YOUR CASE!                     │
+│   • number - boolean   ❌                                    │
+│   • number - object    ❌                                    │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>What's Actually Happening:</h3>
+        <pre><code class="language-typescript">const number = 5;    // TypeScript infers: number
+number - "hi";       // "hi" is string, not allowed!
+
+// Even though JavaScript would do:
+// 5 - "hi" → NaN (Not a Number)
+
+// TypeScript catches this BEFORE runtime!
+// It says: "This might be a mistake, let me warn you"</code></pre>
+
+        <h3>The Error Message Decoded:</h3>
+        <pre><code class="language-text">"The right-hand side of an arithmetic operation 
+ must be of type 'any', 'number', 'bigint' or an enum type"
+ 
+ ↑                                                           ↑
+ |                                                           |
+ └── The thing on the right of `-`                          └── These are the only allowed types
+     (which is "hi")                                          (string is NOT in this list)</code></pre>
+
+        <h3>Visual Explanation:</h3>
+        <pre><code class="language-text">           number - "hi"
+           ▲       ▲
+           │       │
+    ┌──────┘       └──────┐
+    │                     │
+    ✅ Allowed type      ❌ Not allowed!
+    (number)             (string)
+    
+    TypeScript says: 
+    "I can only do math with numbers, not with text!"</code></pre>
+      </section>
+
+      <section id="section-9">
+        <h2>9. How Does // @ts-check Help Type Checking in JavaScript?</h2>
+        
+        <p>The Magic Comment:</p>
+        <pre><code class="language-javascript">// @ts-check
+
+const num = 5;
+num = "hello";  // ❌ VS Code will show error!</code></pre>
+
+        <h3>How It Works:</h3>
+        <pre><code class="language-text">┌────────────────────────────────────────────────────────────────┐
+│ Without @ts-check:                                           │
+├────────────────────────────────────────────────────────────────┤
+│ const num = 5;                                               │
+│ num = "hello";     // No error shown!                        │
+│ // VS Code treats it as plain JavaScript                    │
+└────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────┐
+│ With @ts-check:                                              │
+├────────────────────────────────────────────────────────────────┤
+│ // @ts-check                                                  │
+│ const num = 5;                                               │
+│ num = "hello";    // ❌ Type 'string' is not assignable to   │
+│                   //    type 'number'                        │
+│ // VS Code runs TypeScript's type checker on JS!            │
+└────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>The Complete Picture:</h3>
+        <pre><code class="language-javascript">// @ts-check
+
+// 1. Type inference works
+const name = "Arman";  // Inferred as string
+name = 5;              // ❌ Error: number not assignable to string
+
+// 2. Parameter types inferred
+function greet(name) {  // name inferred as any (loose)
+    return "Hello " + name;
+}
+greet(42);  // ✅ Works (but might be wrong)
+
+// 3. JSDoc can add explicit types
+/**
+ * @param {string} name
+ * @returns {string}
+ */
+function greet2(name) {
+    return "Hello " + name;
+}
+greet2(42);  // ❌ Error: number not assignable to string
+
+// 4. Object types checked
+const user = {
+    name: "Arman",
+    age: 25
+};
+user.age = "twenty-five";  // ❌ Error: string not assignable to number</code></pre>
+
+        <h3>How JavaScript Uses TypeScript Behind the Scenes:</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│ The Complete Picture                                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  1. You write JavaScript with // @ts-check                     │
+│  2. VS Code sees the comment                                   │
+│  3. VS Code sends the file to tsserver                        │
+│  4. tsserver parses it using TypeScript's parser              │
+│  5. TypeScript's type checker runs on JavaScript!             │
+│  6. Errors are sent back to VS Code                           │
+│  7. You see red squiggly lines                                │
+│                                                                 │
+│  This works because:                                           │
+│  - Every valid JS is valid TS                                 │
+│  - TypeScript can infer types from plain JS                   │
+│  - JSDoc provides explicit type info                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Comparison Table:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Without @ts-check</th>
+                    <th>With @ts-check</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Type checking</td><td>❌ None</td><td>✅ Full TypeScript checker</td></tr>
+                <tr><td>Autocomplete</td><td>Basic</td><td>Rich (inferred types)</td></tr>
+                <tr><td>Error detection</td><td>Runtime only</td><td>Compile-time in editor</td></tr>
+                <tr><td>JSDoc support</td><td>Ignored</td><td>Used for type annotations</td></tr>
+                <tr><td>Performance</td><td>Fast</td><td>Slightly slower (type checking)</td></tr>
+                <tr><td>File type</td><td>.js</td><td>.js with TS checking</td></tr>
+            </tbody>
+        </table>
+      </section>
+
+      <footer>
+        <p>TypeScript Internal Architecture Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+              Connect on LinkedIn
+            </a>
+          </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+    <!-- UI Interaction Scripts -->
+        <script src="script.js"></script>
+  </body>
+</html>
