@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced TypeScript Types</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS (Parent Folder) -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Custom Types</div>
+        <a href="#type-aliases" class="nav-link">1. Type Aliases</a>
+        <a href="#type-literals" class="nav-link">2. Type Literals</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Advanced Patterns</div>
+        <a href="#template-literals" class="nav-link">3. Template Literal Types</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Assertions</div>
+        <a href="#type-assertion" class="nav-link">4. Type Assertion (as)</a>
+        <a href="#non-null-assertion" class="nav-link">5. Non-Null Assertion (!)</a>
+        <a href="#definite-assignment" class="nav-link">6. Definite Assignment (!)</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Wrap Up</div>
+        <a href="#summary" class="nav-link">7. Complete Comparison</a>
+        <a href="#decision-guide" class="nav-link">Quick Decision Guide</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Advanced Types</span>
+        <h1>ADVANCED TYPESCRIPT</h1>
+        <p>MASTERING ALIASES, LITERALS, AND ASSERTIONS</p>
+      </section>
+
+      <section id="type-aliases">
+        <h2>Part 1: Type Aliases</h2>
+        
+        <h3>Definition</h3>
+        <p><strong>Type Alias:</strong> A way to give a custom name to any type. It creates a new name for an existing type, making your code more readable and maintainable.</p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type TypeName = ExistingType;</code></pre>
+
+        <h3>Basic Examples</h3>
+        <pre><code class="language-typescript">// 1. Primitive type alias
+type UserID = string;
+type Age = number;
+type IsActive = boolean;
+
+let id: UserID = "abc123";
+let age: Age = 25;
+
+// 2. Union type alias
+type Status = "pending" | "approved" | "rejected";
+let currentStatus: Status = "pending";
+
+// 3. Object type alias
+type Person = {
+    name: string;
+    age: number;
+    email?: string;  // Optional property
+};
+
+let user: Person = {
+    name: "Alice",
+    age: 25
+};
+
+// 4. Function type alias
+type GreetFunction = (name: string) => string;
+const greet: GreetFunction = (name) => `Hello ${name}`;
+
+// 5. Array type alias
+type NumberArray = number[];
+let numbers: NumberArray = [1, 2, 3];
+
+// 6. Tuple type alias
+type Point = [x: number, y: number];
+let coordinate: Point = [10, 20];</code></pre>
+
+        <h3>Use Cases for Type Aliases</h3>
+        <pre><code class="language-typescript">// 1. Reusing complex types across your codebase
+type APIResponse = {
+    status: number;
+    data: unknown;
+    error?: string;
+};
+
+function handleResponse(response: APIResponse) {
+    if (response.status === 200) {
+        console.log(response.data);
+    }
+}
+
+// 2. Creating domain-specific types
+type ProductID = string;
+type Price = number;
+type Currency = "USD" | "EUR" | "GBP";
+
+type Product = {
+    id: ProductID;
+    name: string;
+    price: Price;
+    currency: Currency;
+};
+
+// 3. Simplifying complex union types
+type ValidationResult = 
+    | { valid: true; value: string }
+    | { valid: false; error: string };
+
+// 4. Making code self-documenting
+type EmailAddress = string;  // Now it's clear what the string represents
+type PhoneNumber = string;
+
+function contactUser(email: EmailAddress, phone: PhoneNumber) {
+    // ...
+}</code></pre>
+
+        <h3>Type Alias vs Interface</h3>
+        <pre><code class="language-typescript">// Type Alias
+type Person = {
+    name: string;
+    age: number;
+};
+
+// Interface
+interface Person {
+    name: string;
+    age: number;
+}
+
+// When to use Type Alias vs Interface:
+// ✅ Use Interface for object shapes (can be extended)
+// ✅ Use Type Alias for:
+//    - Union types
+//    - Tuple types
+//    - Function types
+//    - Primitive type aliases
+//    - Complex type combinations</code></pre>
+      </section>
+
+      <section id="type-literals">
+        <h2>Part 2: Type Literals</h2>
+        
+        <h3>Definition</h3>
+        <p><strong>Type Literals:</strong> Types that represent exact, specific values rather than general types. They tell TypeScript that a variable can only hold a specific value.</p>
+
+        <h3>Types of Type Literals</h3>
+        <pre><code class="language-typescript">// 1. String Literals
+type Direction = "north" | "south" | "east" | "west";
+let move: Direction = "north";  // ✅ Valid
+// let move: Direction = "up";  // ❌ Error
+
+type Color = "red" | "green" | "blue";
+let myColor: Color = "red";  // ✅ Valid
+
+// 2. Numeric Literals
+type DiceResult = 1 | 2 | 3 | 4 | 5 | 6;
+let roll: DiceResult = 4;  // ✅ Valid
+// let roll: DiceResult = 7;  // ❌ Error
+
+type HTTPStatus = 200 | 201 | 400 | 401 | 404 | 500;
+let status: HTTPStatus = 200;  // ✅ Valid
+
+// 3. Boolean Literals
+type Truthy = true;
+let isTrue: Truthy = true;  // ✅ Valid
+// let isTrue: Truthy = false;  // ❌ Error
+
+// 4. Mixed Literals
+type Response = "success" | 200 | true;
+let result: Response = "success";  // ✅ Valid
+let result2: Response = 200;       // ✅ Valid
+let result3: Response = true;      // ✅ Valid
+// let result4: Response = "error"; // ❌ Error</code></pre>
+
+        <h3>Real-World Use Cases</h3>
+        <pre><code class="language-typescript">// 1. API Status Codes
+type ApiStatus = "loading" | "success" | "error";
+type HttpStatus = 200 | 201 | 400 | 401 | 500;
+
+interface ApiResponse {
+    status: ApiStatus;
+    code: HttpStatus;
+    data?: unknown;
+}
+
+// 2. Configuration Settings
+type Theme = "light" | "dark" | "system";
+type FontSize = "small" | "medium" | "large";
+
+interface AppConfig {
+    theme: Theme;
+    fontSize: FontSize;
+}
+
+// 3. User Permissions
+type Permission = "read" | "write" | "delete" | "admin";
+
+function hasPermission(user: User, permission: Permission): boolean {
+    return user.permissions.includes(permission);
+}
+
+// 4. Action Types (Redux/State Management)
+type ActionType = 
+    | "FETCH_START"
+    | "FETCH_SUCCESS"
+    | "FETCH_ERROR"
+    | "UPDATE_DATA";
+
+type Action = {
+    type: ActionType;
+    payload?: unknown;
+};</code></pre>
+      </section>
+
+      <section id="template-literals">
+        <h2>Part 3: Template Literal Types</h2>
+        
+        <h3>Definition</h3>
+        <p><strong>Template Literal Types:</strong> Types that use string interpolation to create new string literal types. They work like template strings but at the type level.</p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type NewType = `prefix-${VariableType}`;</code></pre>
+
+        <h3>Basic Examples</h3>
+        <pre><code class="language-typescript">// 1. Simple template literals
+type Greeting = `Hello ${string}`;
+let greet: Greeting = "Hello World";  // ✅ Valid
+// let greet: Greeting = "Hi World";  // ❌ Error
+
+type UserId = `user-${number}`;
+let id: UserId = "user-123";  // ✅ Valid
+// let id: UserId = "user-abc";  // ❌ Error
+
+// 2. Combining with union types
+type Size = "small" | "medium" | "large";
+type Color = "red" | "blue" | "green";
+
+type ProductVariant = `${Color}-${Size}`;
+// Result: "red-small" | "red-medium" | "red-large" | 
+//         "blue-small" | "blue-medium" | "blue-large" | 
+//         "green-small" | "green-medium" | "green-large"
+
+let product: ProductVariant = "red-medium";  // ✅ Valid
+// let product: ProductVariant = "yellow-small";  // ❌ Error
+
+// 3. With multiple placeholders
+type Path = `api/${string}/v${number}/${string}`;
+let apiPath: Path = "api/users/v1/list";  // ✅ Valid
+// let apiPath: Path = "api/users/version/list";  // ❌ Error</code></pre>
+
+        <h3>Advanced Template Literal Types</h3>
+        <pre><code class="language-typescript">// 1. Using `as const` with template literals
+const SIZES = ["small", "medium", "large"] as const;
+const COLORS = ["red", "blue", "green"] as const;
+
+type Size = typeof SIZES[number];  // "small" | "medium" | "large"
+type Color = typeof COLORS[number];  // "red" | "blue" | "green"
+
+type Variant = `${Color}-${Size}`;
+
+// 2. Extract and manipulate types
+type Event = "click" | "hover" | "focus";
+type OnEvent = `on${Capitalize<Event>}`;  
+// Result: "onClick" | "onHover" | "onFocus"
+
+type Prefix<T extends string> = `prefix-${T}`;
+type PrefixedSize = Prefix<Size>;  
+// Result: "prefix-small" | "prefix-medium" | "prefix-large"
+
+// 3. Using infer keyword
+type ExtractPrefix<T extends string> = T extends `${infer Prefix}-${string}` 
+    ? Prefix 
+    : never;
+
+type Test = ExtractPrefix<"user-123">;  // "user"
+type Test2 = ExtractPrefix<"hello">;    // never</code></pre>
+
+        <h3>Real-World Use Cases</h3>
+        <pre><code class="language-typescript">// 1. API Route Types
+type ApiVersion = "v1" | "v2";
+type Resource = "users" | "products" | "orders";
+type Method = "get" | "post" | "put" | "delete";
+
+type ApiEndpoint = `${Method}:api/${ApiVersion}/${Resource}`;
+// Result: "get:api/v1/users" | "post:api/v1/users" | ...
+
+// 2. CSS Class Names
+type Size = "sm" | "md" | "lg";
+type Color = "primary" | "secondary" | "danger";
+
+type ButtonClass = `btn-${Color}-${Size}`;
+// Result: "btn-primary-sm" | "btn-primary-md" | ...
+
+// 3. Event Handler Types
+type EventName = "click" | "change" | "submit";
+type EventHandler<T extends string> = `on${Capitalize<T>}`;
+
+type ClickHandler = EventHandler<"click">;  // "onClick"
+
+// 4. State Management Actions
+type ActionPrefix = "FETCH" | "UPDATE" | "DELETE";
+type ResourceName = "USER" | "PRODUCT" | "ORDER";
+
+type ActionType = `${ActionPrefix}_${ResourceName}`;
+// Result: "FETCH_USER" | "FETCH_PRODUCT" | "FETCH_ORDER" | ...</code></pre>
+      </section>
+
+      <section id="type-assertion">
+        <h2>Part 4: Type Assertion (as)</h2>
+        
+        <h3>Definition</h3>
+        <p><strong>Type Assertion:</strong> A way to tell TypeScript "I know more about this type than you do". It's like a type cast but without runtime overhead.</p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">// Syntax 1: 'as' syntax (preferred)
+let value = someValue as Type;
+
+// Syntax 2: Angle-bracket syntax (not recommended for JSX)
+let value = <Type>someValue;</code></pre>
+
+        <h3>Basic Examples</h3>
+        <pre><code class="language-typescript">// 1. Asserting a broader type
+let data: unknown = "Hello World";
+let strLength = (data as string).length;  // TypeScript now knows data is string
+
+// 2. Asserting a narrower type
+let element = document.getElementById("app") as HTMLDivElement;
+element.innerHTML = "Hello";  // TypeScript knows this is a div
+
+// 3. Asserting union to specific type
+type Animal = Dog | Cat;
+let pet: Animal = { type: "dog", bark: () => console.log("Woof") };
+let dogPet = pet as Dog;  // Treat as Dog
+dogPet.bark();  // Safe because we know it's a dog
+
+// 4. Double assertion (when needed)
+let value: any = "Hello";
+let num: number = value as any as number;  // Force conversion (dangerous!)</code></pre>
+
+        <h3>When to Use Type Assertion</h3>
+        <pre><code class="language-typescript">// ✅ DO: When TypeScript can't infer correctly
+let userData = JSON.parse('{"name":"Alice"}') as { name: string };
+
+// ✅ DO: When working with DOM elements
+const input = document.getElementById("email") as HTMLInputElement;
+input.value = "user@example.com";
+
+// ✅ DO: When you have more information than TypeScript
+const response = await fetch("/api/user");
+const user = await response.json() as User;  // You know the API returns User
+
+// ✅ DO: When migrating from JavaScript
+function handleEvent(event: Event) {
+    const target = event.target as HTMLInputElement;
+    console.log(target.value);
+}
+
+// ❌ AVOID: Asserting completely unrelated types
+let number = 42 as string;  // Wrong! This will cause runtime issues
+
+// ✅ BETTER: Use type guards instead of assertions
+function isUser(data: any): data is User {
+    return data && typeof data.name === "string";
+}
+
+if (isUser(userData)) {
+    console.log(userData.name);  // Type-safe
+}</code></pre>
+      </section>
+
+      <section id="non-null-assertion">
+        <h2>Part 5: Non-Null Assertion (!)</h2>
+        
+        <h3>Definition</h3>
+        <p><strong>Non-Null Assertion:</strong> A way to tell TypeScript "This value is definitely NOT null or undefined". It removes null and undefined from the type.</p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">variable!  // Non-null assertion operator</code></pre>
+
+        <h3>Basic Examples</h3>
+        <pre><code class="language-typescript">// 1. Basic usage
+let name: string | null = "Alice";
+let length = name!.length;  // TypeScript now treats name as string
+
+// 2. With DOM elements
+const element = document.getElementById("app")!;  // Assert it exists
+element.innerHTML = "Hello";
+
+// 3. With optional properties
+interface User {
+    name: string;
+    email?: string;
+}
+
+function getEmail(user: User): string {
+    return user.email!;  // You're sure email exists
+}
+
+// 4. With optional chaining
+let value: string | undefined = "Hello";
+let result = value!.toUpperCase();  // Assert not undefined</code></pre>
+
+        <h3>When to Use Non-Null Assertion vs Optional Chaining</h3>
+        <pre><code class="language-typescript">// ❌ BAD: Using non-null assertion when value might be null/undefined
+function processName(name: string | null | undefined) {
+    const upper = name!.toUpperCase();  // Runtime error if name is null!
+}
+
+// ✅ GOOD: Check first
+function processName(name: string | null | undefined) {
+    if (name) {
+        const upper = name.toUpperCase();  // Safe
+    }
+}
+
+// ✅ GOOD: Use optional chaining
+function processName(name: string | null | undefined) {
+    const upper = name?.toUpperCase();  // Returns undefined if name is null
+}
+
+// When to use Non-Null Assertion:
+// ✅ When you're 100% certain the value exists
+// ✅ In tests where you know the value is provided
+// ✅ When TypeScript can't infer but you know better
+
+// Example: You know this element exists in the HTML
+const root = document.getElementById("root")!;  // Safe because you know it's there
+
+// Example: After a check, but TypeScript doesn't narrow
+let value: string | null = "Hello";
+if (value !== null) {
+    // TypeScript knows value is string here
+    console.log(value.length);
+}
+// But if you have a case where you know but TypeScript doesn't:
+let value: string | null = getValue();
+// You know getValue() never returns null
+let result = value!.length;  // Safe because you know</code></pre>
+
+        <h3>Comparison Table: Non-Null Assertion vs Optional Chaining</h3>
+        <pre><code class="language-typescript">// Non-Null Assertion (!)
+let value: string | null = "Hello";
+let result1 = value!.toUpperCase();  // Returns string (could crash if null)
+
+// Optional Chaining (?.)
+let result2 = value?.toUpperCase();  // Returns string | undefined (safe)
+
+// When to use which:
+// ! - When you're sure the value exists (no checks needed)
+// ?. - When the value might not exist (safe handling)
+
+// Combined usage
+let result3 = value?.toUpperCase() ?? "Default";  // Safe with default</code></pre>
+      </section>
+
+      <section id="definite-assignment">
+        <h2>Part 6: Definite Assignment Assertion (!)</h2>
+        
+        <h3>Definition</h3>
+        <p><strong>Definite Assignment Assertion:</strong> A way to tell TypeScript that a variable will be assigned a value before it's used, even when TypeScript can't prove it.</p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">let variable!: Type;</code></pre>
+
+        <h3>Basic Examples</h3>
+        <pre><code class="language-typescript">// 1. In classes
+class Person {
+    name!: string;  // Will be assigned in constructor or method
+    age!: number;   // Definite assignment assertion
+    
+    constructor() {
+        // No assignment here
+    }
+    
+    init() {
+        this.name = "Alice";
+        this.age = 25;
+    }
+    
+    greet() {
+        console.log(`Hello ${this.name}`);  // No error
+    }
+}
+
+// 2. For variables initialized later
+let value!: string;
+function initialize() {
+    value = "Hello";
+}
+initialize();
+console.log(value.length);  // No error (even though TypeScript can't prove it)
+
+// 3. In Angular/React components
+class Component {
+    @Input() id!: string;  // Angular will inject this
+    @ViewChild('input') input!: ElementRef;  // Angular will set this
+}
+
+class ReactComponent extends React.Component {
+    inputRef!: HTMLInputElement;  // Set in componentDidMount
+    componentDidMount() {
+        this.inputRef = document.getElementById('input') as HTMLInputElement;
+    }
+}</code></pre>
+
+        <h3>Definite Assignment Assertion vs Non-Null Assertion</h3>
+        <pre><code class="language-typescript">// Definite Assignment Assertion (! after variable name)
+// Used in DECLARATION
+let value!: string;  // Says: "I will definitely assign this"
+
+// Non-Null Assertion (! after variable usage)
+// Used in USAGE
+let result = value!.length;  // Says: "This definitely exists now"
+
+// Example of both together
+class User {
+    name!: string;  // Definite assignment
+    email?: string;
+    
+    constructor(name: string) {
+        // This will be assigned outside constructor
+    }
+    
+    init(name: string) {
+        this.name = name;
+    }
+    
+    greet() {
+        // Non-null assertion: "I know name is set"
+        console.log(this.name!.toUpperCase());
+        // Optional chaining: "Email might not exist"
+        console.log(this.email?.toLowerCase());
+    }
+}</code></pre>
+
+        <h3>When to Use Definite Assignment Assertion</h3>
+        <pre><code class="language-typescript">// ✅ DO: In classes where properties are set outside constructor
+class Component {
+    element!: HTMLElement;  // Set by framework later
+    _eventListener!: (event: Event) => void;
+    
+    mount() {
+        this.element = document.createElement('div');
+        this._eventListener = (e) => {
+            console.log(e);
+        };
+    }
+}
+
+// ✅ DO: In React components with refs
+class Input extends React.Component {
+    inputRef!: HTMLInputElement;  // Set by React ref
+    focus() {
+        this.inputRef.focus();  // Safe
+    }
+    render() {
+        return <input ref={el => this.inputRef = el!} />;
+    }
+}
+
+// ✅ DO: When using libraries that initialize properties
+let config!: Config;
+function initConfig() {
+    config = loadConfig();
+}
+initConfig();
+processConfig(config);  // Safe
+
+// ❌ AVOID: When you should handle null/undefined properly
+let name!: string;
+if (Math.random() > 0.5) {
+    name = "Alice";
+}
+console.log(name.length);  // Could crash if condition is false!</code></pre>
+      </section>
+
+      <section id="summary">
+        <h2>Part 7: Complete Comparison Table</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Syntax</th>
+                    <th>Purpose</th>
+                    <th>When to Use</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Type Alias</td><td><code>type Name = Type</code></td><td>Create custom type names</td><td>Reusing complex types</td></tr>
+                <tr><td>String Literal</td><td><code>"value"</code></td><td>Exact string values</td><td>Limited options (statuses)</td></tr>
+                <tr><td>Numeric Literal</td><td><code>42</code></td><td>Exact number values</td><td>Limited options (HTTP codes)</td></tr>
+                <tr><td>Template Literal</td><td><code>`${prefix}-${string}`</code></td><td>Dynamic string patterns</td><td>API routes, CSS classes</td></tr>
+                <tr><td>Type Assertion</td><td><code>value as Type</code></td><td>Override TypeScript inference</td><td>When you know more than TS</td></tr>
+                <tr><td>Non-Null Assertion</td><td><code>value!</code></td><td>Assert value exists</td><td>When sure value isn't null</td></tr>
+                <tr><td>Optional Chaining</td><td><code>value?.prop</code></td><td>Safely access property</td><td>When value might be null</td></tr>
+                <tr><td>Definite Assignment</td><td><code>let x!: Type</code></td><td>Promise to assign later</td><td>Framework initialization</td></tr>
+            </tbody>
+        </table>
+      </section>
+
+      <section id="decision-guide">
+        <h2>Summary & Quick Decision Guide</h2>
+        
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    WHEN TO USE WHAT                                 │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  CREATE CUSTOM TYPE NAME: Use Type Alias                          │
+│  RESTRICT TO SPECIFIC VALUES: Use Type Literals                   │
+│  CREATE DYNAMIC STRING PATTERNS: Use Template Literal Types       │
+│  OVERRIDE TYPE INFERENCE: Use Type Assertion (as)                │
+│  ASSERT VALUE EXISTS: Use Non-Null Assertion (!)                 │
+│  SAFELY ACCESS POSSIBLE NULL: Use Optional Chaining (?)          │
+│  PROMISE TO ASSIGN LATER: Use Definite Assignment (!)            │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-bolt"></i> One-Line Summary</span>
+            <ul>
+                <li><strong>Type Aliases</strong> = Custom type names for reusability</li>
+                <li><strong>Type Literals</strong> = Exact values for strict constraints</li>
+                <li><strong>Template Literal Types</strong> = Pattern-based string types</li>
+                <li><strong>Type Assertion</strong> = TypeScript, trust me on this</li>
+                <li><strong>Non-Null Assertion</strong> = This definitely exists</li>
+                <li><strong>Optional Chaining</strong> = This might not exist, be safe</li>
+                <li><strong>Definite Assignment</strong> = I'll set this later, trust me</li>
+            </ul>
+        </div>
+      </section>
+
+      <footer>
+        <p>Advanced TypeScript Types Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+              Connect on LinkedIn
+            </a>
+          </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

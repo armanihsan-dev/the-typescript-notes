@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Arrays and Tuples Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Array Fundamentals</div>
+        <a href="#array-typing" class="nav-link">1. Array Typing</a>
+        <a href="#syntax" class="nav-link">2. Syntax & Declarations</a>
+        <a href="#mixed-nested" class="nav-link">3. Mixed & Nested Arrays</a>
+        <a href="#empty-arrays" class="nav-link">4. Empty Arrays</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Array Methods</div>
+        <a href="#map-method" class="nav-link">1. map() Transformation</a>
+        <a href="#filter-method" class="nav-link">2. filter() & Type Narrowing</a>
+        <a href="#reduce-method" class="nav-link">3. reduce() Value Extraction</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Tuples</div>
+        <a href="#tuples-fundamentals" class="nav-link">1. What are Tuples?</a>
+        <a href="#tuple-syntax" class="nav-link">2. Syntax & Access</a>
+        <a href="#optional-labels" class="nav-link">3. Optional & Labeled</a>
+        <a href="#arrays-vs-tuples" class="nav-link">4. Arrays vs Tuples</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Immutability</div>
+        <a href="#readonly-arrays" class="nav-link">1. Readonly Arrays</a>
+        <a href="#readonly-tuples" class="nav-link">2. Readonly Tuples</a>
+        <a href="#as-const" class="nav-link">3. as const Assertion</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">V. Summary</div>
+        <a href="#best-practices" class="nav-link">Best Practices</a>
+        <a href="#quick-reference" class="nav-link">Quick Reference Table</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Data Structures</span>
+        <h1>ARRAYS AND TUPLES</h1>
+        <p>THE COMPLETE GUIDE TO TYPING COLLECTIONS IN TYPESCRIPT</p>
+      </section>
+
+      <section id="array-typing">
+        <h2>Part 1: Array Typing - Fundamentals</h2>
+        
+        <h3>1. What is an Array Type?</h3>
+        <p><strong>Definition:</strong> An array type in TypeScript specifies what type of elements an array can contain. This ensures type safety when adding, removing, or accessing array elements.</p>
+      </section>
+
+      <section id="syntax">
+        <h3>2. Syntax for Declaring Array Types</h3>
+        <p>There are two syntaxes for declaring array types:</p>
+
+        <pre><code class="language-typescript">// Syntax 1: Type[] - (Recommended, more common)
+let numbers: number[] = [1, 2, 3];
+let names: string[] = ["Alice", "Bob"];
+let isValid: boolean[] = [true, false];
+
+// Syntax 2: Array<Type> - (Generic syntax)
+let numbers2: Array<number> = [1, 2, 3];
+let names2: Array<string> = ["Alice", "Bob"];
+let isValid2: Array<boolean> = [true, false];</code></pre>
+        
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-star"></i> Best Practice</span>
+            <p style="margin-bottom: 0;">Use <code>Type[]</code> syntax as it's more common and readable.</p>
+        </div>
+      </section>
+
+      <section id="mixed-nested">
+        <h3>3. Array Types with Mixed Elements</h3>
+        <pre><code class="language-typescript">// Union types: Array can contain multiple types
+let mixed: (string | number)[] = ["Hello", 42, "World", 100];
+// Same as:
+let mixed2: Array<string | number> = ["Hello", 42, "World", 100];
+
+// Union with objects
+type User = { name: string; age: number };
+type Admin = { name: string; isAdmin: boolean };
+
+let people: (User | Admin)[] = [
+    { name: "Alice", age: 25 },
+    { name: "Bob", isAdmin: true }
+];</code></pre>
+
+        <h3>4. Nested Arrays (Arrays of Arrays)</h3>
+        <pre><code class="language-typescript">// 2D Array: Array of arrays
+let matrix: number[][] = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+// Same as:
+let matrix2: Array<Array<number>> = [
+    [1, 2, 3],
+    [4, 5, 6]
+];
+
+// 3D Array
+let cube: number[][][] = [
+    [[1, 2], [3, 4]],
+    [[5, 6], [7, 8]]
+];</code></pre>
+      </section>
+
+      <section id="empty-arrays">
+        <h3>5. Empty Arrays</h3>
+        <pre><code class="language-typescript">// ❌ Wrong: TypeScript infers as 'any[]'
+let data = [];  // Type: any[]
+
+// ✅ Correct: Explicitly type the array
+let data: string[] = [];
+data.push("Hello");  // ✅ Works
+data.push(42);       // ❌ Error: number not assignable to string
+
+// ✅ Or initialize with values
+let data = ["Hello"];  // TypeScript infers: string[]
+data.push("World");    // ✅ Works
+data.push(42);         // ❌ Error</code></pre>
+      </section>
+
+      <section id="map-method">
+        <h2>Part 2: Working with Array Methods</h2>
+        
+        <h3>1. map() - Transform Each Element</h3>
+        <p><strong>Definition:</strong> Creates a new array by applying a function to each element of the original array.</p>
+
+        <p><strong>How map() Affects Types:</strong></p>
+        <pre><code class="language-typescript">// Example 1: Mapping to same type
+let numbers: number[] = [1, 2, 3, 4, 5];
+let doubled: number[] = numbers.map(n => n * 2);
+// Result: [2, 4, 6, 8, 10]
+// Type: number[] (same as input)
+
+// Example 2: Mapping to different type
+let numbers2: number[] = [1, 2, 3, 4, 5];
+let strings: string[] = numbers2.map(n => `Number: ${n}`);
+// Result: ["Number: 1", "Number: 2", "Number: 3", "Number: 4", "Number: 5"]
+// Type: string[] (different from input!)
+
+// Example 3: Mapping objects
+type User = { name: string; age: number };
+type UserNames = { fullName: string };
+
+let users: User[] = [
+    { name: "Alice", age: 25 },
+    { name: "Bob", age: 30 }
+];
+
+let names: UserNames[] = users.map(user => ({
+    fullName: user.name
+}));
+// Type: UserNames[]</code></pre>
+
+        <p><strong>TypeScript's Type Inference with map():</strong></p>
+        <pre><code class="language-typescript">// TypeScript automatically infers the return type
+let numbers = [1, 2, 3];
+let result = numbers.map(n => n * 2);  // TypeScript infers: number[]
+let result2 = numbers.map(n => n.toString());  // TypeScript infers: string[]</code></pre>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-star"></i> Best Practice</span>
+            <p style="margin-bottom: 0;">Explicitly type the callback parameter:</p>
+            <pre style="margin-top: 10px; margin-bottom: 0;"><code class="language-typescript">// ❌ Avoid: Implicit any
+let numbers = [1, 2, 3];
+let result = numbers.map(n => n * 2);
+
+// ✅ Prefer: Explicit parameter type
+let numbers: number[] = [1, 2, 3];
+let result = numbers.map((n: number) => n * 2);</code></pre>
+        </div>
+      </section>
+
+      <section id="filter-method">
+        <h3>2. filter() - Filter Elements</h3>
+        <p><strong>Definition:</strong> Creates a new array containing only elements that pass a test.</p>
+
+        <p><strong>How filter() Affects Types:</strong></p>
+        <pre><code class="language-typescript">// Basic filtering (same type)
+let numbers: number[] = [1, 2, 3, 4, 5, 6];
+let evenNumbers: number[] = numbers.filter(n => n % 2 === 0);
+// Result: [2, 4, 6]
+// Type: number[] (same as input)
+
+// Filtering with objects
+type User = { name: string; age: number };
+let users: User[] = [
+    { name: "Alice", age: 25 },
+    { name: "Bob", age: 17 },
+    { name: "Charlie", age: 30 }
+];
+
+let adults: User[] = users.filter(user => user.age >= 18);
+// Type: User[] (same as input)
+
+// Filtering union types (Type Narrowing!)
+type Dog = { type: "dog"; bark(): void };
+type Cat = { type: "cat"; meow(): void };
+
+let animals: (Dog | Cat)[] = [
+    { type: "dog", bark: () => console.log("Woof") },
+    { type: "cat", meow: () => console.log("Meow") }
+];
+
+// TypeScript narrows the type automatically!
+let dogs = animals.filter(animal => animal.type === "dog");
+// TypeScript knows: dogs is Dog[]
+// Because filter removes all Cat elements</code></pre>
+
+        <p><strong>Type Narrowing with filter():</strong></p>
+        <pre><code class="language-typescript">// Example: Filtering out null/undefined
+type OptionalString = string | null | undefined;
+
+let items: OptionalString[] = ["Hello", null, "World", undefined, "!"];
+
+// ❌ Without filter, type remains OptionalString[]
+let withoutFilter: OptionalString[] = items;
+// Type: (string | null | undefined)[]
+
+// ✅ With filter, TypeScript narrows the type
+let strings = items.filter((item): item is string => item !== null && item !== undefined);
+// Type: string[] (null and undefined are removed!)
+
+// ✅ Using a type guard function
+function isString(value: any): value is string {
+    return typeof value === "string";
+}
+
+let strings2 = items.filter(isString);
+// Type: string[]</code></pre>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-star"></i> Best Practice</span>
+            <p style="margin-bottom: 0;">Use filter with type guards for type narrowing:</p>
+            <pre style="margin-top: 10px; margin-bottom: 0;"><code class="language-typescript">type User = { name: string; age: number };
+type ApiResponse = User | { error: string };
+
+let responses: ApiResponse[] = [
+    { name: "Alice", age: 25 },
+    { error: "Not found" },
+    { name: "Bob", age: 30 }
+];
+
+// Type guard
+function isUser(response: ApiResponse): response is User {
+    return "name" in response && "age" in response;
+}
+
+// Now TypeScript knows successful is User[]
+let successful = responses.filter(isUser);
+// Type: User[]</code></pre>
+        </div>
+      </section>
+
+      <section id="reduce-method">
+        <h3>3. reduce() - Reduce to Single Value</h3>
+        <p><strong>Definition:</strong> Applies a function against an accumulator and each element to reduce the array to a single value.</p>
+
+        <p><strong>How reduce() Affects Types:</strong></p>
+        <pre><code class="language-typescript">// Basic reduce: Sum numbers
+let numbers: number[] = [1, 2, 3, 4, 5];
+let sum: number = numbers.reduce((acc, curr) => acc + curr, 0);
+// Result: 15
+// Type: number (initial value was number)
+
+// Reduce to string
+let sumString: string = numbers.reduce((acc, curr) => acc + curr.toString(), "Sum: ");
+// Result: "Sum: 12345"
+// Type: string
+
+// Reduce to object
+type UserStats = { total: number; count: number };
+let ages: number[] = [25, 30, 35, 40];
+
+let stats: UserStats = ages.reduce(
+    (acc, age) => ({
+        total: acc.total + age,
+        count: acc.count + 1
+    }),
+    { total: 0, count: 0 }
+);
+// Type: UserStats
+
+// Reduce with objects
+type Product = { name: string; price: number };
+let products: Product[] = [
+    { name: "Laptop", price: 1000 },
+    { name: "Mouse", price: 50 },
+    { name: "Keyboard", price: 100 }
+];
+
+let totalPrice: number = products.reduce((sum, product) => sum + product.price, 0);
+// Result: 1150
+// Type: number</code></pre>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-star"></i> Best Practice</span>
+            <p style="margin-bottom: 0;">Always provide initial value and explicit return type:</p>
+            <pre style="margin-top: 10px; margin-bottom: 0;"><code class="language-typescript">// ❌ Avoid: Missing initial value (can cause type issues)
+let numbers = [1, 2, 3];
+let result = numbers.reduce((acc, curr) => acc + curr);
+// TypeScript infers type, but might be ambiguous
+
+// ✅ Prefer: Always provide initial value
+let result: number = numbers.reduce((acc: number, curr: number) => acc + curr, 0);
+
+// ✅ Prefer: Explicitly type the accumulator
+type Result = { sum: number; count: number };
+let stats: Result = numbers.reduce<Result>(
+    (acc, curr) => ({
+        sum: acc.sum + curr,
+        count: acc.count + 1
+    }),
+    { sum: 0, count: 0 }
+);</code></pre>
+        </div>
+      </section>
+
+      <section id="tuples-fundamentals">
+        <h2>Part 4: Tuples</h2>
+        
+        <h3>1. What are Tuples?</h3>
+        <p><strong>Definition:</strong> A tuple is an array with a fixed length and each element can have a different type.</p>
+
+        <p>Key characteristics:</p>
+        <ul>
+            <li>Fixed length (number of elements is known)</li>
+            <li>Each position has a specific type</li>
+            <li>Order matters</li>
+        </ul>
+      </section>
+
+      <section id="tuple-syntax">
+        <h3>2. Tuple Syntax</h3>
+        <pre><code class="language-typescript">// Basic tuple syntax
+let person: [string, number] = ["Alice", 25];
+// First element must be string, second must be number
+
+// Tuple with more elements
+let user: [string, number, boolean] = ["Alice", 25, true];
+
+// Tuple with mixed types
+let data: [number, string, boolean] = [42, "Hello", true];
+
+// Empty tuple
+let empty: [] = [];
+
+// Type inference in tuples
+let tuple = ["Alice", 25] as const;  // Type: readonly ["Alice", 25]
+// or
+let tuple2: [string, number] = ["Alice", 25];</code></pre>
+
+        <h3>3. Accessing Tuple Elements</h3>
+        <pre><code class="language-typescript">let person: [string, number] = ["Alice", 25];
+
+// Access by index
+let name: string = person[0];  // "Alice"
+let age: number = person[1];   // 25
+
+// Destructuring
+let [name2, age2] = person;
+// name2: string, age2: number
+
+// ❌ Accessing out of bounds
+let invalid = person[2];  // Error: Tuple type '[string, number]' of length '2' has no element at index '2'</code></pre>
+      </section>
+
+      <section id="optional-labels">
+        <h3>4. Optional Tuple Elements</h3>
+        <pre><code class="language-typescript">// Optional elements using '?'
+type User = [string, number, boolean?];
+// Third element is optional
+
+let user1: User = ["Alice", 25];        // ✅ Valid
+let user2: User = ["Alice", 25, true];  // ✅ Valid
+// let user3: User = ["Alice"];         // ❌ Error: Missing second element
+
+// Optional elements must be at the end
+type Data = [string, number?, boolean?];  // ✅ Valid
+// type Data2 = [string?, number];       // ❌ Invalid: optional can't be before required</code></pre>
+
+        <h3>5. Tuple Labeling (for documentation)</h3>
+        <pre><code class="language-typescript">// Labeled tuple elements
+type Person = [name: string, age: number, isActive?: boolean];
+
+let user: Person = ["Alice", 25, true];
+// Labels appear in IDE for better documentation
+
+type Point = [x: number, y: number];
+let point: Point = [10, 20];</code></pre>
+
+        <h3>6. Rest Elements in Tuples</h3>
+        <pre><code class="language-typescript">// Rest elements allow variable number of elements of the same type
+type StringAndNumbers = [string, ...number[]];
+// First element is string, rest are numbers
+
+let data1: StringAndNumbers = ["Hello", 1, 2, 3, 4];  // ✅ Valid
+let data2: StringAndNumbers = ["Hello"];              // ✅ Valid
+let data3: StringAndNumbers = [1, 2, 3];              // ❌ Error: First must be string
+
+// Multiple rest elements
+type Mixed = [string, ...number[], boolean];
+let data4: Mixed = ["Hello", 1, 2, 3, true];  // ✅ Valid
+let data5: Mixed = ["Hello", true];           // ✅ Valid (no numbers)</code></pre>
+      </section>
+
+      <section id="arrays-vs-tuples">
+        <h3>When to Use Tuples vs Arrays</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Use Case</th>
+                    <th>Tuples</th>
+                    <th>Arrays</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Fixed length</td><td>✅ Yes</td><td>❌ No</td></tr>
+                <tr><td>Different types per position</td><td>✅ Yes</td><td>❌ Same type only</td></tr>
+                <tr><td>CSV row data</td><td>✅ Yes</td><td>❌ No</td></tr>
+                <tr><td>Function returns multiple values</td><td>✅ Yes</td><td>❌ No</td></tr>
+                <tr><td>List of similar items</td><td>❌ No</td><td>✅ Yes</td></tr>
+                <tr><td>Collection of same type</td><td>❌ No</td><td>✅ Yes</td></tr>
+            </tbody>
+        </table>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-check"></i> Best Practices for Tuples:</span>
+            <pre style="margin-bottom: 0;"><code class="language-typescript">// ✅ DO: Use tuples for fixed-length structured data
+type Coordinates = [x: number, y: number];
+type HttpResponse = [status: number, data: any];
+
+// ✅ DO: Use label for clarity
+type Person = [name: string, age: number];
+
+// ✅ DO: Use tuples for function return types
+function getPerson(): [string, number] {
+    return ["Alice", 25];
+}</code></pre>
+        </div>
+      </section>
+
+      <section id="readonly-arrays">
+        <h2>Part 5: Readonly Arrays and Tuples</h2>
+        
+        <h3>1. Readonly Arrays</h3>
+        <p><strong>Definition:</strong> An array that cannot be modified after creation. No push, pop, splice, or other mutation methods.</p>
+
+        <pre><code class="language-typescript">// Syntax 1: readonly modifier
+let numbers: readonly number[] = [1, 2, 3];
+numbers.push(4);     // ❌ Error: Property 'push' does not exist on type 'readonly number[]'
+numbers[0] = 10;     // ❌ Error: Cannot assign to '0' because it is a read-only property
+
+// Syntax 2: ReadonlyArray type
+let numbers2: ReadonlyArray<number> = [1, 2, 3];
+numbers2.push(4);    // ❌ Error
+numbers2[0] = 10;    // ❌ Error
+
+// Syntax 3: as const (readonly literal)
+let numbers3 = [1, 2, 3] as const;
+numbers3.push(4);    // ❌ Error
+numbers3[0] = 10;    // ❌ Error</code></pre>
+
+        <p><strong>Use Cases for Readonly Arrays:</strong></p>
+        <pre><code class="language-typescript">// 1. Configuration (shouldn't be modified)
+const CONFIG_VALUES: readonly string[] = ["development", "production"];
+
+// 2. Function parameters (promise not to modify)
+function processItems(items: readonly number[]): number {
+    // We can read but not modify
+    return items.reduce((sum, n) => sum + n, 0);
+}
+
+// 3. Constant data
+const MONTHS: readonly string[] = [
+    "January", "February", "March", "April",
+    "May", "June", "July", "August",
+    "September", "October", "November", "December"
+];</code></pre>
+
+        <p><strong>Converting Between Readonly and Mutable:</strong></p>
+        <pre><code class="language-typescript">// Mutable to readonly
+let mutable: number[] = [1, 2, 3];
+let readonly: readonly number[] = mutable;  // ✅ Valid (widening)
+
+// Readonly to mutable (requires copy)
+let readonly: readonly number[] = [1, 2, 3];
+let mutable: number[] = [...readonly];  // ✅ Valid (creates copy)
+// or
+let mutable2: number[] = readonly.slice();  // ✅ Valid</code></pre>
+      </section>
+
+      <section id="readonly-tuples">
+        <h3>2. Readonly Tuples</h3>
+        <pre><code class="language-typescript">// Readonly tuple syntax
+let point: readonly [number, number] = [10, 20];
+point[0] = 15;     // ❌ Error: Cannot assign to '0' because it is a read-only property
+
+// Readonly tuple with labels
+type Person = readonly [name: string, age: number];
+let person: Person = ["Alice", 25];
+person[0] = "Bob";  // ❌ Error
+
+// Readonly tuple with rest
+type Data = readonly [string, ...number[]];
+let data: Data = ["Hello", 1, 2, 3];
+data[0] = "Hi";     // ❌ Error
+data.push(4);       // ❌ Error</code></pre>
+      </section>
+
+      <section id="as-const">
+        <h3>3. as const for Readonly</h3>
+        <pre><code class="language-typescript">// The 'as const' assertion makes everything readonly and literal
+
+// Without as const
+let colors = ["Red", "Green", "Blue"];
+// Type: string[]
+
+// With as const
+let colors2 = ["Red", "Green", "Blue"] as const;
+// Type: readonly ["Red", "Green", "Blue"] (literal tuple)
+
+colors2[0] = "Purple";  // ❌ Error
+colors2.push("Yellow"); // ❌ Error
+
+// Use with objects
+let config = {
+    server: {
+        port: 3000,
+        host: "localhost"
+    }
+} as const;
+
+config.server.port = 4000;  // ❌ Error: Cannot assign to 'port' because it is a read-only property</code></pre>
+      </section>
+
+      <section id="best-practices">
+        <h2>Part 6: Best Practices Summary</h2>
+        
+        <h3>Arrays:</h3>
+        <pre><code class="language-typescript">// ✅ DO: Use consistent array syntax
+let items: string[] = [];  // Prefer this
+// let items: Array<string> = [];  // Also valid
+
+// ✅ DO: Initialize arrays with correct type
+let strings: string[] = [];
+// ❌ DON'T: let strings = [];  // TypeScript infers any[]
+
+// ✅ DO: Use type guards with filter
+let strings = data.filter((item): item is string => typeof item === "string");
+
+// ✅ DO: Explicitly type reduce accumulators
+let sum = numbers.reduce<number>((acc, curr) => acc + curr, 0);
+
+// ✅ DO: Use readonly for immutable data
+function process(items: readonly number[]): number {
+    return items.reduce((a, b) => a + b, 0);
+}</code></pre>
+
+        <h3>Tuples:</h3>
+        <pre><code class="language-typescript">// ✅ DO: Use tuples for fixed-length data
+type Point = [x: number, y: number];
+
+// ✅ DO: Use labels for clarity
+type Person = [name: string, age: number];
+
+// ✅ DO: Use readonly for immutable tuples
+type Config = readonly [key: string, value: string];
+
+// ❌ AVOID: Tuples for more than 3-4 elements
+type Complex = [string, number, boolean, string, number, boolean];  // Bad
+
+// ✅ BETTER: Use interface for complex structures
+interface Complex {
+    name: string;
+    id: number;
+    isActive: boolean;
+    // ...
+}</code></pre>
+      </section>
+
+      <section id="quick-reference">
+        <h2>Part 7: Quick Reference Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Syntax</th>
+                    <th>Use Case</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Array</td><td><code>type[]</code> or <code>Array&lt;type&gt;</code></td><td>Collections of same type</td></tr>
+                <tr><td>Mixed Array</td><td><code>(type1 | type2)[]</code></td><td>Array with multiple types</td></tr>
+                <tr><td>Nested Array</td><td><code>type[][]</code></td><td>Matrix, 2D data</td></tr>
+                <tr><td>Tuple</td><td><code>[type1, type2]</code></td><td>Fixed length, different types</td></tr>
+                <tr><td>Labeled Tuple</td><td><code>[name: type1, name2: type2]</code></td><td>Self-documenting tuples</td></tr>
+                <tr><td>Readonly Array</td><td><code>readonly type[]</code></td><td>Immutable arrays</td></tr>
+                <tr><td>Readonly Tuple</td><td><code>readonly [type1, type2]</code></td><td>Immutable tuples</td></tr>
+                <tr><td>Const Assertion</td><td><code>as const</code></td><td>Literal readonly tuples</td></tr>
+            </tbody>
+        </table>
+      </section>
+
+      <footer>
+        <p>TypeScript Arrays and Tuples Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+              Connect on LinkedIn
+            </a>
+          </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Compilation and Runtime Mechanics</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Execution Phases</div>
+        <a href="#compile-vs-runtime" class="nav-link"
+          >1. Compile Time vs Runtime</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. The Compiler</div>
+        <a href="#what-is-compiler" class="nav-link">2. What is a Compiler?</a>
+        <a href="#setup-compilation" class="nav-link">3. Setup & Compilation</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Terminology</div>
+        <a href="#compile-vs-transpile" class="nav-link"
+          >4. Compile vs Transpile</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Configuration</div>
+        <a href="#compiler-flags" class="nav-link"
+          >5. Important Compiler Flags</a
+        >
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Compilation Mechanics</span>
+        <h1>TYPESCRIPT COMPILATION</h1>
+        <p>UNDERSTANDING HOW TYPESCRIPT CODE BECOMES EXECUTABLE JAVASCRIPT</p>
+      </section>
+
+      <section id="compile-vs-runtime">
+        <h2>1. What is Compile Time & Runtime?</h2>
+
+        <h3>
+          <i class="fa-solid fa-microchip" style="color: var(--accent)"></i>
+          Compile Time
+        </h3>
+        <p>
+          <strong>Definition:</strong> The phase when source code (the actual
+          code wrote in a programming language e.g. ts code) is processed by a
+          compiler before execution.
+        </p>
+
+        <p><strong>What happens during compile time:</strong></p>
+        <ul>
+          <li>
+            <strong>Syntax analysis</strong> – Checking if code follows language
+            grammar rules
+          </li>
+          <li>
+            <strong>Type checking</strong> – Verifying type consistency (in
+            TypeScript)
+          </li>
+          <li>
+            <strong>Semantic analysis</strong> – Checking for logical errors
+            (unused variables, unreachable code)
+          </li>
+          <li>
+            <strong>Code generation</strong> – Transforming source code into
+            target code (e.g., TS → JS)
+          </li>
+          <li>
+            <strong>Optimization</strong> – Improving code performance where
+            possible
+          </li>
+        </ul>
+
+        <p><strong>When compile time occurs:</strong></p>
+        <ul>
+          <li>When you manually run <code>tsc</code> command</li>
+          <li>When your build tool runs the compiler</li>
+          <li>When your IDE runs the compiler in the background</li>
+        </ul>
+
+        <div class="note-box">
+          <span class="note-title"
+            ><i class="fa-solid fa-user-shield"></i> Compile Time Facts</span
+          >
+          <p>
+            <strong>Who receives errors:</strong> The developer only. End users
+            never see these errors.
+          </p>
+          <p style="margin-bottom: 0">
+            <strong>Result of an error:</strong> No output code is generated.
+            The compilation process stops or produces incomplete output.
+          </p>
+        </div>
+
+        <h3>
+          <i class="fa-solid fa-play" style="color: var(--accent)"></i> Runtime
+        </h3>
+        <p>
+          <strong>Definition:</strong> The phase when compiled/transpiled code
+          is actually executing in a runtime environment (browser, Node.js,
+          Deno, etc.).
+        </p>
+
+        <p><strong>What happens during runtime:</strong></p>
+        <ul>
+          <li>
+            <strong>Memory allocation</strong> – Variables get actual memory
+            addresses
+          </li>
+          <li>
+            <strong>Execution</strong> – Instructions are executed by the
+            CPU/JavaScript engine
+          </li>
+          <li>
+            <strong>I/O operations</strong> – Reading/writing files, network
+            requests, user interactions
+          </li>
+          <li>
+            <strong>Dynamic errors</strong> – Errors that couldn't be caught at
+            compile time (network failures, out-of-memory, type coercion issues
+            in JavaScript)
+          </li>
+        </ul>
+
+        <p><strong>When runtime occurs:</strong></p>
+        <ul>
+          <li>When you run <code>node app.js</code> in terminal</li>
+          <li>When a user visits your website in a browser</li>
+          <li>When a server receives an HTTP request</li>
+        </ul>
+
+        <div class="note-box danger">
+          <span class="note-title"
+            ><i class="fa-solid fa-triangle-exclamation"></i> Runtime
+            Facts</span
+          >
+          <p>
+            <strong>Who receives errors:</strong> End users (if unhandled) or
+            developers through error logs.
+          </p>
+          <p style="margin-bottom: 0">
+            <strong>Result of an error:</strong> Program crashes, throws
+            exception, or behaves unexpectedly.
+          </p>
+        </div>
+
+        <h3>Key Differences</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Compile Time</th>
+              <th>Runtime</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>When</strong></td>
+              <td>Before execution</td>
+              <td>During execution</td>
+            </tr>
+            <tr>
+              <td><strong>Who sees errors</strong></td>
+              <td>Developer only</td>
+              <td>End users (via crashes/bugs)</td>
+            </tr>
+            <tr>
+              <td><strong>Error types</strong></td>
+              <td>Syntax, type mismatches, undeclared variables</td>
+              <td>Memory issues, network failures, invalid user input</td>
+            </tr>
+            <tr>
+              <td><strong>Cost</strong></td>
+              <td>Developer time (fixed before deployment)</td>
+              <td>Production downtime, user frustration</td>
+            </tr>
+            <tr>
+              <td><strong>Examples</strong></td>
+              <td>TS2363 (invalid arithmetic), missing semicolons</td>
+              <td>
+                Cannot read property 'x' of undefined, 500 Internal Server Error
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="what-is-compiler">
+        <h2>2. What is a Compiler and What is the TypeScript Compiler?</h2>
+
+        <h3>Compiler</h3>
+        <p>
+          <strong>Definition:</strong> A program that translates source code
+          written in one programming language into another language (usually
+          machine code or another high-level language).
+        </p>
+
+        <p><strong>Key functions of a compiler:</strong></p>
+        <ul>
+          <li><strong>Lexical analysis</strong> – Breaks code into tokens</li>
+          <li>
+            <strong>Parsing</strong> – Builds an Abstract Syntax Tree (AST)
+          </li>
+          <li>
+            <strong>Semantic analysis</strong> – Checks types, scopes, and
+            declarations
+          </li>
+          <li>
+            <strong>Intermediate code generation</strong> – Creates an internal
+            representation
+          </li>
+          <li>
+            <strong>Optimization</strong> – Improves the intermediate code
+          </li>
+          <li>
+            <strong>Code generation</strong> – Produces the final output code
+          </li>
+        </ul>
+
+        <h3>TypeScript Compiler (tsc)</h3>
+        <p>
+          <strong>Definition:</strong> The official compiler for TypeScript,
+          published as the <code>typescript</code> npm package. It transforms
+          TypeScript (<code>.ts</code>) files into JavaScript (<code>.js</code>)
+          files.
+        </p>
+
+        <p>The <code>typescript</code> npm package includes:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    typescript npm package                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  📦 Contains:                                                   │
+│  • tsc – The command-line compiler                             │
+│  • tsserver – The language service for editors                 │
+│  • TypeScript compiler API – For programmatic usage            │
+│  • Type definitions – For TypeScript itself                    │
+│                                                                  │
+│  What `tsc` actually does:                                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Input:  .ts files with type annotations                │   │
+│  │  Process: Removes all types, checks syntax, generates  │   │
+│  │  Output: .js files with NO type annotations            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="setup-compilation">
+        <h2>
+          3. How to Setup TypeScript Compiler and Compile TypeScript to
+          JavaScript
+        </h2>
+
+        <h3>Step-by-Step Setup:</h3>
+        <pre><code class="language-bash"># Step 1: Initialize npm project (if not already)
+npm init -y
+
+# Step 2: Install TypeScript as dev dependency
+npm install --save-dev typescript
+
+# Step 3: Create a TypeScript file (app.ts)
+# Write your TypeScript code here
+
+# Step 4: Compile to JavaScript
+npx tsc app.ts
+
+# This creates: app.js (JavaScript version)
+# If you have tsconfig.json, just run:
+npx tsc</code></pre>
+
+        <h3>Complete Example:</h3>
+        <p>File: <code>app.ts</code></p>
+        <pre><code class="language-typescript">const name: string = "Arman";
+const age: number = 25;
+console.log(`Name: ${name}, Age: ${age}`);</code></pre>
+
+        <p>Compile Command:</p>
+        <pre><code class="language-bash">npx tsc app.ts</code></pre>
+
+        <p>Output: <code>app.js</code></p>
+        <pre><code class="language-javascript">const name = "Arman";
+const age = 25;
+console.log(`Name: ${name}, Age: ${age}`);</code></pre>
+
+        <p>Run the Output:</p>
+        <pre><code class="language-bash">node app.js
+# Output: Name: Arman, Age: 25</code></pre>
+      </section>
+
+      <section id="compile-vs-transpile">
+        <h2>4. Does TypeScript Really Compile? Or Does It Transpile?</h2>
+        <p>Both terms apply, but here's the technical distinction:</p>
+
+        <h3>Compilation</h3>
+        <p>
+          <strong>Definition:</strong> Translating source code from a
+          higher-level language to a lower-level language (e.g., C → Assembly,
+          Java → Bytecode).
+        </p>
+        <ul>
+          <li>Significant abstraction level change</li>
+          <li>Output is closer to machine code</li>
+          <li>Often involves optimization</li>
+          <li>Runtime performance improves</li>
+        </ul>
+
+        <h3>Transpilation</h3>
+        <p>
+          <strong>Definition:</strong> Translating source code from one
+          high-level language to another high-level language at similar
+          abstraction level.
+        </p>
+        <ul>
+          <li>Similar abstraction level</li>
+          <li>Output is still human-readable</li>
+          <li>Preserves runtime behavior</li>
+          <li>
+            Language features transform to equivalent features in target
+            language
+          </li>
+        </ul>
+
+        <h3>So What Does TypeScript Do?</h3>
+        <p>TypeScript is BOTH a compiler AND a transpiler:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Classification</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Type checking</strong></td>
+              <td>✅ Compiler</td>
+              <td>
+                Performs semantic analysis, type validation, and error reporting
+                like a traditional compiler
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Output</strong></td>
+              <td>✅ Transpiler</td>
+              <td>
+                Produces JavaScript (same abstraction level as TypeScript)
+                rather than machine code
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Official term</strong></td>
+              <td>"Compiler"</td>
+              <td>
+                The TypeScript team officially calls it a compiler (tsc =
+                TypeScript Compiler)
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Technical accuracy</strong></td>
+              <td>"Transpiler"</td>
+              <td>
+                Since input and output are both high-level languages, it's
+                technically transpilation
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note-box">
+          <span class="note-title"
+            ><i class="fa-solid fa-flag-checkered"></i> Conclusion</span
+          >
+          <p style="margin-bottom: 0">
+            You can use either term correctly. In practice:<br />
+            • When talking about type checking: It's a compiler<br />
+            • When talking about output generation: It's a transpiler<br />
+            • When talking to other developers: Both terms are accepted
+          </p>
+        </div>
+      </section>
+
+      <section id="compiler-flags">
+        <h2>5. What Do These Flags Mean?</h2>
+
+        <h3><code>--noEmit</code></h3>
+        <p>
+          <strong>Definition:</strong> Tells the compiler to perform type
+          checking but NOT generate any output files (.js, .d.ts, .map, etc.)
+        </p>
+
+        <p><strong>Use cases:</strong></p>
+        <ul>
+          <li>Running TypeScript only for type checking (like a linter)</li>
+          <li>
+            In CI/CD pipelines where you want to validate types without building
+          </li>
+          <li>
+            When you're using a separate bundler (like Webpack) that handles
+            compilation
+          </li>
+        </ul>
+
+        <p>Example:</p>
+        <pre><code class="language-bash"># Validates types but produces NO .js files
+npx tsc --noEmit</code></pre>
+        <pre><code class="language-json"># Common in package.json scripts:
+"scripts": {
+  "type-check": "tsc --noEmit",
+  "build": "tsc"
+}</code></pre>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">┌──────────────────────────────────────────────────────────────┐
+│                     tsc --noEmit                           │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Input:  *.ts files                                        │
+│  ↓                                                          │
+│  ✅ Type checking (all errors reported)                    │
+│  ↓                                                          │
+│  ❌ NO output files generated                              │
+│                                                              │
+│  Result: Types are validated, no code is produced         │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3><code>--noEmitOnError</code></h3>
+        <p>
+          <strong>Definition:</strong> Prevents the compiler from generating
+          output files if any type errors exist.
+        </p>
+
+        <p><strong>Default behavior without flag:</strong></p>
+        <pre><code class="language-bash"># Even with errors, .js files are still created
+tsc app.ts</code></pre>
+        <p>
+          <em>Result:</em> You get .js files even though types are wrong. These
+          .js files might behave incorrectly at runtime.
+        </p>
+
+        <p>
+          <strong>With <code>--noEmitOnError</code>:</strong>
+        </p>
+        <pre><code class="language-bash"># If ANY errors exist, NO .js files are created
+tsc --noEmitOnError app.ts</code></pre>
+        <p>
+          <em>Result:</em> If there are type errors, compilation fails
+          completely and no output is generated.
+        </p>
+
+        <h3>Comparison Table</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Flag</th>
+              <th>What it does</th>
+              <th>When to use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>--noEmit</code></td>
+              <td>No output ever, even if code is perfect</td>
+              <td>CI type-checking, linting</td>
+            </tr>
+            <tr>
+              <td><code>--noEmitOnError</code></td>
+              <td>Output only if code has zero errors</td>
+              <td>Production builds to prevent shipping broken code</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Practical Example</h3>
+        <p>Code with error (<code>app.ts</code>):</p>
+        <pre><code class="language-typescript">const num: number = 5;
+num = "hello";  // ❌ Type error</code></pre>
+
+        <p><strong>Without flags:</strong></p>
+        <pre><code class="language-bash">tsc app.ts</code></pre>
+        <pre><code class="language-text">app.ts:2:1 - error TS2322: Type 'string' is not assignable to type 'number'.
+  num = "hello";
+
+Found 1 error.
+
+app.js is still created!  ← Problem: Broken code is generated</code></pre>
+
+        <p>
+          <strong>With <code>--noEmitOnError</code>:</strong>
+        </p>
+        <pre><code class="language-bash">tsc --noEmitOnError app.ts</code></pre>
+        <pre><code class="language-text">app.ts:2:1 - error TS2322: Type 'string' is not assignable to type 'number'.
+  num = "hello";
+
+Found 1 error.
+
+No output files created.  ← Good: Prevent shipping broken code</code></pre>
+
+        <p>
+          <strong>With <code>--noEmit</code>:</strong>
+        </p>
+        <pre><code class="language-bash">tsc --noEmit app.ts</code></pre>
+        <pre><code class="language-text">app.ts:2:1 - error TS2322: Type 'string' is not assignable to type 'number'.
+  num = "hello";
+
+Found 1 error.
+
+No output files created.  ← Type checking ONLY</code></pre>
+
+        <h3>Use Cases Summary</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                         When to use each                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  Development (save file)   →  No flags (fast compilation)          │
+│                                                                     │
+│  Pre-commit hook           →  --noEmit (check types only)          │
+│                                                                     │
+│  CI/CD Pipeline            →  --noEmit + --noEmitOnError          │
+│                             (validation without waste)              │
+│                                                                     │
+│  Production Build          →  --noEmitOnError (guarantee correct)  │
+│                                                                     │
+│  IDE / VS Code             →  Uses tsserver, not these flags       │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Complete Command Reference</h3>
+        <pre><code class="language-bash"># Install TypeScript
+npm install -D typescript
+
+# Compile a single file (creates app.js)
+npx tsc app.ts
+
+# Compile with configuration file
+npx tsc
+
+# Type check without emitting files
+npx tsc --noEmit
+
+# Only emit if no errors
+npx tsc --noEmitOnError
+
+# Combine both (common in CI)
+npx tsc --noEmit --noEmitOnError
+
+# Watch mode (auto-recompile on changes)
+npx tsc --watch
+
+# With custom tsconfig
+npx tsc -p tsconfig.build.json</code></pre>
+      </section>
+
+      <footer>
+        <p>TypeScript Internal Architecture Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem">
+          <a
+            href="https://www.linkedin.com/in/arman-khan-5a790430a/"
+            target="_blank"
+            style="
+              color: var(--accent);
+              text-decoration: none;
+              display: inline-flex;
+              align-items: center;
+              gap: 0.5rem;
+              transition: opacity 0.2s;
+            "
+            onmouseover="this.style.opacity = '0.8'"
+            onmouseout="this.style.opacity = '1'"
+          >
+            <i class="fab fa-linkedin" style="font-size: 1.2rem"></i>
+            Connect on LinkedIn
+          </a>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1991 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Configuration & Type Systems</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Compiler Config</div>
+        <a href="#configuring-compiler" class="nav-link"
+          >Configuring the Compiler</a
+        >
+        <a href="#what-is-tsconfig" class="nav-link"
+          >5. What is tsconfig.json?</a
+        >
+        <a href="#include-exclude" class="nav-link"
+          >Including and Excluding Files</a
+        >
+        <a href="#rootdir-error" class="nav-link"
+          >Understanding rootDir Error</a
+        >
+        <a href="#tsc-init" class="nav-link">Initializing with tsc --init</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Strict Mode</div>
+        <a href="#strict-mode" class="nav-link">Strict Mode in TypeScript</a>
+        <a href="#no-implicit-this" class="nav-link"
+          >Understanding noImplicitThis</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Type System Dimensions</div>
+        <a href="#static-vs-dynamic" class="nav-link"
+          >Statically vs Dynamically Typed</a
+        >
+        <a href="#strong-vs-weak" class="nav-link">Strongly vs Weakly Typed</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Advanced Types</div>
+        <a href="#top-bottom-types" class="nav-link">Top and Bottom Types</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Configuration & Types</span>
+        <h1>TYPESCRIPT CONFIGURATION & TYPE SYSTEMS</h1>
+        <p>MASTERING TSCONFIG, STRICT MODE, AND TYPE SYSTEM DIMENSIONS</p>
+      </section>
+
+      <section id="configuring-compiler">
+        <h2>What is meant by Configuring the TypeScript Compiler?</h2>
+
+        <h3>What is "Configuring the TypeScript Compiler"?</h3>
+        <p>
+          <strong>Definition:</strong> Configuring the TypeScript compiler means
+          creating and customizing a <code>tsconfig.json</code> file that tells
+          the TypeScript compiler (tsc) exactly how to behave when it processes
+          your code.
+        </p>
+
+        <h3>What You're Actually Doing When You Configure</h3>
+        <p>
+          When you configure the TypeScript compiler, you're answering these
+          questions:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>What it controls</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Which files to compile?</td>
+              <td>include, exclude, files</td>
+            </tr>
+            <tr>
+              <td>Where to put the output?</td>
+              <td>outDir, rootDir</td>
+            </tr>
+            <tr>
+              <td>What JavaScript version?</td>
+              <td>target (ES5, ES6, ES2020, etc.)</td>
+            </tr>
+            <tr>
+              <td>What module system?</td>
+              <td>module (CommonJS, ESModules, etc.)</td>
+            </tr>
+            <tr>
+              <td>How strict to be?</td>
+              <td>strict, noImplicitAny, strictNullChecks</td>
+            </tr>
+            <tr>
+              <td>What extra features?</td>
+              <td>jsx, resolveJsonModule, sourceMap</td>
+            </tr>
+            <tr>
+              <td>What to do on errors?</td>
+              <td>noEmitOnError, skipLibCheck</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="what-is-tsconfig">
+        <h2>5. What is tsconfig.json? Purpose, Need, and Effect</h2>
+
+        <h3>Definition</h3>
+        <p>
+          <strong>tsconfig.json:</strong> A configuration file that tells the
+          TypeScript compiler how to behave, which files to process, and what
+          output to generate.
+        </p>
+
+        <h3>Purpose</h3>
+        <p>
+          Serves as the single source of truth for TypeScript compilation
+          settings across your entire project.
+        </p>
+
+        <h3>Need (Why can't I just use command-line flags?)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Without tsconfig.json</th>
+              <th>With tsconfig.json</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                Must type
+                <code>tsc app.ts --target es2020 --outDir dist --strict</code>
+                every time
+              </td>
+              <td>Simply run <code>tsc</code></td>
+            </tr>
+            <tr>
+              <td>Settings lost when terminal closes</td>
+              <td>Settings persisted in file</td>
+            </tr>
+            <tr>
+              <td>Each developer uses different settings</td>
+              <td>All developers use same settings</td>
+            </tr>
+            <tr>
+              <td>Build tools (webpack, Vite) don't know your settings</td>
+              <td>Build tools read tsconfig.json automatically</td>
+            </tr>
+            <tr>
+              <td>Can't manage large projects efficiently</td>
+              <td>Essential for multi-file projects</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>tsconfig.json Structure</h3>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    // Compilation behavior
+  },
+  "include": [
+    // Files to compile
+  ],
+  "exclude": [
+    // Files to ignore
+  ]
+}</code></pre>
+
+        <h3>Common compilerOptions Explained</h3>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    /* Output Settings */
+    "target": "ES2020",        // Which JavaScript version to output
+    "module": "commonjs",      // Module system for Node.js
+    "outDir": "./dist",        // Where to put compiled .js files
+    "rootDir": "./src",        // Where to look for .ts files
+
+    "pretty": true, // logs the error pretty
+
+    "declaration": true,       // Generate .d.ts files
+    "sourceMap": true,         // Generate .js.map files for debugging
+    
+    /* Strict Settings */
+    "strict": true,            // Enables ALL strict type checking
+    "noImplicitAny": true,     // Error if type can't be inferred
+    "strictNullChecks": true,  // null and undefined separate types
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    
+    /* Module Resolution */
+    "esModuleInterop": true,   // Better CommonJS/ES module compatibility
+    "resolveJsonModule": true,  // Allow importing JSON files
+    "allowSyntheticDefaultImports": true,
+    
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    
+    /* Source Files */
+    "allowJs": true,           // Allow compiling .js files too
+    "checkJs": true,           // Type-check .js files
+    "jsx": "react"             // Support JSX syntax
+  },
+  
+  "include": [
+    "src/**/*.ts",             // All .ts files in src folder
+    "src/**/*.tsx"             // All .tsx files
+  ],
+  
+  "exclude": [
+    "node_modules",            // Ignore dependencies
+    "dist",                    // Ignore output folder
+    "**/*.test.ts"             // Ignore test files
+  ]
+}</code></pre>
+
+        <h3>Effect (What actually changes)</h3>
+        <p>Without tsconfig.json:</p>
+        <pre><code class="language-bash">tsc app.ts          # Compiles app.ts to app.js in same directory</code></pre>
+        <p>With tsconfig.json:</p>
+        <pre><code class="language-bash">tsc                 # Compiles ALL files matching include pattern
+                    # Outputs to outDir directory
+                    # Uses target, module, and all other settings
+                    # Applies strict type checking
+                    # Generates source maps</code></pre>
+      </section>
+
+      <section id="strict-mode">
+        <h2>Strict Mode in TypeScript - Complete Guide</h2>
+
+        <h3>1. What is Strict Mode?</h3>
+        <p>
+          <strong>Definition:</strong> Strict mode is a collection of compiler
+          flags that enable the highest level of type safety in TypeScript. When
+          enabled, the compiler performs aggressive type checking to catch more
+          potential bugs at compile time.
+        </p>
+        <p>
+          The <code>"strict": true</code> flag is a shortcut that enables all
+          strict family checks with a single setting.
+        </p>
+
+        <h3>2. What "strict": true Actually Enables</h3>
+        <p>
+          When you set <code>"strict": true</code> in tsconfig.json, TypeScript
+          automatically enables all of these checks:
+        </p>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "strict": true  // This ONE line enables ALL below:
+    // "noImplicitAny": true
+    // "strictNullChecks": true
+    // "strictFunctionTypes": true
+    // "strictBindCallApply": true
+    // "strictPropertyInitialization": true
+    // "noImplicitThis": true
+    // "alwaysStrict": true
+  }
+}</code></pre>
+
+        <h3>3. Detailed Explanation of Each Flag</h3>
+
+        <h4>A. "strictNullChecks": true</h4>
+        <p>
+          <strong>Definition:</strong> When enabled, null and undefined are
+          treated as distinct types and cannot be assigned to other types
+          without explicit handling.
+        </p>
+
+        <p>Without strictNullChecks (false):</p>
+        <pre><code class="language-typescript">// This code compiles without errors
+let name: string = "Arman";
+name = null;    // ✅ No error - This is dangerous!
+name = undefined; // ✅ No error - Also dangerous!
+
+let age: number = 25;
+age = null;     // ✅ No error
+age = undefined; // ✅ No error</code></pre>
+
+        <p>
+          The problem: You can assign null or undefined to any variable, leading
+          to runtime errors:
+        </p>
+        <pre><code class="language-typescript">let name: string = "Arman";
+name = null;
+
+// Later in your code...
+console.log(name.toUpperCase()); 
+// ❌ RUNTIME ERROR: Cannot read property 'toUpperCase' of null</code></pre>
+
+        <p>With strictNullChecks (true):</p>
+        <pre><code class="language-typescript">let name: string = "Arman";
+name = null;     // ❌ Error: Type 'null' is not assignable to type 'string'
+name = undefined; // ❌ Error: Type 'undefined' is not assignable to type 'string'
+
+// ✅ Correct way: Use union types
+let name2: string | null = "Arman";
+name2 = null;    // ✅ Allowed - we explicitly said it can be null
+
+// ✅ Correct way: Check before using
+if (name2 !== null) {
+    console.log(name2.toUpperCase()); // ✅ Safe
+}
+
+// Or use optional chaining
+console.log(name2?.toUpperCase()); // ✅ Safe - returns undefined if null</code></pre>
+
+        <h4>B. "noImplicitAny": true</h4>
+        <p>
+          <strong>Definition:</strong> When enabled, TypeScript will throw an
+          error if it cannot infer the type of a variable or parameter and would
+          otherwise default to any.
+        </p>
+
+        <p>Without noImplicitAny (false):</p>
+        <pre><code class="language-typescript">// TypeScript can't infer the type of 'x'
+function add(a, b) {
+    return a + b;
+}
+// 'a' and 'b' are implicitly 'any' - No error!
+
+let data; // Implicitly 'any' - No error!
+data = 5;
+data = "hello"; // Allowed because 'any'</code></pre>
+
+        <p>
+          The problem: any disables all type checking, defeating TypeScript's
+          purpose:
+        </p>
+        <pre><code class="language-typescript">function add(a, b) {
+    return a + b;
+}
+
+add("hello", 5);   // ✅ No error - but result is "hello5" (unexpected!)
+add({}, []);       // ✅ No error - result is "[object Object]" (nonsense!)
+// Runtime bugs are now your problem!</code></pre>
+
+        <p>With noImplicitAny (true):</p>
+        <pre><code class="language-typescript">function add(a, b) {
+    // ❌ Error: Parameter 'a' implicitly has an 'any' type
+    // ❌ Error: Parameter 'b' implicitly has an 'any' type
+    return a + b;
+}
+
+// ✅ Fix 1: Explicitly type the parameters
+function add(a: number, b: number): number {
+    return a + b;
+}
+
+// ✅ Fix 2: Use 'any' explicitly if you really need it
+function add(a: any, b: any): any {
+    return a + b;
+}
+
+// ✅ Fix 3: Let TypeScript infer from context
+const add = (a: number, b: number) => a + b;</code></pre>
+
+        <h4>C. How "strict" Works Together</h4>
+        <p>Real-world example showing how all flags work together:</p>
+        <pre><code class="language-typescript">// ❌ This code will FAIL with "strict": true
+
+// 1. noImplicitAny catches this
+function processUser(user) {  
+    // ❌ Error: Parameter 'user' implicitly has an 'any' type
+    return user.name;
+}
+
+// 2. strictNullChecks catches this
+let username: string = "Arman";
+username = null;  
+// ❌ Error: Type 'null' is not assignable to type 'string'
+
+// 3. strictPropertyInitialization catches this
+class User {
+    name: string;  
+    // ❌ Error: Property 'name' has no initializer and is not definitely assigned
+    // in the constructor
+}
+
+// 4. noImplicitThis catches this
+function greet() {
+    console.log(this.name);
+    // ❌ Error: 'this' implicitly has type 'any'
+}</code></pre>
+
+        <h3>4. How Strict Mode Affects Your Project</h3>
+        <h4>Positive Effects:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Effect</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>✅ Catches bugs early</td>
+              <td>Null pointer errors caught at compile time</td>
+            </tr>
+            <tr>
+              <td>✅ Better code quality</td>
+              <td>Forces explicit type declarations</td>
+            </tr>
+            <tr>
+              <td>✅ Improved IDE support</td>
+              <td>Better autocomplete and IntelliSense</td>
+            </tr>
+            <tr>
+              <td>✅ Safer refactoring</td>
+              <td>Type checker catches breaking changes</td>
+            </tr>
+            <tr>
+              <td>✅ Self-documenting code</td>
+              <td>Types serve as documentation</td>
+            </tr>
+            <tr>
+              <td>✅ Fewer runtime errors</td>
+              <td>Most type-related errors caught before deployment</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Negative Effects:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Effect</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>⚠️ More verbose code</td>
+              <td>Need to write explicit types and null checks</td>
+            </tr>
+            <tr>
+              <td>⚠️ Learning curve</td>
+              <td>New developers need to learn strict patterns</td>
+            </tr>
+            <tr>
+              <td>⚠️ Migration cost</td>
+              <td>Converting existing code to strict mode takes time</td>
+            </tr>
+            <tr>
+              <td>⚠️ Slower compilation</td>
+              <td>More type checking = slower compile times</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>5. How Strict Mode Works (Under the Hood)</h3>
+        <p>The Type Checking Process:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    TypeScript Compilation Pipeline                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  1. PARSING                                                         │
+│     Source Code → Abstract Syntax Tree (AST)                       │
+│                                                                     │
+│  2. TYPE CHECKING (Strict mode affects this phase)                 │
+│     ┌──────────────────────────────────────────────────────────┐   │
+│     │ For each variable/function/class:                       │   │
+│     │                                                         │   │
+│     │ a. Does it have an explicit type?                      │   │
+│     │    NO  → Is type inferable?                            │   │
+│     │           NO  → noImplicitAny → ERROR ✅               │   │
+│     │                                                         │   │
+│     │ b. Can null/undefined be assigned?                     │   │
+│     │    YES → strictNullChecks → ERROR ✅                   │   │
+│     │                                                         │   │
+│     │ c. Are all class properties initialized?               │   │
+│     │    NO → strictPropertyInitialization → ERROR ✅        │   │
+│     │                                                         │   │
+│     │ d. Is 'this' used without proper typing?              │   │
+│     │    YES → noImplicitThis → ERROR ✅                     │   │
+│     │                                                         │   │
+│     │ e. Are function parameters compatible?                 │   │
+│     │    NO → strictFunctionTypes → ERROR ✅                 │   │
+│     └──────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  3. CODE GENERATION                                                │
+│     (Strict mode DOES NOT affect output JS code)                  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="no-implicit-this">
+        <h2>Understanding the noImplicitThis Error</h2>
+        <p>With strict mode true:</p>
+        <pre><code class="language-typescript">function Car(car: { name: string }) {
+    console.log(this);
+    console.log(car);
+}
+
+console.log(Car({ name: 'BMW' }));</code></pre>
+        <p>
+          .. this says:
+          <code
+            >'this' implicitly has type 'any' because it does not have a type
+            annotation.</code
+          >
+          .. what meant by the error a how to solve it?
+        </p>
+
+        <h3>What the Error Means</h3>
+        <p><strong>Error Message:</strong></p>
+        <pre><code class="language-text">'this' implicitly has type 'any' because it does not have a type annotation.</code></pre>
+        <p>
+          <strong>Definition:</strong> TypeScript cannot determine what
+          <code>this</code> refers to inside your function, so it would default
+          to <code>any</code>. But because <code>"strict": true</code> enables
+          <code>noImplicitThis</code>, TypeScript refuses to allow
+          <code>this</code> to be <code>any</code> and forces you to explicitly
+          declare its type.
+        </p>
+
+        <h3>Why This Error Happens</h3>
+        <p>The Problem:</p>
+        <pre><code class="language-typescript">function Car(car: { name: string }) {
+    console.log(this);  // ← What is 'this' here?
+    console.log(car);
+}</code></pre>
+        <p>
+          The issue: In JavaScript, <code>this</code> can refer to different
+          things depending on how the function is called:
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Call Context</th>
+              <th>What this refers to</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Car({ name: 'BMW' })</code></td>
+              <td>undefined (in strict mode) or global object</td>
+            </tr>
+            <tr>
+              <td><code>new Car({ name: 'BMW' })</code></td>
+              <td>Newly created instance</td>
+            </tr>
+            <tr>
+              <td><code>carObject.Car()</code></td>
+              <td>The carObject itself</td>
+            </tr>
+            <tr>
+              <td><code>Car.call(someObject, { name: 'BMW' })</code></td>
+              <td>someObject</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          TypeScript cannot guess which one you mean, so it throws an error.
+        </p>
+
+        <h3>How to Fix It (3 Solutions)</h3>
+
+        <h4>Solution 1: Declare this Type Explicitly</h4>
+        <p>
+          Add a type annotation for <code>this</code> as the first parameter:
+        </p>
+        <pre><code class="language-typescript">function Car(this: any, car: { name: string }) {
+    console.log(this);   // ✅ Now TypeScript knows 'this' is 'any'
+    console.log(car);
+}
+
+console.log(Car({ name: 'BMW' }));
+// Output: 
+// undefined
+// { name: 'BMW' }</code></pre>
+        <p>
+          The <code>this</code> parameter is a fake parameter — it doesn't exist
+          at runtime. It's only for TypeScript.
+        </p>
+
+        <h4>Solution 2: Specify the Exact this Type</h4>
+        <p>
+          Instead of <code>any</code>, declare what <code>this</code> should
+          actually be:
+        </p>
+        <pre><code class="language-typescript">// When 'this' is a specific object type
+function Car(this: { brand: string }, car: { name: string }) {
+    console.log(this.brand);  // ✅ TypeScript knows this has 'brand'
+    console.log(car);
+}
+
+// Call with explicit 'this'
+Car.call({ brand: 'Toyota' }, { name: 'BMW' });
+// Output:
+// Toyota
+// { name: 'BMW' }</code></pre>
+
+        <h4>Solution 3: Don't Use this at All</h4>
+        <p>If you don't actually need <code>this</code>, remove it:</p>
+        <pre><code class="language-typescript">function Car(car: { name: string }) {
+    // console.log(this);  // ← Remove this line
+    console.log(car);
+}
+
+console.log(Car({ name: 'BMW' }));
+// Output: { name: 'BMW' }</code></pre>
+        <p>This is the simplest fix if you're not using <code>this</code>.</p>
+      </section>
+
+      <section id="include-exclude">
+        <h2>Including and Excluding Files in TypeScript Configuration</h2>
+
+        <h3>Overview</h3>
+        <p>
+          When you run <code>tsc</code>, TypeScript needs to know which files to
+          compile and which files to ignore. You control this through three
+          configuration properties in tsconfig.json:
+        </p>
+        <pre><code class="language-json">{
+  "files": [],
+  "include": [],
+  "exclude": []
+}</code></pre>
+
+        <h3>1. The Three Properties Explained</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Purpose</th>
+              <th>When to Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>files</td>
+              <td>Explicitly list exact files to compile</td>
+              <td>Small projects, specific entry points</td>
+            </tr>
+            <tr>
+              <td>include</td>
+              <td>Use patterns to select files to compile</td>
+              <td>Most projects (wildcards)</td>
+            </tr>
+            <tr>
+              <td>exclude</td>
+              <td>Use patterns to ignore files</td>
+              <td>Exclude tests, node_modules, output</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note-box">
+          <span class="note-title"
+            ><i class="fa-solid fa-key"></i> Key Rule</span
+          >
+          <p style="margin-bottom: 0">
+            Final file list = (files + include) - exclude
+          </p>
+        </div>
+
+        <h3>2. files – Explicit File List</h3>
+        <p>
+          <strong>Definition:</strong> An exact list of file paths that must be
+          compiled. Only these files will be processed.
+        </p>
+
+        <p><strong>Syntax:</strong></p>
+        <pre><code class="language-json">{
+  "files": [
+    "src/index.ts",
+    "src/app.ts",
+    "src/utils/helper.ts"
+  ]
+}</code></pre>
+
+        <p><strong>Use Cases:</strong></p>
+        <p>✅ When to use files:</p>
+        <ul>
+          <li>Very small projects with few files</li>
+          <li>You want to compile specific entry points</li>
+          <li>Build tools like Webpack that handle dependencies</li>
+        </ul>
+        <p>❌ When NOT to use files:</p>
+        <ul>
+          <li>Large projects with many files (too much typing)</li>
+          <li>Projects that frequently add/remove files</li>
+        </ul>
+
+        <p><strong>Example:</strong></p>
+        <pre><code class="language-json">{
+  "files": [
+    "src/main.ts",
+    "src/worker.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "./dist"
+  }
+}</code></pre>
+        <p>
+          Result: Only <code>src/main.ts</code> and
+          <code>src/worker.ts</code> are compiled. Any other .ts files are
+          ignored.
+        </p>
+
+        <h3>3. include – Pattern-Based File Selection</h3>
+        <p>
+          <strong>Definition:</strong> Uses glob patterns (wildcards) to specify
+          which files to compile.
+        </p>
+
+        <p><strong>Syntax:</strong></p>
+        <pre><code class="language-json">{
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "types/**/*.d.ts"
+  ]
+}</code></pre>
+
+        <p><strong>Glob Patterns Explained:</strong></p>
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Meaning</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>*</code></td>
+              <td>Matches any characters (except /)</td>
+              <td><code>*.ts</code> → app.ts, main.ts</td>
+            </tr>
+            <tr>
+              <td><code>**</code></td>
+              <td>Matches any subdirectories</td>
+              <td><code>src/**/*.ts</code> → any .ts in src or subfolders</td>
+            </tr>
+            <tr>
+              <td><code>?</code></td>
+              <td>Matches exactly one character</td>
+              <td><code>file?.ts</code> → file1.ts, fileA.ts</td>
+            </tr>
+            <tr>
+              <td><code>[abc]</code></td>
+              <td>Matches one character in set</td>
+              <td><code>file[1-3].ts</code> → file1.ts, file2.ts</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p><strong>Common include Patterns:</strong></p>
+        <pre><code class="language-json">{
+  "include": [
+    // All TypeScript files in src folder and subfolders
+    "src/**/*.ts",
+    
+    // All TypeScript React files
+    "src/**/*.tsx",
+    
+    // All declaration files in types folder
+    "types/**/*.d.ts",
+    
+    // Only specific file types
+    "src/**/*.{ts,tsx}",
+    
+    // Files in root src only (not subfolders)
+    "src/*.ts"
+  ]
+}</code></pre>
+
+        <p><strong>Use Cases:</strong></p>
+        <p>✅ When to use include:</p>
+        <ul>
+          <li>Most TypeScript projects</li>
+          <li>Projects with organized folder structures</li>
+          <li>When you want to compile everything in a directory</li>
+        </ul>
+        <p>❌ When NOT to use include:</p>
+        <ul>
+          <li>When you need to compile only specific files</li>
+          <li>
+            When you have many files you want to exclude (use exclude instead)
+          </li>
+        </ul>
+
+        <h3>4. exclude – Pattern-Based File Exclusion</h3>
+        <p>
+          <strong>Definition:</strong> Specifies files to remove from the
+          compilation (after files and include are applied).
+        </p>
+
+        <p><strong>Syntax:</strong></p>
+        <pre><code class="language-json">{
+  "exclude": [
+    "node_modules/**/*",
+    "dist/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}</code></pre>
+
+        <p><strong>Common Exclude Patterns:</strong></p>
+        <pre><code class="language-json">{
+  "exclude": [
+    // Always exclude dependencies
+    "node_modules/**/*",
+    
+    // Exclude output folders
+    "dist/**/*",
+    "build/**/*",
+    "out/**/*",
+    
+    // Exclude test files
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/__tests__/**/*",
+    
+    // Exclude specific files
+    "src/legacy/**/*",
+    "src/experimental/**/*",
+    
+    // Exclude config files
+    "*.config.js",
+    "*.config.ts"
+  ]
+}</code></pre>
+
+        <p><strong>Use Cases:</strong></p>
+        <p>✅ When to use exclude:</p>
+        <ul>
+          <li>Exclude node_modules (always do this!)</li>
+          <li>Exclude test files from production builds</li>
+          <li>Exclude output folders</li>
+          <li>Exclude experimental/legacy code</li>
+        </ul>
+        <p>❌ When NOT to use exclude:</p>
+        <ul>
+          <li>When you want to exclude most files (use include instead)</li>
+          <li>When you want to exclude specific files (use files instead)</li>
+        </ul>
+
+        <h3>5. Important Behaviors & Rules</h3>
+        <p>
+          <strong>Rule 1: Default Behavior</strong><br />
+          If no files or include are specified, TypeScript compiles all .ts and
+          .tsx files in the project directory and subdirectories, excluding
+          those matched by exclude.
+        </p>
+        <pre><code class="language-json">{
+  // No files/include
+  "compilerOptions": { ... }
+  // Compiles ALL .ts/.tsx files in project!
+}</code></pre>
+
+        <p>
+          <strong>Rule 2: exclude Defaults</strong><br />
+          If you don't specify exclude, TypeScript defaults to:
+        </p>
+        <pre><code class="language-json">{
+  "exclude": ["node_modules", "bower_components", "jspm_packages"]
+}</code></pre>
+
+        <p>
+          <strong>Rule 3: exclude Does NOT Override files</strong><br />
+          If you explicitly list a file in files, it will be compiled even if it
+          matches patterns in exclude:
+        </p>
+        <pre><code class="language-json">{
+  "files": ["src/legacy/broken.ts"],  // ← This WILL be compiled
+  "exclude": ["src/legacy/**/*"]       // ← Even though this excludes it
+}</code></pre>
+
+        <p><strong>Rule 4: include + exclude Example</strong></p>
+        <pre><code class="language-json">{
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts", "src/experimental/**/*"]
+}</code></pre>
+        <p>Result: All .ts files in src are compiled EXCEPT:</p>
+        <ul>
+          <li>Any file ending with .test.ts</li>
+          <li>Any file inside src/experimental/ folder</li>
+        </ul>
+      </section>
+
+      <section id="rootdir-error">
+        <h2>Understanding the rootDir Error - Simplified</h2>
+
+        <p>
+          When I set the files property with <code>"outDir": "./dist"</code>,
+          the compiler shows this error:
+        </p>
+        <pre><code class="language-json">{
+  "files": ["./src/sub.ts"],
+  "compilerOptions": {
+    "outDir": "./dist"
+  }
+}</code></pre>
+        <p>
+          The error:
+          <code
+            >"The common source directory of 'tsconfig.json' is './src'. The
+            'rootDir' setting must be explicitly set to this or another path to
+            adjust your output's file layout. Visit https://aka.ms/ts6 for
+            migration information."</code
+          >
+        </p>
+        <p>However, the error disappears when I delete the files property.</p>
+
+        <h3>The Problem in Plain English</h3>
+        <p>You told TypeScript:</p>
+        <ul>
+          <li>"Compile this one file: ./src/sub.ts"</li>
+          <li>"Put the output in: ./dist"</li>
+        </ul>
+        <p>
+          TypeScript got confused and asked:<br />
+          "Where should I put the output file?"
+        </p>
+        <pre><code class="language-text">Option A: ./dist/sub.js     (just the filename)
+Option B: ./dist/src/sub.js  (keep the folder structure)</code></pre>
+        <p>TypeScript doesn't know which you want, so it throws an error.</p>
+
+        <h3>Why the Error Disappears Without files</h3>
+        <p>When you have MULTIPLE files:</p>
+        <pre><code class="language-json">{
+  "include": ["src/**/*.ts"],  // Many files in src folder
+  "outDir": "./dist"
+}</code></pre>
+        <p>TypeScript looks at ALL your files and thinks:</p>
+        <ul>
+          <li>"All files are under src/ folder"</li>
+          <li>"So src/ must be the root"</li>
+          <li>"I'll remove src/ from the path"</li>
+        </ul>
+        <p>Result:</p>
+        <pre><code class="language-text">src/sub.ts       →  dist/sub.js
+src/utils/helper.ts  →  dist/utils/helper.js</code></pre>
+        <p>TypeScript can GUESS the root because it sees a pattern.</p>
+
+        <p>When you have ONE specific file:</p>
+        <pre><code class="language-json">{
+  "files": ["./src/sub.ts"],  // Only ONE file
+  "outDir": "./dist"
+}</code></pre>
+        <p>TypeScript looks at your ONE file and thinks:</p>
+        <ul>
+          <li>"I only have one file"</li>
+          <li>"Is src/ the root?"</li>
+          <li>"Or is . (project root) the root?"</li>
+          <li>"I can't guess! You tell me!"</li>
+        </ul>
+        <p>Result: ❌ ERROR</p>
+
+        <h3>Simple Fixes</h3>
+        <h4>Fix 1: Tell TypeScript the Root Directory</h4>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "rootDir": "./src",  // ← ADD THIS ONE LINE
+    "outDir": "./dist"
+  },
+  "files": ["./src/sub.ts"]
+}</code></pre>
+        <p>Now TypeScript knows:</p>
+        <ul>
+          <li>Root = src/</li>
+          <li>Input = src/sub.ts</li>
+          <li>Remove src/ → sub.ts</li>
+          <li>Output = dist/sub.js</li>
+        </ul>
+
+        <h4>Fix 2: Don't Use files - Use include Instead</h4>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "include": ["./src/sub.ts"]  // ← Same file, different property
+}</code></pre>
+        <p>
+          Why this works: TypeScript assumes include files are under a common
+          root.
+        </p>
+      </section>
+
+      <section id="tsc-init">
+        <h2>Initializing a TypeScript Project Using tsc --init</h2>
+
+        <h3>What is tsc --init?</h3>
+        <p>
+          <strong>Definition:</strong> <code>tsc --init</code> is a command that
+          automatically creates a <code>tsconfig.json</code> file with default
+          configuration for your TypeScript project.
+        </p>
+        <p>It saves you from: Writing tsconfig.json from scratch.</p>
+
+        <h3>How to Use It</h3>
+        <p>Step 1: Install TypeScript</p>
+        <pre><code class="language-bash">npm install -g typescript
+# OR (if using locally)
+npm install --save-dev typescript</code></pre>
+
+        <p>Step 2: Run the Init Command</p>
+        <pre><code class="language-bash">tsc --init</code></pre>
+
+        <p>What happens:</p>
+        <pre><code class="language-text">Created a new tsconfig.json with:                                                                                    
+                                                                                                                     
+  target: es2016
+  module: commonjs
+  strict: true
+  esModuleInterop: true
+  skipLibCheck: true
+  forceConsistentCasingInFileNames: true</code></pre>
+
+        <h3>What tsc --init Actually Creates</h3>
+        <p>Default tsconfig.json (Complete):</p>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    
+    /* Modules */
+    "module": "commonjs",                                /* Specify what module code is generated. */
+    
+    /* JavaScript Support */
+    // "allowJs": true,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
+    // "checkJs": true,                                  /* Enable error reporting in type-checked JavaScript files. */
+    // "jsx": "preserve",                                /* Specify what JSX code is generated. */
+    
+    /* Emit */
+    // "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
+    // "declarationMap": true,                           /* Create sourcemaps for d.ts files. */
+    // "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
+    // "outDir": "./dist",                               /* Specify an output folder for all emitted files. */
+    // "rootDir": "./src",                               /* Specify the root folder within your source files. */
+    
+    /* Interop Constraints */
+    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+    
+    /* Type Checking */
+    "strict": true,                                      /* Enable all strict type-checking options. */
+    // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
+    // "strictNullChecks": true,                         /* When type checking, take into account 'null' and 'undefined'. */
+    // "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
+    // "strictBindCallApply": true,                      /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function. */
+    // "strictPropertyInitialization": true,             /* Check for class properties that are declared but not set in the constructor. */
+    // "noImplicitThis": true,                           /* Enable error reporting when 'this' is given the type 'any'. */
+    // "noUnusedLocals": true,                           /* Enable error reporting when local variables aren't read. */
+    // "noUnusedParameters": true,                       /* Raise an error when a function parameter isn't read. */
+    
+    /* Completeness */
+    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+  }
+}</code></pre>
+
+        <h3>Why tsc --init is Useful</h3>
+        <p>Without --init:</p>
+        <pre><code class="language-bash"># You have to create tsconfig.json manually
+# Write every setting yourself
+# Easy to make mistakes</code></pre>
+        <p>With --init:</p>
+        <pre><code class="language-bash"># One command creates the file
+# Best practices built-in
+# All options commented and explained</code></pre>
+
+        <h3>Customizing the Init Command</h3>
+        <p>1. Create with Different Target:</p>
+        <pre><code class="language-bash">tsc --init --target es2020</code></pre>
+        <p>Result:</p>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "es2020",  // ← Changed from default es2016
+    // ... rest of defaults
+  }
+}</code></pre>
+
+        <p>2. Create with Different Module System:</p>
+        <pre><code class="language-bash">tsc --init --module esnext</code></pre>
+        <p>Result:</p>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "module": "esnext",  // ← Changed from default commonjs
+    // ... rest of defaults
+  }
+}</code></pre>
+
+        <p>3. Create Without Strict Mode:</p>
+        <pre><code class="language-bash">tsc --init --strict false</code></pre>
+        <p>Result:</p>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "strict": false,  // ← Changed from default true
+    // ... rest of defaults
+  }
+}</code></pre>
+      </section>
+
+      <section id="static-vs-dynamic">
+        <h2>Statically vs Dynamically Typed Languages - Complete Guide</h2>
+
+        <h3>1. Clear Definitions</h3>
+        <h4>Statically Typed Language</h4>
+        <p>
+          <strong>Definition:</strong> A language where variable types are known
+          at compile time (before the code runs). The type of a variable is
+          fixed and cannot change.
+        </p>
+        <p>Key characteristics:</p>
+        <ul>
+          <li>Types are checked during compilation</li>
+          <li>Variables have a fixed type throughout their lifetime</li>
+          <li>Type errors are caught before the program runs</li>
+          <li>You must declare types explicitly (or compiler infers them)</li>
+        </ul>
+
+        <h4>Dynamically Typed Language</h4>
+        <p>
+          <strong>Definition:</strong> A language where variable types are
+          determined at runtime (while the code is running). The type of a
+          variable can change during execution.
+        </p>
+        <p>Key characteristics:</p>
+        <ul>
+          <li>Types are checked during execution</li>
+          <li>Variables can change type at any time</li>
+          <li>Type errors are caught during runtime</li>
+          <li>Types are determined by the value currently assigned</li>
+        </ul>
+
+        <h3>Quick Visual Comparison</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    STATICALLY TYPED (TypeScript)                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  let name: string = "Arman";   // Type is FIXED                   │
+│  name = "Ali";                 // ✅ OK - still string            │
+│  name = 25;                    // ❌ ERROR at COMPILE TIME        │
+│                                                                     │
+│  Type is checked BEFORE the program runs                          │
+│  Error caught by developer, not user                              │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                    DYNAMICALLY TYPED (JavaScript)                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  let name = "Arman";          // Type is STRING                   │
+│  name = "Ali";                // ✅ OK - still string             │
+│  name = 25;                   // ✅ OK - type CHANGED to number   │
+│  name = true;                 // ✅ OK - type CHANGED to boolean  │
+│                                                                     │
+│  Type is checked DURING runtime                                   │
+│  Error might reach the user if not handled                       │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>3. Detailed Examples</h3>
+        <p><strong>STATICALLY TYPED (TypeScript)</strong></p>
+        <pre><code class="language-typescript">// Type is DECLARED and FIXED
+let name: string = "Arman";
+let age: number = 25;
+let isActive: boolean = true;
+
+// ✅ These work (same type)
+name = "Ali";
+age = 30;
+isActive = false;
+
+// ❌ These FAIL at COMPILE TIME
+name = 42;          // Error: Type 'number' is not assignable to type 'string'
+age = "twenty";     // Error: Type 'string' is not assignable to type 'number'
+isActive = "yes";   // Error: Type 'string' is not assignable to type 'boolean'
+
+// Function parameters are typed
+function greet(name: string): string {
+    return "Hello " + name;
+}
+
+greet("Arman");     // ✅ OK
+greet(25);          // ❌ ERROR: Argument of type 'number' is not assignable to parameter of type 'string'</code></pre>
+
+        <p><strong>DYNAMICALLY TYPED (JavaScript)</strong></p>
+        <pre><code class="language-javascript">// Type is INFERRED and can CHANGE
+let name = "Arman";   // Type is string
+name = "Ali";         // ✅ Still string
+name = 42;            // ✅ Now number!
+name = true;          // ✅ Now boolean!
+name = { value: 1 };  // ✅ Now object!
+
+// Function parameters have no types
+function greet(name) {
+    return "Hello " + name;
+}
+
+greet("Arman");   // ✅ OK - "Hello Arman"
+greet(25);        // ✅ OK - "Hello 25" (works, but maybe unexpected!)
+greet(true);      // ✅ OK - "Hello true"
+
+// Bug only appears at RUNTIME
+function add(a, b) {
+    return a + b;
+}
+
+add(5, 10);       // ✅ 15 (number)
+add("5", 10);     // ✅ "510" (string concatenation - unexpected!)
+add({}, []);      // ✅ "[object Object]" (nonsense - unexpected!)
+// No compile-time error. Bug reaches production!</code></pre>
+
+        <h3>6. Strength and Weaknesses</h3>
+
+        <h4>STATICALLY TYPED</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>✅ Strengths</th>
+              <th>❌ Weaknesses</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bugs caught early (at compile time)</td>
+              <td>More verbose code</td>
+            </tr>
+            <tr>
+              <td>Better IDE support (autocomplete)</td>
+              <td>Slower to write initial code</td>
+            </tr>
+            <tr>
+              <td>Self-documenting (types are documentation)</td>
+              <td>Learning curve</td>
+            </tr>
+            <tr>
+              <td>Better performance (optimized code)</td>
+              <td>Not as flexible</td>
+            </tr>
+            <tr>
+              <td>Safer refactoring</td>
+              <td>Less prototyping flexibility</td>
+            </tr>
+            <tr>
+              <td>Fewer runtime surprises</td>
+              <td>Cannot quickly change types</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>DYNAMICALLY TYPED</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>✅ Strengths</th>
+              <th>❌ Weaknesses</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Faster to write (less code)</td>
+              <td>Bugs found at runtime</td>
+            </tr>
+            <tr>
+              <td>More flexible (types change freely)</td>
+              <td>Less IDE support</td>
+            </tr>
+            <tr>
+              <td>Easier prototyping</td>
+              <td>Harder to maintain large codebases</td>
+            </tr>
+            <tr>
+              <td>Less verbose</td>
+              <td>Unexpected type errors in production</td>
+            </tr>
+            <tr>
+              <td>Easier learning curve</td>
+              <td>No compile-time guarantees</td>
+            </tr>
+            <tr>
+              <td>No compilation step needed</td>
+              <td>Harder to refactor</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="strong-vs-weak">
+        <h2>Strongly vs Weakly Typed Languages - Complete Guide</h2>
+
+        <h3>1. Clear Definitions</h3>
+        <h4>Strongly Typed Language</h4>
+        <p>
+          <strong>Definition:</strong> A language that strictly enforces type
+          rules and does not allow implicit type conversions (type coercion)
+          between different types.
+        </p>
+        <p>Key characteristics:</p>
+        <ul>
+          <li>Types are strictly enforced</li>
+          <li>Cannot mix types in operations without explicit conversion</li>
+          <li>Type errors are thrown when operations are invalid</li>
+          <li>No automatic type coercion (conversion)</li>
+        </ul>
+
+        <h4>Weakly Typed Language</h4>
+        <p>
+          <strong>Definition:</strong> A language that allows implicit type
+          conversions (type coercion) between different types automatically.
+        </p>
+        <p>Key characteristics:</p>
+        <ul>
+          <li>Types are loosely enforced</li>
+          <li>Can mix types in operations - language automatically converts</li>
+          <li>Rarely throws type errors</li>
+          <li>Automatic type coercion happens behind the scenes</li>
+        </ul>
+
+        <h3>2. Critical Difference: Type Coercion</h3>
+        <h4>What is Type Coercion?</h4>
+        <p>
+          <strong>Definition:</strong> The automatic conversion of a value from
+          one type to another by the language, without the programmer explicitly
+          requesting it.
+        </p>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    TYPE COERCION EXPLAINED                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  In WEAKLY typed languages:                                        │
+│                                                                     │
+│  5 + "5"  →  "55"    (number coerced to string)                   │
+│  5 * "5"  →  25       (string coerced to number)                   │
+│  "5" - 2  →  3        (string coerced to number)                   │
+│  true + 1 →  2        (boolean coerced to number)                  │
+│                                                                     │
+│  In STRONGLY typed languages:                                      │
+│                                                                     │
+│  5 + "5"  →  ❌ ERROR (can't mix number and string)               │
+│  5 * "5"  →  ❌ ERROR (can't mix number and string)               │
+│  "5" - 2  →  ❌ ERROR (can't mix string and number)               │
+│  true + 1 →  ❌ ERROR (can't mix boolean and number)              │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>3. Detailed Examples</h3>
+        <p><strong>STRONGLY TYPED (TypeScript)</strong></p>
+        <pre><code class="language-typescript">// In TypeScript, operations between different types FAIL
+
+// Number + String
+let num: number = 5;
+let str: string = "10";
+let result = num + str;  // ❌ ERROR: Operator '+' cannot be applied to types 'number' and 'string'
+
+// Number + Boolean
+let bool: boolean = true;
+let result2 = num + bool;  // ❌ ERROR: Operator '+' cannot be applied to types 'number' and 'boolean'
+
+// String - Number
+let result3 = str - num;   // ❌ ERROR: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type
+
+// Comparison between different types
+let isEqual = (num === str);  // ✅ Allowed (strict equality), but always false
+let isEqual2 = (num == str);  // ❌ ERROR: This condition will always return false since the types 'number' and 'string' have no overlap
+
+// MUST EXPLICITLY CONVERT
+let explicitConversion: number = num + parseInt(str);  // ✅ 15
+let explicitConversion2: string = num.toString() + str;  // ✅ "510"
+
+// All conversions must be explicit
+let explicitBoolean: number = num + (bool ? 1 : 0);  // ✅ 6</code></pre>
+
+        <p><strong>WEAKLY TYPED (JavaScript)</strong></p>
+        <pre><code class="language-javascript">// In JavaScript, type coercion happens AUTOMATICALLY
+
+// Number + String = String (number coerced to string)
+let num = 5;
+let str = "10";
+let result = num + str;  // ✅ "510" (no error!)
+
+// Number + Boolean = Number (boolean coerced to number)
+let bool = true;
+let result2 = num + bool;  // ✅ 6 (true becomes 1)
+
+// String - Number = Number (string coerced to number)
+let result3 = str - num;   // ✅ 5 ("10" becomes 10)
+
+// String * Number = Number (string coerced to number)
+let result4 = str * num;   // ✅ 50 ("10" becomes 10)
+
+// Comparison with coercion
+let isEqual = (5 == "5");       // ✅ true ("5" coerced to number 5)
+let isEqual2 = (5 === "5");     // ✅ false (strict equality, no coercion)
+
+// Empty array to number
+let result5 = [] + 5;          // ✅ "5" (empty array becomes empty string)
+let result6 = [] - 5;          // ✅ -5 (empty array becomes 0)
+
+// Unexpected results!
+let result7 = "5" - "2";        // ✅ 3 (both strings coerced to numbers)
+let result8 = "5" + "2";        // ✅ "52" (both are strings, no coercion needed)
+let result9 = "5" - "hello";    // ✅ NaN (can't coerce "hello" to number)</code></pre>
+
+        <h3>4. The Dangerous Side of Weak Typing</h3>
+        <p>Real-world bugs caused by weak typing:</p>
+        <pre><code class="language-javascript">// Example 1: API returns unexpected string
+function calculateTotal(price, quantity) {
+    return price * quantity;
+}
+
+// During testing:
+calculateTotal(10, 5);     // 50 ✅
+
+// Production: API returns price as string "$10"
+calculateTotal("$10", 5);  // NaN ❌ (bug in production!)
+
+// Example 2: Form input values
+const ageInput = document.getElementById('age').value;  // "25" (string)
+const age = 18;
+if (ageInput > age) {  // "25" > 18 → true (string coerced to number)
+    console.log("Adult");
+} else {
+    console.log("Minor");
+}
+// Works! But what about other inputs?
+const ageInput2 = document.getElementById('age').value;  // "abc" (string)
+const age2 = 18;
+if (ageInput2 > age2) {  // "abc" > 18 → false! (NaN compared to number)
+    console.log("Adult");
+} else {
+    console.log("Minor");
+}
+// "abc" > 18 is false, but "abc" should not be valid input!
+
+// Example 3: Array + object
+let arr = [1, 2, 3];
+let obj = { value: 5 };
+let result = arr + obj;  // "1,2,3[object Object]" (who knows what this means!)</code></pre>
+
+        <h3>5. Strong vs Weak: Side by Side</h3>
+        <p>Same Operation, Different Languages</p>
+        <pre><code class="language-typescript">// TYPESCRIPT (Strongly Typed)
+let num: number = 5;
+let str: string = "10";
+let result = num + str;  // ❌ ERROR: Type 'string' is not assignable to type 'number'
+// Must explicitly convert:
+let result2 = num + Number(str);  // ✅ 15 (explicit conversion)</code></pre>
+        <pre><code class="language-javascript">// JAVASCRIPT (Weakly Typed)
+let num = 5;
+let str = "10";
+let result = num + str;  // ✅ "510" (automatic coercion)
+// No error! But unexpected result if you expected arithmetic</code></pre>
+
+        <h3>6. Complete Comparison Table</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Strongly Typed</th>
+              <th>Weakly Typed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Type conversion</td>
+              <td>Must be explicit</td>
+              <td>Automatic (coercion)</td>
+            </tr>
+            <tr>
+              <td>Mixing types</td>
+              <td>❌ Throws error</td>
+              <td>✅ Allowed</td>
+            </tr>
+            <tr>
+              <td>Examples</td>
+              <td>TypeScript, Python, Java, C#, Go, Rust</td>
+              <td>JavaScript, PHP, Perl</td>
+            </tr>
+            <tr>
+              <td>Safety</td>
+              <td>High (no unexpected conversions)</td>
+              <td>Low (unexpected conversions possible)</td>
+            </tr>
+            <tr>
+              <td>Predictability</td>
+              <td>High (behavior is predictable)</td>
+              <td>Low (can have surprising results)</td>
+            </tr>
+            <tr>
+              <td>Error detection</td>
+              <td>At compile time</td>
+              <td>At runtime (if at all)</td>
+            </tr>
+            <tr>
+              <td>Flexibility</td>
+              <td>Less (must convert explicitly)</td>
+              <td>More (automatic conversions)</td>
+            </tr>
+            <tr>
+              <td>Performance</td>
+              <td>Better (no runtime type checking)</td>
+              <td>Can be slower (runtime coercion)</td>
+            </tr>
+            <tr>
+              <td>Debugging</td>
+              <td>Easier (type errors are clear)</td>
+              <td>Harder (unexpected coercion bugs)</td>
+            </tr>
+            <tr>
+              <td>Documentation</td>
+              <td>Types act as documentation</td>
+              <td>Type information not explicit</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>7. TypeScript: Strong Typing on Top of Weak JavaScript</h3>
+        <p>
+          TypeScript makes JavaScript strongly typed while compiling to weakly
+          typed JavaScript:
+        </p>
+        <pre><code class="language-typescript">// TypeScript (Strong):
+let value: string = "5";
+let num: number = 10;
+let result = value + num;  // ❌ COMPILE ERROR
+// "Types 'string' and 'number' have no overlap"
+
+// This TypeScript compiles TO JavaScript (Weak):
+// After compilation:
+let value = "5";
+let num = 10;
+let result = value + num;  // ✅ "510" (this is what actually runs!)
+// The TypeScript error is caught BEFORE the code runs</code></pre>
+        <p>
+          Key insight: TypeScript adds strong typing DURING DEVELOPMENT, but
+          JavaScript (the runtime) is still weakly typed.
+        </p>
+
+        <h3>8. Two-Dimensional Type Systems</h3>
+        <p>Types can be categorized on TWO axes:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    TYPE SYSTEM DIMENSIONS                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│                     STRONG                                          │
+│                     (No implicit coercion)                         │
+│                         ▲                                          │
+│                         │                                          │
+│      TypeScript ────────┼───────────── Python                     │
+│      Java ──────────────┼───────────── C#                         │
+│      Go ────────────────┼───────────── Rust                       │
+│                         │                                          │
+│   DYNAMIC ◄─────────────┼─────────────► STATIC                    │
+│   (Runtime check)       │              (Compile-time check)        │
+│                         │                                          │
+│      JavaScript ────────┼───────────── PHP                        │
+│      Python ────────────┼───────────── Perl                       │
+│                         │                                          │
+│                         ▼                                          │
+│                     WEAK                                           │
+│                     (Implicit coercion)                           │
+│                                                                     │
+│  Examples:                                                         │
+│  • TypeScript: Static + Strong                                     │
+│  • JavaScript: Dynamic + Weak                                      │
+│  • Python: Dynamic + Strong                                       │
+│  • Java: Static + Strong                                          │
+│  • C: Static + Weak                                               │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>9. Real-World Example: The Bug</h3>
+        <p><strong>STRONG Typing (TypeScript) - Bug Caught:</strong></p>
+        <pre><code class="language-typescript">// Developer writes this:
+function getTotal(items: number[]): number {
+    return items.reduce((sum, item) => sum + item, 0);
+}
+
+// Try to use with strings:
+const items: number[] = ["10", "20", "30"];  
+// ❌ COMPILE ERROR: Type 'string' is not assignable to type 'number'
+
+// Bug caught BEFORE code runs!
+// Developer fixes: parse strings to numbers first
+const itemsCorrect: number[] = ["10", "20", "30"].map(Number);
+getTotal(itemsCorrect);  // ✅ 60 (works correctly)</code></pre>
+
+        <p>
+          <strong>WEAK Typing (JavaScript) - Bug Reaches Production:</strong>
+        </p>
+        <pre><code class="language-javascript">// Developer writes this:
+function getTotal(items) {
+    return items.reduce((sum, item) => sum + item, 0);
+}
+
+// During testing with numbers:
+getTotal([10, 20, 30]);  // 60 ✅
+
+// Production: API returns strings:
+getTotal(["10", "20", "30"]);  // "0102030" ❌ (string concatenation!)
+// This is the WRONG result, but no error was thrown!
+
+// The bug reaches production
+// Users see "0102030" instead of 60
+// Hard to debug because no error occurred</code></pre>
+      </section>
+
+      <section id="top-bottom-types">
+        <h2>Top and Bottom Types in TypeScript: any, unknown, never</h2>
+
+        <h3>1. What Are Top and Bottom Types?</h3>
+        <h4>Top Type</h4>
+        <p>
+          <strong>Definition:</strong> A type that can hold any value from any
+          other type. Every other type is assignable to a top type.
+        </p>
+
+        <h4>Bottom Type</h4>
+        <p>
+          <strong>Definition:</strong> A type that can hold no values at all. No
+          value exists of a bottom type.
+        </p>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    TYPE HIERARCHY                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│                     ┌─────────────┐                                │
+│                     │    any      │  ← TOP TYPE                    │
+│                     │  unknown    │  ← TOP TYPE                    │
+│                     └──────┬──────┘                                │
+│                            │                                        │
+│            ┌───────────────┼───────────────┐                       │
+│            │               │               │                       │
+│        ┌───▼───┐     ┌─────▼─────┐   ┌─────▼─────┐               │
+│        │string │     │  number   │   │ boolean  │                │
+│        └───┬───┘     └─────┬─────┘   └─────┬─────┘               │
+│            │               │               │                       │
+│            └───────────────┼───────────────┘                       │
+│                            │                                        │
+│                     ┌──────▼──────┐                                │
+│                     │    never    │  ← BOTTOM TYPE                 │
+│                     └─────────────┘                                │
+│                                                                     │
+│  Direction: Everything flows DOWN from top to bottom              │
+│  • any/unknown can hold anything (they're at the top)             │
+│  • never can hold nothing (it's at the bottom)                   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>2. The any Type (Top Type)</h3>
+        <h4>Definition</h4>
+        <p>
+          <strong>any:</strong> A type that disables all type checking. It can
+          hold any value, and you can do anything with it. It's the escape hatch
+          from TypeScript's type system.
+        </p>
+
+        <p>Characteristics:</p>
+        <ul>
+          <li>Can hold any value (string, number, object, etc.)</li>
+          <li>Can call any method on it</li>
+          <li>Can assign it to anything</li>
+          <li>No type safety - like using plain JavaScript</li>
+        </ul>
+
+        <p>Examples:</p>
+        <pre><code class="language-typescript">// any can hold ANY value
+let data: any = "Hello";
+data = 42;           // ✅ Allowed
+data = true;         // ✅ Allowed
+data = { name: "John" };  // ✅ Allowed
+data = [1, 2, 3];    // ✅ Allowed
+
+// any can call ANY method (even if they don't exist)
+let value: any = "Hello";
+value.toUpperCase();     // ✅ Works (string method)
+value.push(5);           // ✅ No error! But will crash at runtime
+value.nonExistent();     // ✅ No error! Will crash at runtime
+value + 5;               // ✅ Works
+
+// any can be assigned to ANYTHING
+let value2: any = "Hello";
+let str: string = value2;      // ✅ Allowed
+let num: number = value2;      // ✅ Allowed (dangerous!)
+let bool: boolean = value2;    // ✅ Allowed (dangerous!)
+
+// any disables ALL type checking
+function process(data: any): any {
+    // TypeScript trusts you know what you're doing
+    return data.whatever.method();
+}</code></pre>
+
+        <h4>When to Use any:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Use Case</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Migration from JavaScript</td>
+              <td>Gradually adding types to old code</td>
+            </tr>
+            <tr>
+              <td>Third-party libraries without types</td>
+              <td>Working with untyped libraries</td>
+            </tr>
+            <tr>
+              <td>Dynamic content</td>
+              <td>JSON responses with unknown shape</td>
+            </tr>
+            <tr>
+              <td>Testing/mocking</td>
+              <td>Quick prototypes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>When NOT to Use any:</h4>
+        <pre><code class="language-typescript">// ❌ BAD: Using any when you know the type
+let name: any = "Arman";  // Should be: string
+
+// ❌ BAD: Using any in function signatures
+function add(a: any, b: any) {  // Should have proper types
+    return a + b;
+}
+
+// ❌ BAD: Using any for objects
+let user: any = { name: "Arman", age: 25 };  // Should have interface</code></pre>
+
+        <h3>3. The unknown Type (Top Type)</h3>
+        <h4>Definition</h4>
+        <p>
+          <strong>unknown:</strong> A type-safe version of any. It can hold any
+          value, but you cannot do anything with it until you narrow down the
+          type.
+        </p>
+
+        <p>Characteristics:</p>
+        <ul>
+          <li>Can hold any value (like any)</li>
+          <li>Cannot call methods or properties on it</li>
+          <li>Cannot assign it to anything except any or unknown</li>
+          <li>Must narrow the type before using it</li>
+          <li>Type-safe version of any</li>
+        </ul>
+
+        <p>Examples:</p>
+        <pre><code class="language-typescript">// unknown can hold ANY value (like any)
+let data: unknown = "Hello";
+data = 42;           // ✅ Allowed
+data = true;         // ✅ Allowed
+data = { name: "John" };  // ✅ Allowed
+data = [1, 2, 3];    // ✅ Allowed
+
+// BUT you CANNOT do anything with unknown
+let value: unknown = "Hello";
+value.toUpperCase();     // ❌ ERROR: Object is of type 'unknown'
+value.push(5);           // ❌ ERROR: Object is of type 'unknown'
+value + 5;               // ❌ ERROR: Object is of type 'unknown'
+
+// unknown CANNOT be assigned to anything except any/unknown
+let value2: unknown = "Hello";
+let str: string = value2;      // ❌ ERROR: Type 'unknown' is not assignable to type 'string'
+let num: number = value2;      // ❌ ERROR: Type 'unknown' is not assignable to type 'number'
+
+// Must NARROW the type before using
+function process(data: unknown) {
+    // ❌ Can't use directly
+    // console.log(data.name);
+    
+    // ✅ Must check the type first
+    if (typeof data === "string") {
+        console.log(data.toUpperCase());  // ✅ Now it's safe
+    }
+    
+    // ✅ Or use type narrowing with typeof
+    if (typeof data === "number") {
+        console.log(data + 5);  // ✅ Now it's safe
+    }
+    
+    // ✅ Or use a type guard
+    if (isUser(data)) {
+        console.log(data.name);  // ✅ Now it's safe
+    }
+}
+
+function isUser(obj: any): obj is { name: string; age: number } {
+    return obj && typeof obj.name === "string" && typeof obj.age === "number";
+}</code></pre>
+
+        <h3>4. The never Type (Bottom Type)</h3>
+        <h4>Definition</h4>
+        <p>
+          <strong>never:</strong> A type that represents values that never
+          occur. It's the type of functions that never return or variables that
+          can never have a value.
+        </p>
+
+        <p>Characteristics:</p>
+        <ul>
+          <li>No value can be of type never</li>
+          <li>Used for functions that always throw or never return</li>
+          <li>Used for exhaustiveness checking</li>
+          <li>It's the bottom type - nothing can be assigned to it</li>
+        </ul>
+
+        <p>Examples:</p>
+        <pre><code class="language-typescript">// Function that always throws (never returns)
+function throwError(message: string): never {
+    throw new Error(message);
+    // Nothing after this point
+}
+
+// Function that never returns (infinite loop)
+function infiniteLoop(): never {
+    while (true) {
+        // Runs forever, never returns
+    }
+}
+
+// Function that always exits the process
+function exit(): never {
+    process.exit(1);
+    // Never reaches here
+}
+
+// NEVER can be used for exhaustiveness checking
+type Color = "red" | "green" | "blue";
+
+function getColorCode(color: Color): string {
+    switch (color) {
+        case "red":
+            return "#FF0000";
+        case "green":
+            return "#00FF00";
+        case "blue":
+            return "#0000FF";
+        default:
+            // If we add a new color, this will catch it
+            const exhaustiveCheck: never = color;
+            return exhaustiveCheck;
+    }
+}
+
+// If you add "yellow" to Color, TypeScript will show error
+// because yellow is not handled and would be assigned to never</code></pre>
+
+        <h3>5. any vs unknown vs never Comparison</h3>
+        <h4>Side-by-Side Comparison:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>any</th>
+              <th>unknown</th>
+              <th>never</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Type Category</td>
+              <td>Top Type</td>
+              <td>Top Type</td>
+              <td>Bottom Type</td>
+            </tr>
+            <tr>
+              <td>Can hold any value</td>
+              <td>✅ Yes</td>
+              <td>✅ Yes</td>
+              <td>❌ No</td>
+            </tr>
+            <tr>
+              <td>Can call methods</td>
+              <td>✅ Yes (unsafe)</td>
+              <td>❌ No (type-safe)</td>
+              <td>N/A (no values)</td>
+            </tr>
+            <tr>
+              <td>Can assign to anything</td>
+              <td>✅ Yes</td>
+              <td>❌ No</td>
+              <td>❌ No</td>
+            </tr>
+            <tr>
+              <td>Type safety</td>
+              <td>❌ None</td>
+              <td>✅ Full</td>
+              <td>N/A</td>
+            </tr>
+            <tr>
+              <td>Purpose</td>
+              <td>Escape hatch</td>
+              <td>Safe dynamic typing</td>
+              <td>Impossible/never values</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note-box">
+          <span class="note-title"
+            ><i class="fa-solid fa-star"></i> Best Practice:</span
+          >
+          <ul>
+            <li>
+              Prefer <code>unknown</code> over <code>any</code> for type safety
+            </li>
+            <li>Use <code>never</code> for exhaustive checking</li>
+            <li>
+              Only use <code>any</code> when absolutely necessary (migration,
+              legacy code)
+            </li>
+            <li>Always narrow <code>unknown</code> before using it</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer>
+        <p>TypeScript Configuration and Type Systems Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem">
+          <a
+            href="https://www.linkedin.com/in/arman-khan-5a790430a/"
+            target="_blank"
+            style="
+              color: var(--accent);
+              text-decoration: none;
+              display: inline-flex;
+              align-items: center;
+              gap: 0.5rem;
+              transition: opacity 0.2s;
+            "
+            onmouseover="this.style.opacity = '0.8'"
+            onmouseout="this.style.opacity = '1'"
+          >
+            <i class="fab fa-linkedin" style="font-size: 1.2rem"></i>
+            Connect on LinkedIn
+          </a>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+  </body>
+</html>
