@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Module Detection</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Module Detection</div>
+        <a href="#the-core-problem" class="nav-link">1. The Core Problem</a>
+        <a href="#traditional-detection" class="nav-link"
+          >2. Traditional Detection</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Compiler Options</div>
+        <a href="#moduledetection-option" class="nav-link"
+          >1. The moduleDetection Option</a
+        >
+        <a href="#three-modes" class="nav-link">2. The Three Modes</a>
+        <a href="#why-it-matters" class="nav-link"
+          >3. Why It Matters & Rule of Thumb</a
+        >
+        <a href="#bonus-force-module" class="nav-link"
+          >4. Bonus: Forcing a Single File</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Concrete Example</div>
+        <a href="#the-bug" class="nav-link">1. The Problem "force" Solves</a>
+        <a href="#why-this-matters" class="nav-link"
+          >2. Why This Matters in Practice</a
+        >
+        <a href="#mental-model" class="nav-link">3. Simple Mental Model</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Compiler Internals</span>
+        <h1>MODULE DETECTION</h1>
+        <p>UNDERSTANDING HOW TYPESCRIPT SCOPES YOUR FILES</p>
+      </section>
+
+      <section id="the-core-problem">
+        <h2>Part 1: The Core Problem</h2>
+        <p>
+          Module Detection is a TypeScript compiler concept that determines
+          whether a <code>.ts</code> file is treated as a module or a script.
+        </p>
+
+        <p>
+          TypeScript needs to decide, for every file, whether it should be
+          compiled as:
+        </p>
+        <ul>
+          <li>
+            <strong>A module</strong> → variables/types are scoped to that file,
+            you need <code>import/export</code> to share things.
+          </li>
+          <li>
+            <strong>A script</strong> → everything declared is added to the
+            global scope, visible everywhere.
+          </li>
+        </ul>
+
+        <div class="note-box danger">
+          <span class="note-title"
+            ><i class="fa-solid fa-triangle-exclamation"></i> The Danger</span
+          >
+          <p style="margin-bottom: 0">
+            Getting this wrong causes weird bugs — like two files accidentally
+            declaring the same variable name and colliding globally, or
+            import/export not behaving as expected.
+          </p>
+        </div>
+      </section>
+
+      <section id="traditional-detection">
+        <h2>Part 2: How Detection Works (Traditionally)</h2>
+        <p>
+          Before TS 4.7, a file was considered a module
+          <strong
+            >only if it contained at least one import or export
+            statement.</strong
+          >
+        </p>
+
+        <pre><code class="language-typescript">// fileA.ts
+export const name = "Alice"; // has an export → treated as a MODULE</code></pre>
+
+        <pre><code class="language-typescript">// fileB.ts
+const name = "Bob"; // no import/export → treated as a SCRIPT (global scope!)</code></pre>
+
+        <p>
+          If both files existed in the same project, <code>fileB.ts</code>'s
+          <code>name</code> would leak into the global scope and could clash
+          with other global scripts.
+        </p>
+      </section>
+
+      <section id="moduledetection-option">
+        <h2>Part 3: The moduleDetection Compiler Option (TS 4.7+)</h2>
+        <p>
+          TypeScript introduced an explicit setting in
+          <code>tsconfig.json</code>:
+        </p>
+
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "moduleDetection": "auto" // "legacy" | "auto" | "force"
+  }
+}</code></pre>
+      </section>
+
+      <section id="three-modes">
+        <h3>The Three Modes:</h3>
+
+        <h4>1. "legacy"</h4>
+        <p>
+          Old behavior — a file is a module only if it has
+          <code>import/export</code>.
+        </p>
+
+        <h4>2. "auto" (default)</h4>
+        <p>Same as legacy, plus two extra cases:</p>
+        <ul>
+          <li>
+            If the file is a module format based on module setting (e.g.,
+            ESM-detected via <code>package.json "type": "module"</code>).
+          </li>
+          <li>
+            If the file is a JSX file under certain conditions, or explicitly
+            recognized as ESM by the environment.
+          </li>
+        </ul>
+
+        <h4>3. "force"</h4>
+        <p>
+          Every file is treated as a module, regardless of whether it has
+          <code>import/export</code>. This is the safest option for larger
+          codebases.
+        </p>
+
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "moduleDetection": "force"
+  }
+}</code></pre>
+
+        <pre><code class="language-typescript">// fileB.ts — no import/export, but still scoped as a module because of "force"
+const name = "Bob"; // safe, private to this file</code></pre>
+      </section>
+
+      <section id="why-it-matters">
+        <h3>Why It Matters</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Setting</th>
+              <th>File with no import/export</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>legacy / auto</code></td>
+              <td>Treated as script → global scope</td>
+              <td>Naming collisions across files</td>
+            </tr>
+            <tr>
+              <td><code>force</code></td>
+              <td>Treated as module → file scope</td>
+              <td>Safe, predictable</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note-box">
+          <span class="note-title"
+            ><i class="fa-solid fa-scale-balanced"></i> Quick Rule of
+            Thumb</span
+          >
+          <ul>
+            <li>
+              <strong>Writing a library or app with many files?</strong> Use
+              <code>"force"</code> to avoid accidental global leaks.
+            </li>
+            <li>
+              <strong>Working with old-style global scripts</strong> (like
+              ambient <code>.d.ts</code> declaration files without imports)?
+              Keep <code>"auto"</code> or <code>"legacy"</code> so they stay
+              global on purpose.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="bonus-force-module">
+        <h3>Bonus: Forcing a Single File to Be a Module</h3>
+        <p>
+          Even without changing <code>tsconfig.json</code>, you can force any
+          individual file to be treated as a module by adding an empty export:
+        </p>
+
+        <pre><code class="language-typescript">export {};</code></pre>
+
+        <p>
+          This tells TypeScript "treat this file as a module" without actually
+          exporting anything — a common trick in older codebases.
+        </p>
+      </section>
+
+      <section id="the-bug">
+        <h2>Part 4: Concrete Example (Collision Prevention)</h2>
+        <p>
+          Let's make it concrete with an actual bug to illustrate
+          <code>force</code>'s collision prevention benefits.
+        </p>
+
+        <h3>The Problem "force" Solves</h3>
+        <p>
+          Imagine you have two files, and neither one uses import or export:
+        </p>
+
+        <pre><code class="language-typescript">// counter.ts
+let count = 0;
+function increment() {
+  count++;
+}</code></pre>
+
+        <pre><code class="language-typescript">// user.ts
+let count = "Alice"; // 👈 same name, different type!
+function getUser() {
+  return count;
+}</code></pre>
+
+        <p>
+          With <code>moduleDetection: "legacy"</code> (or "auto" without any
+          module signals), both files are treated as scripts, meaning they share
+          the same global scope — as if you pasted them into one big file.
+        </p>
+
+        <p><strong>Result: 💥</strong></p>
+        <pre><code class="language-text">Cannot redeclare block-scoped variable 'count'.</code></pre>
+        <p>
+          TypeScript throws an error because <code>count</code> is declared
+          twice globally. Even though these are two completely unrelated files
+          that were never meant to interact, they collide.
+        </p>
+
+        <h3>With "force"</h3>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "moduleDetection": "force"
+  }
+}</code></pre>
+
+        <p>
+          Now every file — even ones without import/export — is automatically
+          treated as its own isolated module. So:
+        </p>
+
+        <pre><code class="language-typescript">// counter.ts
+let count = 0; // scoped to counter.ts only
+
+// user.ts
+let count = "Alice"; // scoped to user.ts only — totally fine!</code></pre>
+
+        <p>
+          No error. No collision. Each file has its own private scope, just like
+          you'd expect in any modern JS/TS project.
+        </p>
+      </section>
+
+      <section id="why-this-matters">
+        <h3>Why This Matters in Practice</h3>
+        <ul>
+          <li>
+            <strong>Safety by default</strong> — you don't have to remember to
+            add <code>export {}</code> to every new file to avoid leaking into
+            globals.
+          </li>
+          <li>
+            <strong>Prevents "invisible" bugs</strong> — without force, a file
+            might accidentally start colliding with another file the moment
+            someone adds a matching variable name — a bug that's easy to miss in
+            large codebases.
+          </li>
+          <li>
+            <strong>Matches real-world JS behavior</strong> — modern bundlers
+            (webpack, esbuild, Vite) already treat every file as a module.
+            <code>"force"</code> makes TypeScript's mental model match what
+            actually happens at runtime.
+          </li>
+          <li>
+            <strong>Useful for isolated tooling</strong> — TS's
+            <code>isolatedModules</code> and transpile-per-file tools (like
+            esbuild, SWC, Babel) compile one file at a time and can't see other
+            files to know if something is a module or script.
+            <code>"force"</code> guarantees consistent behavior since every file
+            is unambiguously a module.
+          </li>
+        </ul>
+      </section>
+
+      <section id="mental-model">
+        <h3>Simple Mental Model</h3>
+        <pre><code class="language-text">Without force: "Is this file a module? Let me check if it has import/export..." 
+               (fragile, depends on content)
+
+With force:    "Every file is a module. Period." 
+               (predictable, no guessing)</code></pre>
+      </section>
+
+      <footer>
+        <p>TypeScript Module Detection Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem">
+          <a
+            href="https://www.linkedin.com/in/arman-khan-5a790430a/"
+            target="_blank"
+            style="
+              color: var(--accent);
+              text-decoration: none;
+              display: inline-flex;
+              align-items: center;
+              gap: 0.5rem;
+              transition: opacity 0.2s;
+            "
+            onmouseover="this.style.opacity = '0.8'"
+            onmouseout="this.style.opacity = '1'"
+          >
+            <i class="fab fa-linkedin" style="font-size: 1.2rem"></i>
+            Connect on LinkedIn
+          </a>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Type Alias vs Interface | TypeScript Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Core Differences</div>
+        <a href="#core-difference" class="nav-link">1. The Core Difference</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Capabilities</div>
+        <a href="#capabilities" class="nav-link">2. Capabilities Comparison</a>
+        <a href="#primitives" class="nav-link">Primitives & Unions</a>
+        <a href="#tuples" class="nav-link">Tuples</a>
+        <a href="#object-shapes" class="nav-link">Object Shapes & Extending</a>
+        <a href="#declaration-merging" class="nav-link">Declaration Merging</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Real World</div>
+        <a href="#use-cases" class="nav-link">Library Design</a>
+        <a href="#conclusion" class="nav-link">The Absolute Truth</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Architecture</span>
+        <h1>TYPE ALIAS VS INTERFACE</h1>
+        <p>THE ABSOLUTE COMPLETE DIFFERENCE</p>
+      </section>
+
+      <section id="core-difference">
+        <h2>Part 1: The Core Difference (The "Why")</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Type Alias</th>
+              <th>Interface</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Purpose</td>
+              <td>Creates a new name for any type</td>
+              <td>Defines a contract/blueprint for an object</td>
+            </tr>
+            <tr>
+              <td>Mental Model</td>
+              <td>"This is what this type looks like"</td>
+              <td>"This is what this object must have"</td>
+            </tr>
+            <tr>
+              <td>Philosophy</td>
+              <td>Type aliases are type definitions</td>
+              <td>Interfaces are object shape definitions</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="capabilities">
+        <h2>Part 2: What Each Can Do (Capabilities Comparison)</h2>
+
+        <h3 id="primitives">2.1 Primitive Types (Type Alias Wins)</h3>
+        <pre><code class="language-typescript">// ✅ Type Alias: Can alias ANY type
+type UserID = string;
+type Age = number;
+type IsActive = boolean;
+type Status = "pending" | "approved" | "rejected";
+
+// ❌ Interface: Cannot alias primitives
+interface UserID extends string {} // ❌ Error: Cannot extend primitive
+interface Age extends number {}    // ❌ Error: Cannot extend primitive</code></pre>
+
+        <h3 id="unions">2.2 Union Types (Type Alias Wins)</h3>
+        <pre><code class="language-typescript">// ✅ Type Alias: Can create union types
+type StringOrNumber = string | number;
+type Status = "pending" | "approved" | "rejected";
+type Pet = Dog | Cat;
+
+// ❌ Interface: Cannot create union types
+interface StringOrNumber extends string | number {} // ❌ Error
+interface Status extends "pending" | "approved" {}   // ❌ Error</code></pre>
+
+        <h3 id="tuples">2.3 Tuple Types (Type Alias Wins)</h3>
+        <pre><code class="language-typescript">// ✅ Type Alias: Can create tuple types
+type Point = [number, number];
+type User = [string, number, boolean?];
+type RGB = [red: number, green: number, blue: number];
+
+// ❌ Interface: Cannot create tuples
+interface Point extends [number, number] {} // ❌ Error
+interface User extends [string, number] {}   // ❌ Error</code></pre>
+
+        <h3 id="object-shapes">2.4 Object Shapes (Both Work)</h3>
+        <pre><code class="language-typescript">// ✅ Type Alias: Works for objects
+type Person = {
+    name: string;
+    age: number;
+    greet(): void;
+};
+
+// ✅ Interface: Works for objects
+interface Person {
+    name: string;
+    age: number;
+    greet(): void;
+}
+
+// Both are valid for object shapes
+const person1: Person = { name: "Alice", age: 25, greet() {} };</code></pre>
+
+        <h3>2.5 Extending (Both Work, Different Syntax)</h3>
+        <pre><code class="language-typescript">// ✅ Type Alias: Uses intersection (&)
+type Animal = { name: string };
+type Dog = Animal & { breed: string };
+// Dog = { name: string; breed: string }
+
+// ✅ Interface: Uses extends
+interface Animal {
+    name: string;
+}
+interface Dog extends Animal {
+    breed: string;
+}
+// Dog = { name: string; breed: string }
+
+// ✅ Extending multiple types
+type A = { a: string };
+type B = { b: number };
+type C = A & B;  // { a: string; b: number }
+
+interface A { a: string; }
+interface B { b: number; }
+interface C extends A, B { }  // { a: string; b: number }</code></pre>
+      </section>
+
+      <section id="declaration-merging">
+        <h3>2.6 Declaration Merging (Interface Wins)</h3>
+        <pre><code class="language-typescript">// ✅ Interface: Automatically merges
+interface User {
+    name: string;
+}
+interface User {
+    age: number;
+}
+// Final User = { name: string; age: number }
+
+let user: User = {
+    name: "Alice",
+    age: 25
+};
+
+// ❌ Type Alias: Cannot merge
+type User = { name: string };
+type User = { age: number }; // ❌ Error: Duplicate identifier 'User'
+
+// Declaration merging is useful for extending third-party types
+// Example: Adding to Window object
+interface Window {
+    myCustomProperty: string;
+}
+
+// Now you can use it
+window.myCustomProperty = "hello"; // ✅ Works</code></pre>
+      </section>
+
+      <section id="use-cases">
+        <h2>Part 5: Real-World Use Cases</h2>
+        <h3>5.1 Library/Framework Design (Use Interface)</h3>
+        <p>Example 1: User Management System</p>
+        <pre><code class="language-typescript">// ✅ Using Interface for public API
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    createdAt: Date;
+}
+
+interface Admin extends User {
+    permissions: string[];
+    accessLevel: number;
+}
+
+// ✅ Using Type Alias for internal states
+type UserState = "active" | "inactive" | "suspended";
+type UserRole = "admin" | "moderator" | "user";
+type UserFilter = { role?: UserRole; status?: UserState };</code></pre>
+      </section>
+
+      <section id="conclusion">
+        <h2>The Absolute Truth</h2>
+        <div class="note-box">
+          <span class="note-title"
+            ><i class="fa-solid fa-star"></i> Summary</span
+          >
+          <p style="margin-bottom: 0">
+            Both are powerful. Use <strong>Interface</strong> for object shapes
+            that will be extended. Use <strong>Type Alias</strong> for
+            everything else. Both are equally performant at runtime (they don't
+            exist!).
+          </p>
+        </div>
+      </section>
+
+      <footer>
+        <p>Type Alias vs Interface Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem">
+          <a
+            href="https://www.linkedin.com/in/arman-khan-5a790430a/"
+            target="_blank"
+            style="
+              color: var(--accent);
+              text-decoration: none;
+              display: inline-flex;
+              align-items: center;
+              gap: 0.5rem;
+              transition: opacity 0.2s;
+            "
+            onmouseover="this.style.opacity = '0.8'"
+            onmouseout="this.style.opacity = '1'"
+          >
+            <i class="fab fa-linkedin" style="font-size: 1.2rem"></i>
+            Connect on LinkedIn
+          </a>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

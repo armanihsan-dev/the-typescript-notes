@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Object Literal Types & Interfaces</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Object Literal Types</div>
+        <a href="#object-literal-types" class="nav-link">1. What are Object Literal Types?</a>
+        <a href="#property-modifiers-obj" class="nav-link">2. Property Modifiers</a>
+        <a href="#index-signatures" class="nav-link">3. Index Signatures & Record</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Interfaces</div>
+        <a href="#what-is-interface" class="nav-link">1. What is an Interface?</a>
+        <a href="#basic-interface-syntax" class="nav-link">2. Basic Interface Syntax</a>
+        <a href="#property-modifiers-int" class="nav-link">3. Property Modifiers</a>
+        <a href="#function-types" class="nav-link">4. Function Types</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Structures</span>
+        <h1>OBJECT LITERAL TYPES & INTERFACES</h1>
+        <p>THE COMPLETE GUIDE TO DEFINING OBJECT SHAPES IN TYPESCRIPT</p>
+      </section>
+
+      <section id="object-literal-types">
+        <h2>Complete Guide to Object Literal Types in TypeScript</h2>
+        
+        <h3>Part 1: What are Object Literal Types?</h3>
+        
+        <h4>Definition</h4>
+        <p><strong>Object Literal Types:</strong> A way to define the shape/structure of an object by specifying the types of its properties. They describe what properties an object should have and what types those properties should be.</p>
+
+        <h4>Syntax</h4>
+        <pre><code class="language-typescript">type TypeName = {
+    propertyName: propertyType;
+    propertyName2: propertyType2;
+};</code></pre>
+
+        <h4>Basic Examples</h4>
+        <pre><code class="language-typescript">// 1. Simple object literal type
+type Person = {
+    name: string;
+    age: number;
+};
+
+let user: Person = {
+    name: "Alice",
+    age: 25
+};
+
+// 2. With different property types
+type Product = {
+    id: number;
+    name: string;
+    price: number;
+    inStock: boolean;
+};
+
+let laptop: Product = {
+    id: 1,
+    name: "MacBook Pro",
+    price: 1299.99,
+    inStock: true
+};
+
+// 3. With nested objects
+type Address = {
+    street: string;
+    city: string;
+    country: string;
+    zipCode: string;
+};
+
+type Customer = {
+    name: string;
+    email: string;
+    address: Address;  // Nested object type
+};
+
+let customer: Customer = {
+    name: "Alice",
+    email: "alice@email.com",
+    address: {
+        street: "123 Main St",
+        city: "New York",
+        country: "USA",
+        zipCode: "10001"
+    }
+};</code></pre>
+      </section>
+
+      <section id="property-modifiers-obj">
+        <h3>Part 2: Property Modifiers in Object Literal Types</h3>
+        
+        <h4>1. Optional Properties (?)</h4>
+        <p><strong>Definition:</strong> Properties that may or may not exist on the object.</p>
+
+        <pre><code class="language-typescript">// Optional property using '?'
+type User = {
+    name: string;
+    age: number;
+    email?: string;  // Optional property
+    phone?: string;  // Optional property
+};
+
+// ✅ Valid: All required properties present
+let user1: User = {
+    name: "Alice",
+    age: 25
+};
+
+// ✅ Valid: Optional properties can be omitted
+let user2: User = {
+    name: "Bob",
+    age: 30,
+    email: "bob@email.com"
+};
+
+// ✅ Valid: Both optional properties present
+let user3: User = {
+    name: "Charlie",
+    age: 35,
+    email: "charlie@email.com",
+    phone: "123-456-7890"
+};
+
+// ❌ Error: Required property missing
+let user4: User = {
+    name: "David"
+    // age is missing
+};</code></pre>
+
+        <h4>2. Readonly Properties (readonly)</h4>
+        <p><strong>Definition:</strong> Properties that cannot be changed after the object is created.</p>
+
+        <pre><code class="language-typescript">type Config = {
+    readonly id: number;        // Cannot be changed
+    readonly createdAt: Date;   // Cannot be changed
+    name: string;               // Can be changed
+    isActive: boolean;          // Can be changed
+};
+
+let config: Config = {
+    id: 1,
+    createdAt: new Date(),
+    name: "App Config",
+    isActive: true
+};
+
+// ✅ Allowed: Changing non-readonly property
+config.name = "New Config";
+config.isActive = false;
+
+// ❌ Error: Cannot change readonly property
+config.id = 2;  // Error: Cannot assign to 'id' because it is a read-only property
+config.createdAt = new Date();  // Error: Cannot assign to 'createdAt' because it is a read-only property</code></pre>
+
+        <h4>3. Combining Optional and Readonly</h4>
+        <pre><code class="language-typescript">type Product = {
+    readonly id: number;        // Required & Readonly
+    name: string;               // Required & Mutable
+    readonly createdAt: Date;   // Required & Readonly
+    description?: string;       // Optional & Mutable
+    readonly updatedAt?: Date;  // Optional & Readonly
+};
+
+let product: Product = {
+    id: 1,
+    name: "Laptop",
+    createdAt: new Date()
+};
+
+// ✅ Allowed: Mutable optional property
+product.description = "A powerful laptop";
+
+// ❌ Error: Readonly property
+product.id = 2;  // Error
+product.createdAt = new Date();  // Error
+product.updatedAt = new Date();  // Error (readonly)</code></pre>
+      </section>
+
+      <section id="index-signatures">
+        <h3>Part 3: Index Signatures & Record</h3>
+        
+        <p>In TypeScript, <code>Record&lt;Keys, Type&gt;</code> is a built-in utility type used to map a specific set of keys to a consistent value type, effectively creating a structured dictionary or object shape.</p>
+        
+        <h4>Basic Syntax</h4>
+        <pre><code class="language-typescript">Record<Keys, Type></code></pre>
+        <ul>
+            <li><strong>Keys:</strong> The allowed keys for the object (must be a string, number, or symbol, or a union of literals).</li>
+            <li><strong>Type:</strong> The data type assigned to the values of those keys.</li>
+        </ul>
+
+        <h4>Common Use Cases</h4>
+        <p><strong>1. Simple String or Number Dictionaries</strong></p>
+        <p>Use this when you have dynamic keys but want to enforce a uniform value type across the entire object.</p>
+        <pre><code class="language-typescript">// A dictionary where any string key must have a number value
+const userScores: Record<string, number> = {
+  alice: 95,
+  bob: 88,
+  charlie: 72
+};</code></pre>
+
+        <h4>Index Signatures Definition</h4>
+        <p><strong>Index Signatures:</strong> Allow objects to have dynamic property names while still enforcing type safety.</p>
+
+        <h4>Syntax</h4>
+        <pre><code class="language-typescript">{
+    [key: KeyType]: ValueType;
+}</code></pre>
+
+        <h4>Examples</h4>
+        <pre><code class="language-typescript">// 1. String index signature
+type Dictionary = {
+    [key: string]: string;
+};
+
+let translations: Dictionary = {
+    hello: "hola",
+    goodbye: "adiós",
+    thankYou: "gracias"
+};
+
+// ✅ Adding new properties is allowed
+translations.welcome = "bienvenido";
+
+// ❌ Error: Value must be string
+translations.number = 42;  // Error: Type 'number' is not assignable to type 'string'
+
+// 2. Number index signature
+type NumberArray = {
+    [index: number]: string;
+};
+
+let fruits: NumberArray = {
+    0: "apple",
+    1: "banana",
+    2: "orange"
+};
+
+// 3. Mix of indexed and regular properties
+type UserSettings = {
+    readonly id: number;
+    name: string;
+    [key: string]: string | number;  // Additional string properties
+};
+
+let settings: UserSettings = {
+    id: 1,
+    name: "Alice",
+    theme: "dark",
+    language: "en"
+};
+
+// 4. Record utility type (alternative to index signature)
+type Dictionary2 = Record<string, string>;
+let translations2: Dictionary2 = {
+    hello: "hola",
+    goodbye: "adiós"
+};</code></pre>
+
+        <h4>Index Signature Constraints</h4>
+        <pre><code class="language-typescript">// Multiple index signatures (restricted)
+type Mixed = {
+    [key: string]: string | number;  // Value must be string or number
+    [key: number]: string;           // Number keys must have string values
+};
+
+// This works because string index includes number index value type
+let data: Mixed = {
+    "name": "Alice",
+    "age": 25,
+    0: "first"
+};
+
+// ❌ Error: String index value must include number index value type
+type Invalid = {
+    [key: string]: number;    // String values are numbers
+    [key: number]: string;    // Number values are strings
+    // Error: 'number' index type 'string' is not assignable to 'string' index type 'number'
+};</code></pre>
+      </section>
+
+      <section id="what-is-interface">
+        <h2>Complete Guide to Interfaces in TypeScript</h2>
+        
+        <h3>Part 1: What is an Interface?</h3>
+        
+        <h4>Definition</h4>
+        <p><strong>Interface:</strong> A contract or blueprint that defines the structure of an object. It specifies what properties and methods an object should have, but does not provide implementation.</p>
+
+        <h4>Key Characteristics</h4>
+        <ul>
+            <li>Defines the shape of an object</li>
+            <li>Can be extended by other interfaces</li>
+            <li>Supports declaration merging (multiple declarations combine)</li>
+            <li>Used for type checking at compile time</li>
+            <li>No runtime presence (they're purely TypeScript)</li>
+        </ul>
+      </section>
+
+      <section id="basic-interface-syntax">
+        <h3>Part 2: Basic Interface Syntax</h3>
+        
+        <h4>Syntax</h4>
+        <pre><code class="language-typescript">interface InterfaceName {
+    propertyName: propertyType;
+    propertyName2: propertyType2;
+    methodName(): returnType;
+}</code></pre>
+
+        <h4>Basic Examples</h4>
+        <pre><code class="language-typescript">// 1. Simple interface
+interface Person {
+    name: string;
+    age: number;
+}
+
+let user: Person = {
+    name: "Alice",
+    age: 25
+};
+
+// 2. Interface with methods
+interface Greetable {
+    name: string;
+    greet(): string;
+}
+
+let person: Greetable = {
+    name: "Bob",
+    greet() {
+        return `Hello, I'm ${this.name}`;
+    }
+};
+
+// 3. Interface with multiple property types
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    inStock: boolean;
+    categories: string[];  // Array
+    createdAt: Date;       // Date object
+}
+
+let laptop: Product = {
+    id: 1,
+    name: "MacBook Pro",
+    price: 1299.99,
+    inStock: true,
+    categories: ["Electronics", "Computers"],
+    createdAt: new Date()
+};</code></pre>
+      </section>
+
+      <section id="property-modifiers-int">
+        <h3>Part 3: Property Modifiers in Interfaces</h3>
+        
+        <h4>1. Optional Properties (?)</h4>
+        <p><strong>Definition:</strong> Properties that may or may not exist on the implementing object.</p>
+
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email?: string;      // Optional
+    phone?: string;      // Optional
+    age?: number;        // Optional
+}
+
+// ✅ All valid:
+let user1: User = { id: 1, name: "Alice" };
+let user2: User = { id: 2, name: "Bob", email: "bob@email.com" };
+let user3: User = { 
+    id: 3, 
+    name: "Charlie", 
+    email: "charlie@email.com",
+    phone: "123-456-7890",
+    age: 30
+};
+
+// ❌ Error: Required property missing
+let user4: User = { id: 1 };  // Error: Property 'name' is missing</code></pre>
+
+        <h4>2. Readonly Properties (readonly)</h4>
+        <p><strong>Definition:</strong> Properties that cannot be changed after initialization.</p>
+
+        <pre><code class="language-typescript">interface Config {
+    readonly id: number;        // Cannot be changed
+    readonly createdAt: Date;   // Cannot be changed
+    name: string;               // Can be changed
+    isActive: boolean;          // Can be changed
+}
+
+let config: Config = {
+    id: 1,
+    createdAt: new Date(),
+    name: "App Config",
+    isActive: true
+};
+
+// ✅ Allowed: Changing non-readonly property
+config.name = "New Config";
+config.isActive = false;
+
+// ❌ Error: Cannot change readonly property
+config.id = 2;  // Error: Cannot assign to 'id' because it is a read-only property
+config.createdAt = new Date();  // Error: Cannot assign to 'createdAt' because it is a read-only property</code></pre>
+
+        <h4>3. Combining Optional and Readonly</h4>
+        <pre><code class="language-typescript">interface Product {
+    readonly id: number;        // Required & Readonly
+    name: string;               // Required & Mutable
+    readonly createdAt: Date;   // Required & Readonly
+    description?: string;       // Optional & Mutable
+    readonly updatedAt?: Date;  // Optional & Readonly
+}
+
+let product: Product = {
+    id: 1,
+    name: "Laptop",
+    createdAt: new Date()
+};
+
+// ✅ Allowed: Mutable optional property
+product.description = "A powerful laptop";
+
+// ❌ Error: Readonly properties
+product.id = 2;  // Error
+product.createdAt = new Date();  // Error
+product.updatedAt = new Date();  // Error (readonly)</code></pre>
+      </section>
+
+      <section id="function-types">
+        <h3>Part 4: Function Types in Interfaces</h3>
+        
+        <h4>1. Method Syntax</h4>
+        <pre><code class="language-typescript">// Method syntax (shorthand)
+interface Calculator {
+    value: number;
+    add(n: number): number;
+    subtract(n: number): number;
+    multiply(n: number): number;
+}
+
+let calc: Calculator = {
+    value: 0,
+    add(n) {
+        this.value += n;
+        return this.value;
+    },
+    subtract(n) {
+        this.value -= n;
+        return this.value;
+    },
+    multiply(n) {
+        this.value *= n;
+        return this.value;
+    }
+};</code></pre>
+      </section>
+
+      <footer>
+        <p>TypeScript Object Literals and Interfaces Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+              Connect on LinkedIn
+            </a>
+          </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

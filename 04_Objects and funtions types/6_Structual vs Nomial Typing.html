@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Structural vs Nominal Typing</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Core Concepts</div>
+        <a href="#definitions" class="nav-link">1. Clear Definitions</a>
+        <a href="#visual-comparison" class="nav-link">2. Visual Comparison</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. TypeScript Behavior</div>
+        <a href="#ts-structural" class="nav-link"
+          >3. TS is Structurally Typed</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. In Action</div>
+        <a href="#extra-properties" class="nav-link">4.1 Extra Properties</a>
+        <a href="#missing-properties" class="nav-link"
+          >4.2 Missing Properties</a
+        >
+        <a href="#subtype-relationship" class="nav-link"
+          >4.3 Subtype Relationship</a
+        >
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Type Systems</span>
+        <h1>STRUCTURAL VS NOMINAL TYPING</h1>
+        <p>COMPLETE GUIDE TO HOW TYPESCRIPT EVALUATES TYPE COMPATIBILITY</p>
+      </section>
+
+      <section id="definitions">
+        <h2>Part 1: Clear Definitions</h2>
+
+        <h3>Nominal Typing (Also Called "Name-Based Typing")</h3>
+        <p>
+          <strong>Definition:</strong> Two types are considered compatible only
+          if they have the same name (declaration). Even if two types have
+          identical structure, they are NOT compatible if they have different
+          names.
+        </p>
+        <p>
+          <strong>Key characteristic:</strong> The name of the type matters, not
+          its shape.
+        </p>
+
+        <h3 style="margin-top: 2rem">
+          Structural Typing (Also Called "Duck Typing")
+        </h3>
+        <p>
+          <strong>Definition:</strong> Two types are considered compatible if
+          they have the same structure (shape). The name of the type doesn't
+          matter; only its properties and their types matter.
+        </p>
+        <p>
+          <strong>Key characteristic:</strong> The shape of the type matters,
+          not its name.
+        </p>
+      </section>
+
+      <section id="visual-comparison">
+        <h2>Part 2: Visual Comparison</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    NOMINAL TYPING                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  type User = { name: string; age: number }                         │
+│  type Person = { name: string; age: number }                       │
+│                                                                     │
+│  let user: User = { name: "Alice", age: 25 }                      │
+│  let person: Person = user  // ❌ ERROR!                          │
+│                                                                     │
+│  Why? Because User and Person are different NAMES,                │
+│  even though they have identical STRUCTURE.                       │
+│                                                                     │
+│  "I don't care that they look the same. They have                │
+│   different names, so they're different types!"                  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                    STRUCTURAL TYPING (TypeScript)                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  type User = { name: string; age: number }                         │
+│  type Person = { name: string; age: number }                       │
+│                                                                     │
+│  let user: User = { name: "Alice", age: 25 }                      │
+│  let person: Person = user  // ✅ WORKS!                          │
+│                                                                     │
+│  Why? Because User and Person have identical STRUCTURE.           │
+│                                                                     │
+│  "I don't care what you call it. If it looks like a duck,        │
+│   walks like a duck, it's a duck!"                               │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="ts-structural">
+        <h2>Part 3: TypeScript is Structurally Typed</h2>
+
+        <div class="note-box">
+          <span class="note-title"
+            ><i class="fa-solid fa-triangle-exclamation"></i> Important</span
+          >
+          <p style="margin-bottom: 0">
+            TypeScript uses structural typing by default. This is one of its
+            most distinctive features.
+          </p>
+        </div>
+
+        <h3>Simple Example</h3>
+        <pre><code class="language-typescript">// TypeScript uses STRUCTURAL typing
+type Dog = {
+    name: string;
+    bark(): void;
+};
+
+type Cat = {
+    name: string;
+    meow(): void;
+};
+
+// Different types, but compatible if structure matches
+let dog: Dog = {
+    name: "Rex",
+    bark: () => console.log("Woof!")
+};
+
+let cat: Cat = {
+    name: "Whiskers",
+    meow: () => console.log("Meow!")
+};
+
+// ✅ Works: Dog and Cat have different names but same structure?
+// Wait, they DON'T have the same structure! (bark vs meow)
+// Let's try with identical structure:</code></pre>
+
+        <h3>True Structural Typing Example</h3>
+        <pre><code class="language-typescript">type User = {
+    id: number;
+    name: string;
+    email: string;
+};
+
+type Customer = {
+    id: number;
+    name: string;
+    email: string;
+};
+
+// Different names, but IDENTICAL structure
+let user: User = {
+    id: 1,
+    name: "Alice",
+    email: "alice@email.com"
+};
+
+// ✅ Works in TypeScript (Structural Typing)
+let customer: Customer = user;  // Allowed!
+console.log(customer.name); // "Alice"
+
+// This would NEVER work in a nominally typed language like Java</code></pre>
+      </section>
+
+      <section id="extra-properties">
+        <h2>Part 4: Structural Typing in Action</h2>
+
+        <h3>4.1 Extra Properties Are Allowed</h3>
+        <pre><code class="language-typescript">// Structural typing: Extra properties are fine
+type Person = {
+    name: string;
+    age: number;
+};
+
+// Object has extra property "email"
+let person: Person = {
+    name: "Alice",
+    age: 25,
+    email: "alice@email.com"  // ✅ Allowed (extra property)
+};
+
+// Function with structural typing
+function greet(person: Person): string {
+    return `Hello ${person.name}`;
+}
+
+// Can pass objects with extra properties
+greet({
+    name: "Bob",
+    age: 30,
+    email: "bob@email.com",  // ✅ Allowed
+    phone: "123-456-7890"    // ✅ Allowed
+});</code></pre>
+      </section>
+
+      <section id="missing-properties">
+        <h3>4.2 Missing Properties Are NOT Allowed</h3>
+        <pre><code class="language-typescript">type Person = {
+    name: string;
+    age: number;
+};
+
+// ❌ Missing required property "age"
+let person: Person = {
+    name: "Alice"
+    // Error: Property 'age' is missing
+};
+
+// ❌ Missing required property "name"
+let person2: Person = {
+    age: 25
+    // Error: Property 'name' is missing
+};</code></pre>
+      </section>
+
+      <section id="subtype-relationship">
+        <h3>4.3 Subtype Relationship</h3>
+        <pre><code class="language-typescript">// In structural typing, having more properties means
+// you're a subtype of the simpler type
+
+type Person = {
+    name: string;
+    age: number;
+};
+
+type Employee = {
+    name: string;
+    age: number;
+    employeeId: string;
+    department: string;
+};
+
+// ✅ Employee is a subtype of Person
+let employee: Employee = {
+    name: "Alice",
+    age: 25,
+    employeeId: "EMP001",
+    department: "Engineering"
+};
+
+// Can assign Employee to Person (more specific to more general)
+let person: Person = employee;  // ✅ Allowed
+
+// ❌ Cannot assign Person to Employee (less specific to more specific)
+let person2: Person = {
+    name: "Bob",
+    age: 30
+};
+
+let employee2: Employee = person2;
+// Error: Property 'employeeId' is missing</code></pre>
+      </section>
+
+      <footer>
+        <p>TypeScript Structural vs Nominal Typing Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem">
+          <a
+            href="https://www.linkedin.com/in/arman-khan-5a790430a/"
+            target="_blank"
+            style="
+              color: var(--accent);
+              text-decoration: none;
+              display: inline-flex;
+              align-items: center;
+              gap: 0.5rem;
+              transition: opacity 0.2s;
+            "
+            onmouseover="this.style.opacity = '0.8'"
+            onmouseout="this.style.opacity = '1'"
+          >
+            <i class="fab fa-linkedin" style="font-size: 1.2rem"></i>
+            Connect on LinkedIn
+          </a>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

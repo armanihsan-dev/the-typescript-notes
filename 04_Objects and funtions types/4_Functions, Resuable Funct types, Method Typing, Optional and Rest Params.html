@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Function Typing in TypeScript</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Fundamentals</div>
+        <a href="#function-typing" class="nav-link"
+          >1.1 What is Function Typing?</a
+        >
+        <a href="#basic-syntax" class="nav-link">1.2 Basic Function Syntax</a>
+        <a href="#arrow-functions" class="nav-link">1.3 Arrow Functions</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Reusable Types</div>
+        <a href="#type-aliases" class="nav-link"
+          >2.1 Type Aliases for Functions</a
+        >
+        <a href="#interfaces" class="nav-link"
+          >2.4 Interface for Function Types</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Method Typing</div>
+        <a href="#object-methods" class="nav-link"
+          >3.1 Methods in Object Literals</a
+        >
+        <a href="#interface-methods" class="nav-link"
+          >3.2 Methods in Interfaces</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Parameters</div>
+        <a href="#optional-params" class="nav-link">4.1 Optional Parameters</a>
+        <a href="#optional-objects" class="nav-link">4.2 Optional in Objects</a>
+        <a href="#optional-best-practices" class="nav-link"
+          >4.3 Best Practices</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">V. Advanced Params</div>
+        <a href="#rest-parameters" class="nav-link">5.1 Rest Parameters</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Functions</span>
+        <h1>FUNCTION TYPING</h1>
+        <p>THE COMPLETE GUIDE TO TYPING FUNCTIONS, METHODS, AND PARAMETERS</p>
+      </section>
+
+      <section id="function-typing">
+        <h2>Part 1: Function Typing - Fundamentals</h2>
+
+        <h3>1.1 What is Function Typing?</h3>
+        <p>
+          <strong>Definition:</strong> Function typing in TypeScript is the
+          practice of explicitly defining the types of parameters and the return
+          type of a function. This ensures type safety when calling functions
+          and makes the code self-documenting.
+        </p>
+
+        <p>Why it matters:</p>
+        <ul>
+          <li>Catches bugs at compile time</li>
+          <li>Provides better IDE autocomplete</li>
+          <li>Acts as documentation</li>
+          <li>Enforces correct usage</li>
+        </ul>
+      </section>
+
+      <section id="basic-syntax">
+        <h3>1.2 Basic Function Syntax</h3>
+        <h4>Syntax Breakdown</h4>
+        <pre><code class="language-typescript">function functionName(param1: type, param2: type): returnType {
+    // Function body
+    return value; // Must match returnType
+}</code></pre>
+
+        <h4>Examples</h4>
+        <pre><code class="language-typescript">// 1. Simple function with typed parameters and return
+function add(a: number, b: number): number {
+    return a + b;
+}
+
+// 2. Function with string return type
+function greet(name: string): string {
+    return `Hello ${name}`;
+}
+
+// 3. Function with void return (no return value)
+function log(message: string): void {
+    console.log(message);
+}
+
+// 4. Function with optional parameter
+function introduce(name: string, age?: number): string {
+    if (age) {
+        return `My name is ${name} and I'm ${age} years old`;
+    }
+    return `My name is ${name}`;
+}
+
+// 5. Function with default parameter
+function multiply(a: number, b: number = 1): number {
+    return a * b;
+}</code></pre>
+      </section>
+
+      <section id="arrow-functions">
+        <h3>1.3 Arrow Functions (Function Expressions)</h3>
+        <pre><code class="language-typescript">// Arrow function with explicit types
+const add: (a: number, b: number) => number = (a: number, b: number): number => {
+    return a + b;
+};
+
+// Simplified (TypeScript infers return type)
+const add = (a: number, b: number): number => a + b;
+
+// No return (void)
+const log = (message: string): void => console.log(message);
+
+// With object return (need parentheses)
+const createUser = (name: string, age: number): { name: string; age: number } => ({
+    name,
+    age
+});</code></pre>
+      </section>
+
+      <section id="type-aliases">
+        <h2>Part 2: Reusable Function Types</h2>
+
+        <h3>2.1 Using Type Aliases for Functions</h3>
+        <p>
+          <strong>Definition:</strong> Define a function type once and reuse it
+          across multiple functions.
+        </p>
+
+        <pre><code class="language-typescript">// Define a reusable function type
+type MathOperation = (a: number, b: number) => number;
+
+// Use the type for multiple functions
+const add: MathOperation = (a, b) => a + b;
+const subtract: MathOperation = (a, b) => a - b;
+const multiply: MathOperation = (a, b) => a * b;
+const divide: MathOperation = (a, b) => a / b;
+
+// Another example with strings
+type StringTransformer = (input: string) => string;
+
+const toUpperCase: StringTransformer = (input) => input.toUpperCase();
+const toLowerCase: StringTransformer = (input) => input.toLowerCase();
+const reverseString: StringTransformer = (input) => input.split('').reverse().join('');
+
+// Usage
+console.log(toUpperCase('hello, munnu how are u'));
+console.log(reverseString("hello")); // "olleh"
+console.log(toLowerCase('HELLO, MUNNU'));</code></pre>
+      </section>
+
+      <section id="interfaces">
+        <h3>2.4 Interface for Function Types</h3>
+        <pre><code class="language-typescript">// Using interface for function type
+interface StringProcessor {
+    (input: string): string;
+}
+
+const addExclamation: StringProcessor = (input) => `${input}!`;
+const addQuestion: StringProcessor = (input) => `${input}?`;
+const addAsterisk: StringProcessor = (input) => `*${input}*`;
+
+// Multiple signatures in interface
+interface NumberProcessor {
+    (input: number): number;
+    (input: string): string;
+}
+
+const process: NumberProcessor = (input: any): any => {
+    if (typeof input === "number") {
+        return input * 2;
+    }
+    return input.toUpperCase();
+};
+
+console.log(process(5)); // 10
+console.log(process("hello")); // "HELLO"</code></pre>
+      </section>
+
+      <section id="object-methods">
+        <h2>Part 3: Method Typing in Objects</h2>
+
+        <h3>3.1 Methods in Object Literal Types</h3>
+        <pre><code class="language-typescript">// Method syntax in type alias
+type Calculator = {
+    value: number;
+    // Method syntax
+    add(n: number): number;
+    subtract(n: number): number;
+    // Arrow function syntax
+    multiply: (n: number) => number;
+    divide: (n: number) => number;
+};
+
+// Implementing the type
+const calc: Calculator = {
+    value: 0,
+    add(n) {
+        this.value += n;
+        return this.value;
+    },
+    subtract(n) {
+        this.value -= n;
+        return this.value;
+    },
+    multiply: function(n: number): number {
+        this.value *= n;
+        return this.value;
+    },
+    divide: function(n: number): number {
+        this.value /= n;
+        return this.value;
+    }
+};
+
+console.log(calc.add(10));   // 10
+console.log(calc.multiply(2)); // 20
+console.log(calc.subtract(5)); // 15</code></pre>
+      </section>
+
+      <section id="interface-methods">
+        <h3>3.2 Methods in Interfaces</h3>
+        <pre><code class="language-typescript">interface User {
+    name: string;
+    age: number;
+    // Method with return type
+    greet(): string;
+    // Method with parameters
+    updateAge(newAge: number): void;
+    // Method with multiple parameters
+    describe(greeting: string, punctuation: string): string;
+}
+
+// Implementing the interface
+class Person implements User {
+    name: string;
+    age: number;
+    
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    greet(): string {
+        return `Hello, I'm ${this.name}`;
+    }
+    
+    updateAge(newAge: number): void {
+        this.age = newAge;
+    }
+    
+    describe(greeting: string, punctuation: string): string {
+        return `${greeting}, I'm ${this.name}${punctuation}`;
+    }
+}
+
+const person = new Person("Alice", 25);
+console.log(person.greet()); // "Hello, I'm Alice"
+console.log(person.describe("Hey", "!")); // "Hey, I'm Alice!"</code></pre>
+      </section>
+
+      <section id="optional-params">
+        <h2>Part 4: Optional Parameters</h2>
+
+        <h3>4.1 Optional Parameters in Functions</h3>
+        <p>
+          <strong>Definition:</strong> Parameters that may or may not be
+          provided when calling the function. They're denoted with a
+          <code>?</code>.
+        </p>
+
+        <pre><code class="language-typescript">// 1. Single optional parameter
+function greet(name: string, greeting?: string): string {
+    if (greeting) {
+        return `${greeting} ${name}`;
+    }
+    return `Hello ${name}`;
+}
+
+console.log(greet("Alice")); // "Hello Alice"
+console.log(greet("Alice", "Hi")); // "Hi Alice"
+
+// 2. Multiple optional parameters
+function createUser(
+    name: string,
+    age?: number,
+    email?: string
+): { name: string; age?: number; email?: string } {
+    return { name, age, email };
+}
+
+console.log(createUser("Alice")); // { name: "Alice" }
+console.log(createUser("Alice", 25)); // { name: "Alice", age: 25 }
+console.log(createUser("Alice", 25, "alice@email.com")); // { name: "Alice", age: 25, email: "alice@email.com" }
+
+// 3. Optional with default values
+function formatDate(
+    date: Date,
+    format?: string,
+    locale: string = "en-US"
+): string {
+    const options: Intl.DateTimeFormatOptions = {};
+    if (format === "short") {
+        options.dateStyle = "short";
+    } else if (format === "long") {
+        options.dateStyle = "long";
+    }
+    return new Intl.DateTimeFormat(locale, options).format(date);
+}
+
+console.log(formatDate(new Date())); // "1/15/2024"
+console.log(formatDate(new Date(), "long")); // "January 15, 2024"
+console.log(formatDate(new Date(), "short", "fr-FR")); // "15/01/2024"</code></pre>
+      </section>
+
+      <section id="optional-objects">
+        <h3>4.2 Optional Parameters in Objects</h3>
+        <pre><code class="language-typescript">// 1. Optional properties in type alias
+type User = {
+    name: string;
+    age?: number;        // Optional
+    email?: string;      // Optional
+    phone?: string;      // Optional
+};
+
+const user1: User = { name: "Alice" };
+const user2: User = { name: "Bob", age: 25 };
+const user3: User = { name: "Charlie", email: "charlie@email.com" };
+
+// 2. Optional properties in interface
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    description?: string;   // Optional
+    category?: string;      // Optional
+    inStock?: boolean;      // Optional
+}
+
+const product1: Product = { id: 1, name: "Laptop", price: 1000 };
+const product2: Product = { 
+    id: 2, 
+    name: "Mouse", 
+    price: 50,
+    description: "Wireless mouse",
+    inStock: true
+};</code></pre>
+      </section>
+
+      <section id="optional-best-practices">
+        <h3>4.3 Optional Parameters Best Practices</h3>
+        <pre><code class="language-typescript">// ✅ GOOD: Optional parameters at the end
+function createUser(
+    name: string,        // Required
+    age?: number,        // Optional
+    email?: string       // Optional
+): User {
+    return { name, age, email };
+}
+
+// ❌ BAD: Optional parameters in the middle
+function createUser(
+    name?: string,       // Optional first - confusing!
+    age: number,         // Required after optional - confusing!
+    email?: string
+): User {
+    // This makes it hard to call
+}
+// createUser(undefined, 25) // Must pass undefined for optional
+
+// ✅ GOOD: Use default values for better clarity
+function greet(
+    name: string,
+    greeting: string = "Hello"
+): string {
+    return `${greeting} ${name}`;
+}
+
+// ✅ GOOD: Use object parameter for many options
+interface UserOptions {
+    name: string;
+    age?: number;
+    email?: string;
+    phone?: string;
+    address?: string;
+}
+
+function createUser(options: UserOptions): User {
+    return {
+        name: options.name,
+        age: options.age,
+        email: options.email,
+        phone: options.phone,
+        address: options.address
+    };
+}
+
+// Much cleaner!
+createUser({ name: "Arman" });
+createUser({ name: "Munnu", age: 25, email: "munnu@email.com" });</code></pre>
+      </section>
+
+      <section id="rest-parameters">
+        <h2>Part 5: Rest Parameters</h2>
+
+        <h3>5.1 What are Rest Parameters?</h3>
+        <p>
+          <strong>Definition:</strong> Rest parameters allow a function to
+          accept an indefinite number of arguments as an array. They're denoted
+          with <code>...</code> before the parameter name.
+        </p>
+
+        <pre><code class="language-typescript">// 1. Basic rest parameters
+function sum(...numbers: number[]): number {
+    return numbers.reduce((total, n) => total + n, 0);
+}
+
+console.log(sum(1, 2, 3)); // 6
+console.log(sum(1, 2, 3, 4, 5)); // 15
+console.log(sum()); // 0
+
+// 2. Rest parameters with other parameters
+function greetAll(greeting: string, ...names: string[]): string {
+    return `${greeting} ${names.join(", ")}`;
+}
+
+console.log(greetAll("Hello", "Alice", "Bob", "Charlie"));
+// "Hello Alice, Bob, Charlie"
+
+// 3. Rest parameters with types
+function formatNumbers(prefix: string, ...numbers: number[]): string {
+    return numbers.map(n => `${prefix}${n}`).join(", ");
+}
+
+console.log(formatNumbers("$", 10, 20, 30)); // "$10, $20, $30"</code></pre>
+      </section>
+
+      <footer>
+        <p>TypeScript Function Typing Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem">
+          <a
+            href="https://www.linkedin.com/in/arman-khan-5a790430a/"
+            target="_blank"
+            style="
+              color: var(--accent);
+              text-decoration: none;
+              display: inline-flex;
+              align-items: center;
+              gap: 0.5rem;
+              transition: opacity 0.2s;
+            "
+            onmouseover="this.style.opacity = '0.8'"
+            onmouseout="this.style.opacity = '1'"
+          >
+            <i class="fab fa-linkedin" style="font-size: 1.2rem"></i>
+            Connect on LinkedIn
+          </a>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Declaration Merging</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Core Concept</div>
+        <a href="#what-is-merging" class="nav-link">1. What is Declaration Merging?</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Types of Merging</div>
+        <a href="#interface-merging" class="nav-link">2.1 Interface Merging</a>
+        <a href="#namespace-merging" class="nav-link">2.2 Namespace Merging</a>
+        <a href="#module-augmentation" class="nav-link">2.3 Module Augmentation</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Why It's Useful</div>
+        <a href="#third-party-libs" class="nav-link">3.1 Third-Party Libraries</a>
+        <a href="#builtin-objects" class="nav-link">3.2 Built-in Objects</a>
+        <a href="#window-object" class="nav-link">3.3 The Window Object</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Real-World</div>
+        <a href="#real-world-examples" class="nav-link">4. Express.js Example</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Advanced TypeScript</span>
+        <h1>DECLARATION MERGING</h1>
+        <p>MASTERING INTERFACES, NAMESPACES, AND MODULE AUGMENTATION</p>
+      </section>
+
+      <section id="what-is-merging">
+        <h2>Part 1: What is Declaration Merging?</h2>
+        
+        <h3>Definition</h3>
+        <p><strong>Declaration Merging:</strong> TypeScript's ability to automatically combine multiple declarations of the same name into a single definition. When you declare the same interface, namespace, or class multiple times, TypeScript merges them together.</p>
+
+        <h3>The Magic</h3>
+        <pre><code class="language-typescript">// First declaration
+interface User {
+    name: string;
+    age: number;
+}
+
+// Second declaration (same name)
+interface User {
+    email: string;
+    isActive: boolean;
+}
+
+// TypeScript MERGES them automatically!
+// Final User interface = {
+//     name: string;
+//     age: number;
+//     email: string;
+//     isActive: boolean;
+// }
+
+let user: User = {
+    name: "Alice",
+    age: 25,
+    email: "alice@email.com",
+    isActive: true
+};</code></pre>
+      </section>
+
+      <section id="interface-merging">
+        <h2>Part 2: Types of Declaration Merging</h2>
+        
+        <h3>2.1 Interface Merging (Most Common)</h3>
+        <pre><code class="language-typescript">// ✅ Interfaces merge automatically
+interface Person {
+    name: string;
+}
+
+interface Person {
+    age: number;
+}
+
+interface Person {
+    greet(): void;
+}
+
+// Final Person = { name: string; age: number; greet(): void }
+
+let person: Person = {
+    name: "Alice",
+    age: 25,
+    greet() {
+        console.log(`Hello, I'm ${this.name}`);
+    }
+};</code></pre>
+      </section>
+
+      <section id="namespace-merging">
+        <h3>2.2 Namespace Merging</h3>
+        <p>Namespace merging in TypeScript means two or more declarations with the same namespace name are combined into one. TypeScript uses this when you split a namespace across multiple places, and it joins all the exported members together.</p>
+
+        <h4>Syntax</h4>
+        <pre><code class="language-typescript">namespace MySpace {
+  export const a = 1;
+}
+
+namespace MySpace {
+  export const b = 2;
+}</code></pre>
+
+        <p>Here:</p>
+        <ul>
+            <li><code>namespace MySpace</code> declares the same namespace name twice.</li>
+            <li><code>export</code> makes members visible outside that block.</li>
+            <li>TypeScript merges both blocks into one <code>MySpace</code>.</li>
+        </ul>
+
+        <h4>How it works</h4>
+        <p>TypeScript collects declarations with the same name and combines them into one definition. For namespaces, only exported members become part of the merged result; non-exported members stay local to their own block.</p>
+
+        <h4>Example</h4>
+        <pre><code class="language-typescript">namespace User {
+  export function getName() {
+    return "Arman";
+  }
+}
+
+namespace User {
+  export function getAge() {
+    return 25;
+  }
+}
+
+User.getName();
+User.getAge();</code></pre>
+        <p>After merging, TypeScript treats <code>User</code> as one namespace containing both functions.</p>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-circle-info"></i> When to use it</span>
+            <p style="margin-bottom: 0;">It is mostly useful in older TypeScript code, library typing, and declaration files. In modern app development, ES modules are usually preferred over namespaces.</p>
+        </div>
+
+        <pre><code class="language-typescript">// ✅ Namespaces merge
+namespace Animals {
+    export class Dog {
+        bark() {
+            console.log("Woof!");
+        }
+    }
+}
+
+namespace Animals {
+    export class Cat {
+        meow() {
+            console.log("Meow!");
+        }
+    }
+}
+
+// Final Animals namespace has BOTH Dog and Cat
+const dog = new Animals.Dog();
+const cat = new Animals.Cat();
+dog.bark();  // Woof!
+cat.meow();  // Meow!</code></pre>
+      </section>
+
+      <section id="module-augmentation">
+        <h3>Module Augmentation (Global Declaration)</h3>
+        <p>Module augmentation in TypeScript means adding new types to an existing module without changing its original source code. It is commonly used when you want to extend a third-party library or add extra properties/methods to something that already exists.</p>
+
+        <h4>Syntax</h4>
+        <p>The main syntax is <code>declare global { ... }</code>. Inside that block, you write extra interfaces, types, or method signatures for the existing module.</p>
+
+        <pre><code class="language-typescript">declare global {
+    interface Window {
+        myName: string
+    }
+    interface Array<T> {
+        length: number;
+        push(...items: T[]): number;
+    }
+
+    interface Array<T> {
+        last(): T | undefined;  // Add custom method
+        first(): T | undefined; // Add custom method
+    }
+
+}
+
+// window.myName = "Arman"
+
+// Now all arrays have these methods!
+const numbers = [1, 2, 3, 4, 5];
+console.log(numbers.last());  // 5
+console.log(numbers.first()); // 1</code></pre>
+      </section>
+
+      <section id="third-party-libs">
+        <h2>Part 3: Why Declaration Merging is Useful</h2>
+        
+        <h3>3.1 Extending Third-Party Libraries</h3>
+        <pre><code class="language-typescript">// Problem: You're using Express, but it doesn't have a custom property
+// You want to add `user` property to Express Request
+
+// SOLUTION: Declaration merging!
+
+// express.d.ts (your file)
+declare global {
+    namespace Express {
+        interface Request {
+            user: {
+                id: string;
+                name: string;
+                email: string;
+            };
+        }
+    }
+}
+
+// Now in your code, Request has the user property!
+app.get('/profile', (req: Request, res: Response) => {
+    const userId = req.user.id;  // ✅ TypeScript knows this exists!
+    const userName = req.user.name;  // ✅ TypeScript knows this exists!
+});</code></pre>
+      </section>
+
+      <section id="builtin-objects">
+        <h3>3.2 Adding Methods to Built-in Objects</h3>
+        <pre><code class="language-typescript">// Adding a custom method to String
+interface String {
+    toTitleCase(): string;
+}
+
+// Implementation
+String.prototype.toTitleCase = function(): string {
+    return this.split(' ')
+        .map(word => word[0].toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+};
+
+// Usage
+const name = "john doe";
+console.log(name.toTitleCase()); // "John Doe"
+// ✅ TypeScript knows about toTitleCase!</code></pre>
+      </section>
+
+      <section id="window-object">
+        <h3>3.3 Extending the Window Object</h3>
+        <pre><code class="language-typescript">// In your global.d.ts file
+interface Window {
+    __APP_CONFIG__: {
+        apiUrl: string;
+        version: string;
+        environment: 'development' | 'production';
+    };
+}
+
+// Now you can use it safely!
+window.__APP_CONFIG__ = {
+    apiUrl: 'https://api.example.com',
+    version: '1.0.0',
+    environment: 'development'
+};
+
+const apiUrl = window.__APP_CONFIG__.apiUrl;  // ✅ TypeScript knows</code></pre>
+      </section>
+
+      <section id="real-world-examples">
+        <h2>Part 4: Real-World Examples</h2>
+        
+        <h3>Example 1: Express.js with Custom Properties</h3>
+        <pre><code class="language-typescript">// types/express.d.ts
+import { User } from '../models/User';
+
+declare global {
+    namespace Express {
+        interface Request {
+            user: User;
+            session: {
+                id: string;
+                data: Record<string, any>;
+            };
+        }
+    }
+}
+
+// In your route handler
+app.get('/dashboard', (req: Request, res: Response) => {
+    // TypeScript knows these exist now!
+    const user = req.user;  // Type: User
+    const sessionId = req.session.id;  // Type: string
+});</code></pre>
+      </section>
+
+      <footer>
+        <p>TypeScript Declaration Merging Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+              Connect on LinkedIn
+            </a>
+          </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>
