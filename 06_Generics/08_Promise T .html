@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Understanding Promise&lt;T&gt; in TypeScript</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#mental-model" class="nav-link"
+          >🧠 Mental Model &amp; Core Idea</a
+        >
+        <a href="#states-and-creation" class="nav-link"
+          >🔍 States &amp; Creation</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Consumption &amp; Chaining</div>
+        <a href="#using-promise" class="nav-link"
+          >📦 Using .then, .catch, .finally</a
+        >
+        <a href="#chaining" class="nav-link"
+          >🔗 Chaining &amp; Type Inference</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Production Usage</div>
+        <a href="#real-world" class="nav-link">🎯 Real-World Examples</a>
+        <a href="#common-patterns" class="nav-link">🔥 Advanced Patterns</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Wrap-up</div>
+        <a href="#summary" class="nav-link">📝 Reference &amp; Takeaways</a>
+      </div>
+
+      <!-- Author Links -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Asynchronous Generics</span>
+        <h1>WHAT IS PROMISE&lt;T&gt;?</h1>
+        <p>A COMPLETE GUIDE TO ASYNCHRONOUS TYPE SAFETY IN TYPESCRIPT</p>
+      </section>
+
+      <!-- Part 1: Mental Model & Core Idea -->
+      <section id="mental-model">
+        <h2>Part 1: The Mental Model &amp; Core Idea</h2>
+
+        <h3>Definition</h3>
+        <p>
+          <code>Promise&lt;T&gt;</code> is a built-in generic type representing
+          an eventual value of type <code>T</code>. It is used to type
+          asynchronous actions that finish at some point in the future.
+        </p>
+
+        <h3>The Core Idea</h3>
+        <pre><code class="language-typescript">// A Promise that will eventually resolve to a string
+const promise: Promise&lt;string&gt; = new Promise((resolve) => {
+    setTimeout(() => resolve("Hello"), 1000);
+});
+
+// A Promise that will eventually yield a User entity
+const userPromise: Promise&lt;User&gt; = fetchUser();</code></pre>
+
+        <h3>Visual: The Ticket Mental Model</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    PROMISE&lt;T&gt; MENTAL MODEL                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Promise&lt;T&gt; is like a "ticket" or "receipt" for a value        │
+│  that you will receive later.                                   │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  You have:    Promise&lt;T&gt;  (the ticket)                  │   │
+│  │  You will get: T          (the actual value later)      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Examples:                                                       │
+│  Promise&lt;string&gt; → "You will get a string later"              │
+│  Promise&lt;number&gt; → "You will get a number later"              │
+│  Promise&lt;User&gt;   → "You will get a User object later"        │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 2: States & Creation -->
+      <section id="states-and-creation">
+        <h2>Part 2: How Promise&lt;T&gt; Works</h2>
+
+        <h3>The Three Lifecycle States</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>State</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Pending</code></td>
+              <td>Initial state; asynchronous action is currently ongoing</td>
+            </tr>
+            <tr>
+              <td><code>Fulfilled</code></td>
+              <td>
+                Operation finished successfully &rarr; yields value of type
+                <code>T</code>
+              </td>
+            </tr>
+            <tr>
+              <td><code>Rejected</code></td>
+              <td>Operation failed &rarr; yields an error/reason</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Creating a Promise</h3>
+        <pre><code class="language-typescript">// ✅ Create a Promise that resolves to a string
+const promise1: Promise&lt;string&gt; = new Promise((resolve, reject) => {
+    const success = true;
+    if (success) {
+        resolve("Success!"); // Fulfilled with string
+    } else {
+        reject(new Error("Failed!")); // Rejected with Error
+    }
+});
+
+// ✅ Create a Promise that resolves to a number
+const promise2: Promise&lt;number&gt; = new Promise((resolve) => {
+    setTimeout(() => resolve(42), 1000);
+});
+
+// ✅ Create a Promise that resolves to an interface
+interface User {
+    id: number;
+    name: string;
+}
+
+const promise3: Promise&lt;User&gt; = new Promise((resolve) => {
+    resolve({ id: 1, name: "Alice" });
+});</code></pre>
+      </section>
+
+      <!-- Part 3: Using Promises -->
+      <section id="using-promise">
+        <h2>Part 3: Consuming Promises</h2>
+
+        <h3>1. <code>.then()</code> — Getting the Resolved Value</h3>
+        <pre><code class="language-typescript">const promise: Promise&lt;string&gt; = new Promise((resolve) => {
+    setTimeout(() => resolve("Hello World"), 1000);
+});
+
+// `.then()` callback param is strictly typed as string
+promise.then((value) => {
+    console.log(value); // "Hello World" (after 1 second)
+    // value has type 'string'
+});</code></pre>
+
+        <h3>2. <code>.catch()</code> — Handling Failures</h3>
+        <pre><code class="language-typescript">const promise: Promise&lt;string&gt; = new Promise((resolve, reject) => {
+    reject(new Error("Something went wrong"));
+});
+
+// `.catch()` captures the rejection reason
+promise
+    .then((value) => {
+        console.log(value);
+    })
+    .catch((error) => {
+        console.error(error.message); // "Something went wrong"
+    });</code></pre>
+
+        <h3>3. <code>.finally()</code> — Guaranteed Execution</h3>
+        <pre><code class="language-typescript">const promise: Promise&lt;string&gt; = new Promise((resolve) => {
+    setTimeout(() => resolve("Done"), 1000);
+});
+
+promise
+    .then((value) => console.log(value))
+    .catch((error) => console.error(error))
+    .finally(() => {
+        console.log("Always runs, regardless of success or failure");
+    });</code></pre>
+      </section>
+
+      <!-- Part 4: Chaining & Inference -->
+      <section id="chaining">
+        <h2>Part 4: Chaining Promises &amp; Type Propagation</h2>
+
+        <h3>
+          The Mechanics: <code>.then()</code> Wraps Results in a New Promise
+        </h3>
+        <pre><code class="language-typescript">// Each `.then()` transforms the resolved value and returns a new Promise
+const promise: Promise&lt;number&gt; = Promise.resolve(5);
+
+promise
+    .then((num) => num * 2)        // Returns Promise&lt;number&gt;
+    .then((num) => num.toString())   // Returns Promise&lt;string&gt;
+    .then((str) => `Result: ${str}`) // Returns Promise&lt;string&gt;
+    .then((result) => {
+        console.log(result); // "Result: 10"
+    });</code></pre>
+
+        <h3>Type Inference Flow Through Chains</h3>
+        <pre><code class="language-typescript">const promise: Promise&lt;number&gt; = Promise.resolve(5);
+
+// TypeScript automatically infers the return type across stages:
+const chain = promise
+    .then((num: number) => num * 2)        // → Promise&lt;number&gt;
+    .then((num: number) => num.toString()) // → Promise&lt;string&gt;
+    .then((str: string) => str.length);    // → Promise&lt;number&gt;
+
+// Final inferred type: Promise&lt;number&gt;</code></pre>
+      </section>
+
+      <!-- Part 5: Real-World Examples -->
+      <section id="real-world">
+        <h2>Part 5: Real-World Scenarios</h2>
+
+        <h3>Example 1: Typed Fetch Request</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+function fetchUser(id: number): Promise&lt;User&gt; {
+    return fetch(`/api/users/${id}`)
+        .then(response => response.json())
+        .then(data => data as User);
+}
+
+// Usage
+fetchUser(1)
+    .then((user) => {
+        console.log(user.name);  // ✅ Type-safe!
+        console.log(user.email); // ✅ Type-safe!
+    })
+    .catch((error) => {
+        console.error("Failed to fetch user:", error);
+    });</code></pre>
+
+        <h3>Example 2: Dependent Sequential Requests</h3>
+        <pre><code class="language-typescript">interface Post {
+    id: number;
+    title: string;
+    body: string;
+}
+
+function fetchPosts(): Promise&lt;Post[]&gt; {
+    return fetch("/api/posts")
+        .then(response => response.json())
+        .then(data => data as Post[]);
+}
+
+function fetchUserPosts(userId: number): Promise&lt;Post[]&gt; {
+    return fetchUser(userId)
+        .then((user) => fetch(`/api/users/${user.id}/posts`))
+        .then((response) => response.json())
+        .then((data) => data as Post[]);
+}
+
+// Usage
+fetchUserPosts(1).then((posts) => {
+    console.log(posts[0].title); // ✅ Fully typed!
+});</code></pre>
+
+        <h3>Example 3: Concurrent Requests with <code>Promise.all()</code></h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+}
+
+interface Post {
+    id: number;
+    title: string;
+}
+
+const userPromise: Promise&lt;User&gt; = fetchUser(1);
+const postsPromise: Promise&lt;Post[]&gt; = fetchPosts();
+
+// Promise.all preserves tuple element typing: Promise&lt;[User, Post[]]&gt;
+const combined: Promise&lt;[User, Post[]]&gt; = Promise.all([
+    userPromise,
+    postsPromise
+]);
+
+combined.then(([user, posts]) => {
+    console.log(user.name);      // ✅ Type-safe User
+    console.log(posts[0].title); // ✅ Type-safe Post
+});</code></pre>
+
+        <h3>Example 4: <code>async / await</code> Syntax</h3>
+        <pre><code class="language-typescript">// Async functions implicitly wrap return values in Promise&lt;T&gt;
+async function getUserData(id: number): Promise&lt;User&gt; {
+    const user = await fetchUser(id);
+    // user is unwrapped to 'User'
+    return user;
+}
+
+// Usage
+const user = await getUserData(1);
+console.log(user.name); // ✅ Type-safe!</code></pre>
+      </section>
+
+      <!-- Part 6: Common Patterns -->
+      <section id="common-patterns">
+        <h2>Part 6: Advanced &amp; Common Patterns</h2>
+
+        <h3>1. Custom Error Types in Rejections</h3>
+        <pre><code class="language-typescript">interface ApiError {
+    code: number;
+    message: string;
+}
+
+function fetchData(): Promise&lt;string&gt; {
+    return new Promise((resolve, reject) => {
+        reject({ code: 404, message: "Not found" } as ApiError);
+    });
+}
+
+fetchData()
+    .then((data) => console.log(data))
+    .catch((error: ApiError) => {
+        console.log(`Error ${error.code}: ${error.message}`);
+    });</code></pre>
+
+        <h3>2. Generic API Client</h3>
+        <pre><code class="language-typescript">class ApiClient {
+    get&lt;T&gt;(url: string): Promise&lt;T&gt; {
+        return fetch(url)
+            .then(response => response.json())
+            .then(data => data as T);
+    }
+
+    post&lt;T, U&gt;(url: string, body: U): Promise&lt;T&gt; {
+        return fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        })
+        .then(response => response.json())
+        .then(data => data as T);
+    }
+}
+
+// Usage
+const api = new ApiClient();
+
+interface User {
+    id: number;
+    name: string;
+}
+
+interface CreateUserPayload {
+    name: string;
+    email: string;
+}
+
+// GET request
+const user = await api.get&lt;User&gt;("/users/1"); // Inferred: User
+
+// POST request
+const newUser = await api.post&lt;User, CreateUserPayload&gt;("/users", {
+    name: "Alice",
+    email: "alice@email.com"
+}); // Inferred: User</code></pre>
+
+        <h3>3. Extracting Types via <code>Awaited&lt;T&gt;</code></h3>
+        <pre><code class="language-typescript">// Manual unwrapping using conditional types
+type Resolved&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : never;
+
+type UserPromise = Promise&lt;{ name: string; age: number }&gt;;
+type UserType = Resolved&lt;UserPromise&gt;;
+// Result: { name: string; age: number }
+
+// ✅ Native built-in utility type (TypeScript 4.5+)
+type UserType2 = Awaited&lt;UserPromise&gt;;
+// Result: { name: string; age: number }</code></pre>
+      </section>
+
+      <!-- Summary -->
+      <section id="summary">
+        <h2>📝 Summary &amp; Key Takeaways</h2>
+
+        <h3>Quick Reference Table</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Syntax</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Type Declaration</td>
+              <td><code>Promise&lt;T&gt;</code></td>
+              <td><code>Promise&lt;string&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Instantiation</td>
+              <td><code>new Promise&lt;T&gt;((res, rej) =&gt; {})</code></td>
+              <td>
+                <code>new Promise&lt;string&gt;((res) =&gt; res("ok"))</code>
+              </td>
+            </tr>
+            <tr>
+              <td>Fulfillment</td>
+              <td><code>resolve(value)</code></td>
+              <td><code>resolve(42)</code></td>
+            </tr>
+            <tr>
+              <td>Rejection</td>
+              <td><code>reject(error)</code></td>
+              <td><code>reject(new Error("Failed"))</code></td>
+            </tr>
+            <tr>
+              <td>Resolve Consumption</td>
+              <td><code>.then((value: T) =&gt; ...)</code></td>
+              <td><code>.then((str) =&gt; console.log(str))</code></td>
+            </tr>
+            <tr>
+              <td>Error Handling</td>
+              <td><code>.catch((error) =&gt; ...)</code></td>
+              <td><code>.catch((err) =&gt; console.error(err))</code></td>
+            </tr>
+            <tr>
+              <td>Cleanup Hook</td>
+              <td><code>.finally(() =&gt; ...)</code></td>
+              <td><code>.finally(() =&gt; cleanup())</code></td>
+            </tr>
+            <tr>
+              <td>Concurrent Execution</td>
+              <td><code>Promise.all([p1, p2])</code></td>
+              <td><code>Promise.all([userPromise, postsPromise])</code></td>
+            </tr>
+            <tr>
+              <td>Async / Await</td>
+              <td><code>const val: T = await p</code></td>
+              <td><code>const user: User = await fetchUser(1)</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>🎯 Key Takeaways</h3>
+        <ul>
+          <li>
+            <strong>Future Value:</strong>
+            <code>Promise&lt;T&gt;</code> explicitly conveys that an operation
+            is asynchronous and guarantees that when fulfilled, the result
+            matches type <code>T</code>.
+          </li>
+          <li>
+            <strong>3 States:</strong> Operates across <code>Pending</code>,
+            <code>Fulfilled</code> (yields <code>T</code>), and
+            <code>Rejected</code> (yields an error reason).
+          </li>
+          <li>
+            <strong>Type Continuity in Chains:</strong> Every invocation of
+            <code>.then()</code> wraps the return value into a fresh Promise,
+            letting TypeScript automatically trace type conversions down the
+            chain.
+          </li>
+          <li>
+            <strong>Async / Await Parity:</strong>
+            <code>await promise</code> safely unpacks
+            <code>Promise&lt;T&gt;</code> into a plain <code>T</code> type,
+            matching standard synchronous type behaviors.
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

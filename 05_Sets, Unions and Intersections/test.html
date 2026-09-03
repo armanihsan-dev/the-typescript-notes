@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mathematical Sets & TypeScript Type Operations</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-solid fa-shapes"></i> SETS & TYPES</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Set Fundamentals</div>
+        <a href="#what-is-a-set" class="nav-link">1. What is a Set?</a>
+        <a href="#representation" class="nav-link">2. Representation of Sets</a>
+        <a href="#elements" class="nav-link">3. Elements of a Set</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Types of Sets</div>
+        <a href="#types-of-sets" class="nav-link">4. Empty to Disjoint Sets</a>
+        <a href="#standard-sets" class="nav-link">5. Important Standard Sets</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Relationships</div>
+        <a href="#subsets" class="nav-link">6. Subset & Superset</a>
+        <a href="#universal-set" class="nav-link">7. Universal Set</a>
+        <a href="#properties" class="nav-link">8. Set Properties</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Visualizations & Ops</div>
+        <a href="#venn-diagrams" class="nav-link">9. Venn Diagrams</a>
+        <a href="#complement" class="nav-link">10. Complement (A')</a>
+        <a href="#set-difference" class="nav-link">11. Set Difference (A \ B)</a>
+        <a href="#ts-exclude" class="nav-link">12. TS: The Exclude Utility</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Discrete Math & Types</span>
+        <h1>SETS AND TYPESCRIPT</h1>
+        <p>FROM MATHEMATICAL FOUNDATIONS TO CONDITIONAL TYPES</p>
+      </section>
+
+      <section id="what-is-a-set">
+        <h2>Part 1: What is a Set?</h2>
+        
+        <h3>Definition</h3>
+        <p>A set is a well-defined collection of distinct objects, considered as an object in its own right. The objects in a set are called elements or members of the set.</p>
+
+        <h3>Key Characteristics</h3>
+        <ul>
+            <li><strong>Well-defined</strong> – There's no ambiguity about what belongs to the set</li>
+            <li><strong>Distinct</strong> – No duplicate elements (each element appears once)</li>
+            <li><strong>Unordered</strong> – The order of elements doesn't matter</li>
+        </ul>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-text">Set Name : {element 1 , element 2}</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-text">{1, 2, 3} → set of numbers
+{a, b, c} → set of characters
+{red, green, blue} → set of colors
+
+❌ Not a set (not well-defined)
+{beautiful flowers}
+👉 “beautiful” is subjective, so we can’t clearly decide</code></pre>
+
+        <pre><code class="language-typescript">// In TypeScript (as sets of values)
+type Colors = "red" | "green" | "blue";  // Set of three colors
+type Numbers = 1 | 2 | 3 | 4 | 5;        // Set of five numbers
+type Booleans = true | false;            // Set of two booleans</code></pre>
+      </section>
+
+      <section id="representation">
+        <h2>Part 2: Representation of Sets</h2>
+        
+        <h3>2.1 Roster or Tabular Form</h3>
+        <p>List all elements inside curly braces <code>{}</code>.</p>
+        
+        <p>Example:</p>
+        <pre><code class="language-text">A = {1, 2, 3, 4, 5}
+B = {red, green, blue}
+C = {apple, banana, orange}</code></pre>
+
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type SetA = 1 | 2 | 3 | 4 | 5;
+type SetB = "red" | "green" | "blue";
+type SetC = "apple" | "banana" | "orange";</code></pre>
+
+        <h3>2.2 Set Builder Form</h3>
+        <p>Describe the elements using a rule or condition.</p>
+        
+        <p><strong>Syntax:</strong> <code>{ x | condition(x) }</code><br>
+        <strong>Read as:</strong> "The set of all x such that condition(x) is true"</p>
+
+        <p>Examples:</p>
+        <pre><code class="language-text">A = { x | x is a natural number less than 10 }
+B = { x | x is a primary color }
+C = { x | x is a vowel in English alphabet }
+
+Example:
+A = {1,2,3,4,5,6,7,8,9}
+V = {a,e,i,o,u}</code></pre>
+      </section>
+
+      <section id="elements">
+        <h2>Part 3: Elements of a Set</h2>
+        
+        <h3>Definition</h3>
+        <p>An element (or member) is an object that belongs to a set.</p>
+
+        <h3>Notation</h3>
+        <ul>
+            <li><code>a ∈ A</code> means "a is an element of set A"</li>
+            <li><code>a ∉ A</code> means "a is NOT an element of set A"</li>
+        </ul>
+
+        <h3>Examples</h3>
+        <pre><code class="language-text">A = {1, 2, 3, 4, 5}
+
+1 ∈ A   (1 is an element of A)
+6 ∉ A   (6 is NOT an element of A)</code></pre>
+
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type SetA = 1 | 2 | 3 | 4 | 5;
+
+// TypeScript doesn't have direct "∈" operator,
+// but we can check using extends
+
+type IsElement<T, Set> = T extends Set ? true : false;
+
+type Test1 = IsElement<1, SetA>;  // true
+type Test2 = IsElement<6, SetA>;  // false</code></pre>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-code-branch"></i> The "extends" keyword</span>
+            <p>The keyword <code>extends</code> is being used to build Conditional Types using the syntax:</p>
+            <pre style="margin-bottom: 0;"><code class="language-typescript">T extends U ? X : Y</code></pre>
+            <p style="margin-top: 10px; margin-bottom: 0;">Think of it as: "Is T assignable to U? If yes, evaluate to X (True); if no, evaluate to Y (False)."</p>
+        </div>
+      </section>
+
+      <section id="types-of-sets">
+        <h2>Part 4: Types of Sets</h2>
+        
+        <h3>4.1 Empty Set (∅ or {})</h3>
+        <p><strong>Definition:</strong> A set with no elements.</p>
+        <pre><code class="language-text">∅ = {}
+∅ = { x | x ≠ x }  // No element can be different from itself</code></pre>
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type EmptySet = never;  // never = empty set
+// No value can be assigned to never</code></pre>
+
+        <h3>4.2 Singleton Set</h3>
+        <p><strong>Definition:</strong> A set with exactly one element.</p>
+        <pre><code class="language-text">A = {5}
+B = {apple}
+C = {true}</code></pre>
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type SingletonA = 5;
+type SingletonB = "apple";
+type SingletonC = true;</code></pre>
+
+        <h3>4.3 Finite Set</h3>
+        <p><strong>Definition:</strong> A set with a countable number of elements.</p>
+        <pre><code class="language-text">A = {1, 2, 3}  // 3 elements
+B = {a, b, c, d}  // 4 elements
+C = {red, green, blue}  // 3 elements</code></pre>
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type FiniteA = 1 | 2 | 3;
+type FiniteB = "a" | "b" | "c" | "d";
+type FiniteC = "red" | "green" | "blue";</code></pre>
+
+        <h3>4.4 Infinite Set</h3>
+        <p><strong>Definition:</strong> A set with an uncountable number of elements.</p>
+        <pre><code class="language-text">A = {1, 2, 3, 4, ...}  // Natural numbers (infinite)
+B = {..., -2, -1, 0, 1, 2, ...}  // Integers (infinite)</code></pre>
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">// TypeScript types for infinite sets
+type NaturalNumbers = number;  // All numbers (infinite)
+type Strings = string;         // All strings (infinite)</code></pre>
+
+        <h3>4.5 Equal Sets</h3>
+        <p><strong>Definition:</strong> Two sets are equal if they have exactly the same elements.</p>
+        <pre><code class="language-text">A = {1, 2, 3}
+B = {3, 2, 1}  // A = B (order doesn't matter)
+C = {1, 2, 3, 3}  // A = C (duplicates ignored)
+D = {1, 2}  // A ≠ D (different elements)</code></pre>
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type AreEqual<A, B> = A extends B ? (B extends A ? true : false) : false;
+
+type A = 1 | 2 | 3;
+type B = 3 | 2 | 1;
+type C = 1 | 2 | 3 | 3;  // Duplicates are ignored
+
+type Test1 = AreEqual<A, B>;  // true
+type Test2 = AreEqual<A, C>;  // true</code></pre>
+
+        <h3>4.6 Disjoint Sets</h3>
+        <p><strong>Definition:</strong> Two sets with NO common elements.</p>
+        <pre><code class="language-text">A = {1, 2, 3}
+B = {4, 5, 6}
+C = {3, 4, 5}
+
+A and B are DISJOINT (no common elements)
+A and C are NOT disjoint (share element 3)</code></pre>
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type AreDisjoint<A, B> = A extends B ? false : true;
+
+type A = 1 | 2 | 3;
+type B = 4 | 5 | 6;
+type C = 3 | 4 | 5;
+
+type Test1 = AreDisjoint<A, B>;  // true
+type Test2 = AreDisjoint<A, C>;  // false (share 3)</code></pre>
+      </section>
+
+      <section id="standard-sets">
+        <h2>5. Important Standard Sets</h2>
+        <p>These are very commonly used mathematical sets.</p>
+
+        <ul>
+            <li><strong>🔸 Natural Numbers</strong><br>
+            <code>N = {1, 2, 3, 4, ...}</code><br>
+            👉 Counting numbers</li>
+            
+            <li><strong>🔸 Whole Numbers</strong><br>
+            <code>W = {0, 1, 2, 3, 4, ...}</code><br>
+            👉 Includes 0</li>
+            
+            <li><strong>🔸 Integers</strong><br>
+            <code>Z = {..., -3, -2, -1, 0, 1, 2, 3, ...}</code><br>
+            👉 Positive + negative + zero</li>
+            
+            <li><strong>🔸 Rational Numbers</strong><br>
+            <code>Q = { x : x = p/q, where p and q are integers and q ≠ 0 }</code><br>
+            👉 Fractions like: <code>1/2, 3/4, -5/2</code></li>
+            
+            <li><strong>🔸 Real Numbers</strong><br>
+            <code>R = all rational + irrational numbers</code><br>
+            👉 Includes: <code>√2, π, etc.</code></li>
+        </ul>
+      </section>
+
+      <section id="subsets">
+        <h2>Part 6: Subset and Superset</h2>
+        
+        <h3>6.1 Subset (⊆)</h3>
+        <p><strong>Definition:</strong> Set A is a subset of set B if every element of A is also in B.</p>
+        <pre><code class="language-text">A ⊆ B  (A is subset of B)
+If A ⊆ B, then A is contained in B
+
+Example:
+A = {1, 2}
+B = {1, 2, 3, 4}
+A ⊆ B (true)</code></pre>
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type IsSubset<A, B> = A extends B ? true : false;
+
+type A = 1 | 2;
+type B = 1 | 2 | 3 | 4;
+type C = 5 | 6;
+
+type Test1 = IsSubset<A, B>;  // true
+type Test2 = IsSubset<C, B>;  // false</code></pre>
+
+        <h3>6.2 Proper Subset (⊂)</h3>
+        <p><strong>Definition:</strong> A ⊆ B and A ≠ B.</p>
+        <pre><code class="language-text">A = {1, 2}
+B = {1, 2, 3}
+A ⊂ B (proper subset)
+
+A = {1, 2}
+B = {1, 2}
+A ⊂ B (false - they're equal)</code></pre>
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type IsProperSubset<A, B> = A extends B ? (B extends A ? false : true) : false;
+
+type A = 1 | 2;
+type B = 1 | 2 | 3;
+type C = 1 | 2;
+
+type Test1 = IsProperSubset<A, B>;  // true
+type Test2 = IsProperSubset<A, C>;  // false (equal sets)</code></pre>
+
+        <h3>6.3 Superset (⊇)</h3>
+        <p><strong>Definition:</strong> B is a superset of A if A ⊆ B.</p>
+        <pre><code class="language-text">B ⊇ A  (B is superset of A)
+If B contains all elements of A
+
+Example:
+A = {1, 2}
+B = {1, 2, 3, 4}
+B ⊇ A (true - B contains all of A)</code></pre>
+      </section>
+
+      <section id="universal-set">
+        <h2>Part 7: Universal Set (U)</h2>
+        
+        <h3>Definition</h3>
+        <p>The Universal Set is the set containing ALL possible elements under consideration.</p>
+        
+        <p><strong>Properties:</strong></p>
+        <ul>
+            <li>Every set in the context is a subset of the universal set</li>
+            <li>The complement of any set is relative to the universal set</li>
+        </ul>
+
+        <h3>Examples</h3>
+        <pre><code class="language-text">For numbers: U = ℝ (Real numbers)
+For colors: U = {red, green, blue, yellow, orange, purple, ...}
+For letters: U = {a, b, c, ..., z}</code></pre>
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type UniversalSet = unknown;  // Universal set in TypeScript
+// Everything is a subset of unknown</code></pre>
+      </section>
+
+      <section id="properties">
+        <h2>8. Important Properties of Sets</h2>
+        
+        <p><strong>✅ 1. Order Does NOT Matter</strong><br>
+        👉 Changing the order does not change the set.</p>
+        <pre><code class="language-text">A = {1, 2, 3}
+B = {3, 2, 1}
+👉 These are exactly the same set
+
+A = B</code></pre>
+
+        <p><strong>✅ 2. Repetition Does NOT Matter</strong><br>
+        👉 Duplicate elements are ignored.</p>
+        <pre><code class="language-text">A = {1, 2, 2, 3, 3, 3}
+👉 This is the same as:
+
+A = {1, 2, 3}</code></pre>
+      </section>
+
+      <section id="venn-diagrams">
+        <h2>Part 9: Venn Diagrams</h2>
+        
+        <h3>9.1 What is a Venn Diagram?</h3>
+        <p>A Venn Diagram is a visual representation of sets using overlapping circles (or ovals) inside a rectangle (the universal set).</p>
+
+        <h3>9.2 Basic Venn Diagrams</h3>
+        
+        <h4>1. Union (A ∪ B)</h4>
+        <pre><code class="language-text">┌─────────────────────────────┐
+│          U                   │
+│    ┌─────────────┐          │
+│    │     A        │          │
+│    │   ┌─────────┼──────┐  │
+│    │   │   A∪B   │      │  │
+│    │   │         │  B   │  │
+│    └───┼─────────┘      │  │
+│        └──────────────────┘  │
+└─────────────────────────────┘</code></pre>
+
+        <h4>2. Intersection (A ∩ B)</h4>
+        <pre><code class="language-text">┌─────────────────────────────┐
+│          U                   │
+│    ┌─────────────┐          │
+│    │     A        │          │
+│    │   ┌─────┐   │          │
+│    │   │A∩B │   │          │
+│    │   └─────┘   │          │
+│    └─────────────┘          │
+│         B                    │
+└─────────────────────────────┘</code></pre>
+
+        <h4>3. Subset (A ⊆ B)</h4>
+        <pre><code class="language-text">┌─────────────────────────────┐
+│          U                   │
+│    ┌──────────────────┐     │
+│    │        B         │     │
+│    │   ┌────────┐     │     │
+│    │   │   A    │     │     │
+│    │   └────────┘     │     │
+│    └──────────────────┘     │
+└─────────────────────────────┘</code></pre>
+
+        <h4>4. Disjoint Sets</h4>
+        <pre><code class="language-text">┌─────────────────────────────┐
+│          U                   │
+│    ┌─────────┐ ┌─────────┐ │
+│    │    A    │ │    B    │ │
+│    │         │ │         │ │
+│    └─────────┘ └─────────┘ │
+└─────────────────────────────┘</code></pre>
+
+        <h4>5. Complement (A')</h4>
+        <pre><code class="language-text">┌─────────────────────────────┐
+│          U                   │
+│    ┌─────────────┐          │
+│    │     A        │          │
+│    │             │          │
+│    │             │          │
+│    └─────────────┘          │
+│   /////  A' (shaded) /////  │
+└─────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="complement">
+        <h2>What is Complement?</h2>
+        
+        <h3>Definition</h3>
+        <p>The complement of set A (written as A' or A^c or ¬A) is the set of ALL elements in the Universal Set (U) that are NOT in A.</p>
+
+        <h3>Simple Formula</h3>
+        <pre><code class="language-text">A' = { x | x ∈ U AND x ∉ A }
+
+Read as: "The set of all x such that x is in the Universal Set AND x is NOT in A"</code></pre>
+
+        <h3>Visual Explanation of the Venn Diagram</h3>
+        <p>The Diagram:</p>
+        <pre><code class="language-text">┌─────────────────────────────┐
+│          U                   │
+│    ┌─────────────┐          │
+│    │     A        │          │
+│    │             │          │
+│    │             │          │
+│    └─────────────┘          │
+│   /////  A' (shaded) /////  │
+└─────────────────────────────┘</code></pre>
+
+        <p>Breaking It Down:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    VENN DIAGRAM ANATOMY                             │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                     U (Universal Set)                        │   │
+│  │  ┌─────────────────────────────────────────────────────┐    │   │
+│  │  │           A (Set A)                                 │    │   │
+│  │  │  Everything INSIDE this circle belongs to A        │    │   │
+│  │  │                                                   │    │   │
+│  │  └─────────────────────────────────────────────────────┘    │   │
+│  │                                                              │   │
+│  │  Everything OUTSIDE the circle but INSIDE the box          │   │
+│  │  is the COMPLEMENT (A')                                    │   │
+│  │  (Shaded with /////)                                       │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <p>The Key Insight:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    THREE REGIONS                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  1. INSIDE the circle (A):                                         │
+│     → Elements belong to A                                        │
+│     → Example: If A = {1, 2, 3}, then 1, 2, 3 are here           │
+│                                                                     │
+│  2. OUTSIDE the circle but INSIDE the box (A'):                    │
+│     → Elements belong to complement                               │
+│     → Example: If U = {1, 2, 3, 4, 5}, then 4, 5 are here        │
+│                                                                     │
+│  3. OUTSIDE the box:                                               │
+│     → NOTHING! Universal set contains EVERYTHING                 │
+│     → No elements exist outside U                                 │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Simple Examples</h3>
+        <p><strong>Example 1: Numbers</strong></p>
+        <pre><code class="language-text">U = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+A = {1, 2, 3, 4, 5}
+
+A' = {6, 7, 8, 9, 10}
+
+Explanation:
+- A contains 1, 2, 3, 4, 5
+- U contains everything from 1 to 10
+- A' contains everything in U that's NOT in A
+- So A' = {6, 7, 8, 9, 10}</code></pre>
+        
+        <p>Visual:</p>
+        <pre><code class="language-text">U = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+┌─────────────────────────────────────┐
+│  U                                  │
+│  ┌─────────────┐                    │
+│  │     A        │                    │
+│  │  {1,2,3,4,5}│                    │
+│  └─────────────┘                    │
+│  A' = {6,7,8,9,10}                  │
+└─────────────────────────────────────┘</code></pre>
+
+        <p><strong>Example 2: Colors</strong></p>
+        <pre><code class="language-text">U = {red, orange, yellow, green, blue, purple}
+A = {red, green, blue}
+
+A' = {orange, yellow, purple}
+
+Explanation:
+- A has: red, green, blue
+- U has: red, orange, yellow, green, blue, purple
+- A' has everything in U that's NOT in A
+- So A' = {orange, yellow, purple}</code></pre>
+        
+        <p>Visual:</p>
+        <pre><code class="language-text">U = {red, orange, yellow, green, blue, purple}
+
+┌─────────────────────────────────────┐
+│  U                                  │
+│  ┌─────────────┐                    │
+│  │     A        │                    │
+│  │ {red,green, │                    │
+│  │  blue}      │                    │
+│  └─────────────┘                    │
+│  A' = {orange, yellow, purple}      │
+└─────────────────────────────────────┘</code></pre>
+
+        <h3>Complement in TypeScript</h3>
+        <p>How TypeScript Represents Complement:</p>
+        <pre><code class="language-typescript">// In TypeScript, complement is "everything except A"
+
+type U = string | number | boolean | null | undefined;
+type A = string | number;
+
+// A' = Everything in U that's NOT in A
+type ComplementA = Exclude<U, A>;  // boolean | null | undefined
+
+// More practical example
+type Colors = "red" | "green" | "blue" | "yellow" | "orange";
+type Primary = "red" | "green" | "blue";
+
+// Complement of Primary in Colors
+type Secondary = Exclude<Colors, Primary>;  // "yellow" | "orange"
+
+// Visual:
+// Colors = { red, green, blue, yellow, orange }
+// Primary = { red, green, blue }
+// Secondary = { yellow, orange } (everything else)</code></pre>
+      </section>
+
+      <section id="set-difference">
+        <h2>Set Difference (\) and TypeScript's Exclude - Complete Guide</h2>
+        
+        <h3>Part 1: What is Set Difference?</h3>
+        
+        <h4>Definition</h4>
+        <p>The difference of two sets A and B (written as A \ B or A - B) is the set of all elements that are in A but NOT in B.</p>
+
+        <h4>Formula</h4>
+        <pre><code class="language-text">A \ B = { x | x ∈ A AND x ∉ B }
+
+Read as: "The set of all x such that x is in A AND x is NOT in B"</code></pre>
+
+        <h4>Example 1: Numbers</h4>
+        <pre><code class="language-text">A = {1, 2, 3, 4, 5}
+B = {4, 5, 6, 7, 8}
+
+A \ B = {1, 2, 3}
+
+Explanation:
+- A has: 1, 2, 3, 4, 5
+- B has: 4, 5, 6, 7, 8
+- Remove from A anything that's also in B
+- 4 and 5 are in both, so remove them
+- 1, 2, 3 remain → A \ B = {1, 2, 3}</code></pre>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">A = {1, 2, 3, 4, 5}     B = {4, 5, 6, 7, 8}
+
+A \ B = {1, 2, 3}
+
+┌─────────────┐     ┌─────────────┐
+│     A        │     │     B        │
+│  {1,2,3}     │     │  {6,7,8}    │
+│     ┌────────┼─────┼────────┐    │
+│     │ {4,5}  │     │        │    │
+│     └────────┼─────┼────────┘    │
+│              │     │              │
+└──────────────┘     └──────────────┘
+     A \ B                B \ A
+     = {1,2,3}           = {6,7,8}</code></pre>
+
+        <h4>Example 2: Colors</h4>
+        <pre><code class="language-text">Colors = {red, green, blue, yellow, orange, purple}
+Primary = {red, green, blue}
+Secondary = {orange, purple, green}  // Green is both
+
+Colors \ Primary = {yellow, orange, purple}
+Colors \ Secondary = {red, blue, yellow}
+Primary \ Secondary = {red, blue}
+Secondary \ Primary = {orange, purple}</code></pre>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">Colors = {red, green, blue, yellow, orange, purple}
+
+┌─────────────────────────────────────┐
+│  Colors                             │
+│  ┌─────────────┐ ┌─────────────┐  │
+│  │  Primary    │ │  Secondary  │  │
+│  │  {red,     │ │  {orange,   │  │
+│  │   blue}    │ │   purple}   │  │
+│  │     ┌──────┼─┼──────┐      │  │
+│  │     │{green}│      │      │  │
+│  │     └──────┼─┼──────┘      │  │
+│  └────────────┘ └─────────────┘  │
+│  {yellow} (in Colors only)        │
+└─────────────────────────────────────┘
+
+Primary \ Secondary = {red, blue}
+Secondary \ Primary = {orange, purple}</code></pre>
+      </section>
+
+      <section id="ts-exclude">
+        <h2>Part 6: Difference in TypeScript</h2>
+        
+        <h3>The Exclude Utility Type</h3>
+        <p>In TypeScript, set difference is implemented as <code>Exclude&lt;T, U&gt;</code>:</p>
+
+        <pre><code class="language-typescript">type Exclude<T, U> = T extends U ? never : T;
+
+// This reads as:
+// For each type T, if T extends U (is in U), remove it (never)
+// Otherwise, keep it (T)</code></pre>
+
+        <p>OR</p>
+        <ul>
+            <li><strong>T:</strong> The incoming union of types you want to filter (the "source set").</li>
+            <li><strong>U:</strong> The type(s) you want to get rid of (the "filter set").</li>
+            <li><strong>T extends U:</strong> Does the individual union member T fit inside U?</li>
+            <li><strong>? never:</strong> If yes, evaluate to never. The never type represents an empty set in TypeScript — it gets automatically deleted from any union.</li>
+            <li><strong>: T:</strong> If no, keep this specific member T.</li>
+        </ul>
+
+        <h3>Step-by-Step Execution Walkthrough</h3>
+        <p>Let's trace what happens when TypeScript executes this exact line:</p>
+
+        <pre><code class="language-typescript">type Status = "success" | "loading" | "error";
+
+type NonErrorStatus = Exclude<Status, "error">;</code></pre>
+
+        <h4>1. TypeScript Distributes the Union</h4>
+        <p>Because Status is <code>"success" | "loading" | "error"</code>, TypeScript breaks the operation into three independent checks:</p>
+        <p style="background: var(--bg-tertiary); padding: 10px; border-radius: 5px; font-family: monospace;">Exclude("success", "error") | Exclude("loading", "error") | Exclude("error", "error")</p>
+
+        <h4>2. Individual Conditional Checks</h4>
+        <ul>
+            <li><strong>Check 1 ("success"):</strong> Does "success" extends "error"? No. → Evaluates to: "success"</li>
+            <li><strong>Check 2 ("loading"):</strong> Does "loading" extends "error"? No. → Evaluates to: "loading"</li>
+            <li><strong>Check 3 ("error"):</strong> Does "error" extends "error"? Yes. → Evaluates to: never</li>
+        </ul>
+
+        <h4>3. Re-combining the Results</h4>
+        <p>TypeScript unions the outputs together:</p>
+        <p style="background: var(--bg-tertiary); padding: 10px; border-radius: 5px; font-family: monospace;">"success" | "loading" | never</p>
+        
+        <p>Because <code>never</code> means "no value possible" (an empty set), TypeScript drops it:</p>
+        <p style="background: var(--bg-tertiary); padding: 10px; border-radius: 5px; font-family: monospace; font-weight: bold; color: var(--accent);">"success" | "loading"</p>
+      </section>
+
+      <section>
+        <h2>Part 12: Summary - Key Concepts</h2>
+        <table>
+  
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>Notation</th>
+      <th>TypeScript Equivalent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Set</td>
+      <td>{ }</td>
+      <td><code>type</code> or <code>interface</code></td>
+    </tr>
+    <tr>
+      <td>Element</td>
+      <td>∈</td>
+      <td><code>extends</code></td>
+    </tr>
+    <tr>
+      <td>Empty Set</td>
+      <td>∅</td>
+      <td><code>never</code></td>
+    </tr>
+    <tr>
+      <td>Universal Set</td>
+      <td>U</td>
+      <td><code>unknown</code></td>
+    </tr>
+    <tr>
+      <td>Union</td>
+      <td>∪</td>
+      <td><code>|</code></td>
+    </tr>
+    <tr>
+      <td>Intersection</td>
+      <td>∩</td>
+      <td><code>&amp;</code></td>
+    </tr>
+    <tr>
+      <td>Subset</td>
+      <td>⊆</td>
+      <td><code>extends</code></td>
+    </tr>
+    <tr>
+      <td>Complement</td>
+      <td>'</td>
+      <td><code>Exclude</code></td>
+    </tr>
+    <tr>
+      <td>Difference</td>
+      <td>\</td>
+      <td><code>Exclude</code></td>
+    </tr>
+  </tbody>
+</table>
+      </section>
+
+      <footer>
+        <p>Mathematical Sets and TypeScript Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+              Connect on LinkedIn
+            </a>
+          </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

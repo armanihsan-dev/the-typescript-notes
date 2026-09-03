@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generic Constraints - The Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Foundation</div>
+        <a href="#what-you-will-learn" class="nav-link">🎯 What You'll Learn</a>
+        <a href="#what-is-a-constraint" class="nav-link"
+          >1. What is a Constraint?</a
+        >
+        <a href="#why-we-need-constraints" class="nav-link"
+          >2. Why We Need Constraints</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Syntax & Concepts</div>
+        <a href="#syntax" class="nav-link">3. Syntax of Constraints</a>
+        <a href="#set-constraints" class="nav-link">4. Constraints as Sets</a>
+        <a href="#extends-keyword" class="nav-link">5. The extends Keyword</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Patterns</div>
+        <a href="#common-patterns" class="nav-link"
+          >6. Common Constraint Patterns</a
+        >
+        <a href="#unpacking-typeof" class="nav-link">7. Unpacking typeof</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Constructor Constraints</div>
+        <a href="#constructor-intro" class="nav-link"
+          >8. What is a Constructor?</a
+        >
+        <a href="#constructor-solution" class="nav-link"
+          >9. Constructor Constraints</a
+        >
+        <a href="#instance-type" class="nav-link"
+          >10. InstanceType & Parameters</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">V. Wrap Up</div>
+        <a href="#recap" class="nav-link">Quick Recap</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            target="_blank"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            target="_blank"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Generics</span>
+        <h1>GENERIC CONSTRAINTS</h1>
+        <p>THE COMPLETE GUIDE: LIMITING TYPES FOR MAXIMUM SAFETY</p>
+      </section>
+
+      <section id="what-you-will-learn">
+        <h2>🎯 What You'll Learn</h2>
+        <ul>
+          <li>What constraints are (and what they are NOT)</li>
+          <li>Why we need constraints</li>
+          <li>Syntax of constraints</li>
+          <li>How constraints work</li>
+          <li>Common constraint patterns</li>
+          <li>Best practices (1% knowledge)</li>
+        </ul>
+      </section>
+
+      <section id="what-is-a-constraint">
+        <h2>Part 1: What is a Constraint? (Clear Definition)</h2>
+
+        <h3>The Definition</h3>
+        <p>
+          A constraint is a rule that limits what types can be used as a generic
+          parameter. It tells TypeScript: "Only accept types that have these
+          specific properties or methods."
+        </p>
+
+        <h3>The Simple Explanation</h3>
+        <pre><code class="language-typescript">// ❌ Without constraint: T can be ANYTHING
+function getLength&lt;T&gt;(value: T): number {
+    return value.length; // ❌ ERROR! T might not have 'length'
+}
+
+// ✅ With constraint: T MUST have a 'length' property
+function getLength&lt;T extends { length: number }&gt;(value: T): number {
+    return value.length; // ✅ WORKS! TypeScript knows T has length
+}</code></pre>
+
+        <p>Let’s reset completely and build this from scratch, very slowly.</p>
+        <p>We’ll focus on this function:</p>
+        <pre><code class="language-typescript">function genLength2&lt;T extends { length: number }&gt;(value: T): number {
+  return value.length;
+}</code></pre>
+        <p>and your call:</p>
+        <pre><code class="language-typescript">const res3 = genLength2({ length: 53325 });</code></pre>
+
+        <p>You’re asking:</p>
+        <ul>
+          <li>What does the constraint mean?</li>
+          <li>Is it applied to the value we pass, or the type?</li>
+          <li>What exactly is this “type” in practice?</li>
+        </ul>
+
+        <h3>Step 1: Separate “value” vs “type”</h3>
+        <p>In TypeScript, there are always two layers:</p>
+        <ul>
+          <li>
+            <strong>Value:</strong> the actual thing at runtime (e.g.
+            <code>123</code>, <code>"arman"</code>,
+            <code>{ length: 53325 }</code>).
+          </li>
+          <li>
+            <strong>Type:</strong> the description the compiler uses (e.g.
+            <code>number</code>, <code>string</code>,
+            <code>{ length: number }</code>).
+          </li>
+        </ul>
+        <p>Example:</p>
+        <pre><code class="language-typescript">const x = 5;
+// value of x: 5
+// type of x: number
+
+const y = { length: 53325 };
+// value of y: { length: 53325 }
+// type of y: { length: number }</code></pre>
+        <p>So when you call:</p>
+        <pre><code class="language-typescript">genLength2({ length: 53325 });</code></pre>
+        <p>
+          You pass a value: <code>{ length: 53325 }</code>.<br />
+          TypeScript infers a type from that value:
+          <code>{ length: number }</code>.<br />
+          The constraint always checks the type, not the raw value.
+        </p>
+
+        <h3>
+          Step 2: What does <code>T extends { length: number }</code> mean?
+        </h3>
+        <p>
+          Think of it like a rule:<br />
+          “Whatever T is, it must have a length property of type number.”
+        </p>
+        <p>
+          That <code>{ length: number }</code> is just a type describing a
+          shape:<br />
+          “An object/type that has at least a length property that is a number.”
+        </p>
+
+        <p>So:</p>
+        <pre><code class="language-typescript">function genLength2&lt;T extends { length: number }&gt;(value: T): number {
+  return value.length;
+}</code></pre>
+        <p>reads as:</p>
+        <ul>
+          <li><code>T</code> is a generic type parameter.</li>
+          <li>
+            <code>T</code> is restricted to types that have
+            <code>length: number</code>.
+          </li>
+          <li><code>value</code> is of type <code>T</code>.</li>
+        </ul>
+        <p>
+          Inside the function, we are allowed to do
+          <code>value.length</code> because the compiler knows length exists on
+          T.
+        </p>
+
+        <h3>Step 3: How the call is checked</h3>
+        <p>Call:</p>
+        <pre><code class="language-typescript">const res3 = genLength2({ length: 53325 });</code></pre>
+        <p>Compiler process:</p>
+        <ol>
+          <li>Look at the value <code>{ length: 53325 }</code>.</li>
+          <li>Infer its type: <code>{ length: number }</code>.</li>
+          <li>
+            Ask: “Can this inferred type be used as T where
+            <code>T extends { length: number }</code>?”
+          </li>
+        </ol>
+        <p>
+          Since <code>{ length: number }</code> obviously has
+          <code>length: number</code>, the rule is satisfied, so the call is
+          allowed.
+        </p>
+
+        <p>If you tried:</p>
+        <pre><code class="language-typescript">genLength2(123);</code></pre>
+        <p>Compiler process:</p>
+        <ol>
+          <li>Value: <code>123</code>.</li>
+          <li>Inferred type: <code>number</code>.</li>
+          <li>
+            Check: “Does type number satisfy the rule
+            <code>extends { length: number }</code>?”
+          </li>
+        </ol>
+        <p>
+          Answer: no, number does not guarantee a length property, so the call
+          is rejected at compile time.
+        </p>
+
+        <h3>Step 4: So, is the constraint on the value or the type?</h3>
+        <p>Short answer in your terms:</p>
+        <ol>
+          <li>You pass a value.</li>
+          <li>TypeScript infers or uses a type for that value.</li>
+          <li>The constraint is applied to that type.</li>
+          <li>
+            If the type fits the constraint, the value is accepted; if not,
+            TypeScript gives a type error.
+          </li>
+        </ol>
+
+        <p>
+          So when you say:<br />
+          “during calling the function it must have written length property”
+        </p>
+        <p>
+          You can refine that to:<br />
+          “during calling the function, the type of the value must have a
+          <code>length: number</code> property”.
+        </p>
+
+        <p>That’s why these work:</p>
+        <pre><code class="language-typescript">genLength2("hello");             // OK, type is string, and string has length: number
+genLength2([1, 2, 3]);           // OK, type is number[], arrays have length: number
+genLength2({ length: 53325 });   // OK, type has length: number</code></pre>
+        <p>and these fail:</p>
+        <pre><code class="language-typescript">genLength2(123);     // type is number → no length: number
+genLength2(true);    // type is boolean → no length: number</code></pre>
+      </section>
+
+      <section id="why-we-need-constraints">
+        <h2>Part 2: Why We Need Constraints</h2>
+
+        <h3>The Problem: Without Constraints</h3>
+        <pre><code class="language-typescript">// ❌ This function is unsafe
+function logObject&lt;T&gt;(obj: T): T {
+    console.log(obj.name); // ❌ ERROR: T might not have 'name'
+    return obj;
+}
+
+// Why? Because T could be:
+logObject({ name: "Alice" }); // ✅ Works
+logObject(42); // ❌ 42 doesn't have 'name'
+logObject("hello"); // ❌ "hello" doesn't have 'name'
+logObject(true); // ❌ true doesn't have 'name'
+logObject(null); // ❌ null doesn't have 'name'
+logObject(undefined); // ❌ undefined doesn't have 'name'</code></pre>
+
+        <h3>The Solution: With Constraints</h3>
+        <pre><code class="language-typescript">// ✅ This function is safe
+function logObject&lt;T extends { name: string }&gt;(obj: T): T {
+    console.log(obj.name); // ✅ WORKS! TypeScript knows T has 'name'
+    return obj;
+}
+
+// Now only valid types work:
+logObject({ name: "Alice" }); // ✅ Works
+logObject({ name: "Bob", age: 25 }); // ✅ Works (has extra property)
+
+// ❌ Invalid types fail:
+logObject(42); // ❌ Error: number doesn't have 'name'
+logObject("hello"); // ❌ Error: string doesn't have 'name'
+logObject(true); // ❌ Error: boolean doesn't have 'name'</code></pre>
+
+        <h3>Visual: The Difference</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    WITHOUT VS WITH CONSTRAINT                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  WITHOUT CONSTRAINT:                                            │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ function logObject&lt;T&gt;(obj: T): T {                      │   │
+│  │     console.log(obj.name); // ❌ ERROR!                │   │
+│  │ }                                                       │   │
+│  │                                                         │   │
+│  │ T can be ANYTHING → TypeScript can't guarantee 'name'  │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  WITH CONSTRAINT:                                                │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ function logObject&lt;T extends { name: string }&gt;(        │   │
+│  │     obj: T                                               │   │
+│  │ ): T {                                                   │   │
+│  │     console.log(obj.name); // ✅ WORKS!                 │   │
+│  │ }                                                       │   │
+│  │                                                         │   │
+│  │ T MUST have 'name' → TypeScript knows it's safe        │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="syntax">
+        <h2>Part 3: Syntax of Constraints</h2>
+
+        <h3>Basic Syntax</h3>
+        <pre><code class="language-typescript">function functionName&lt;T extends ConstraintType&gt;(parameter: T): T {
+    // ...
+}</code></pre>
+
+        <h3>Syntax Breakdown</h3>
+        <pre><code class="language-typescript">function logObject&lt;T extends { name: string }&gt;(obj: T): T {
+//               ↑
+//               |
+//           Constraint: T must have a 'name' property of type string
+    console.log(obj.name);
+    return obj;
+}</code></pre>
+
+        <h3>Different Constraint Types</h3>
+        <pre><code class="language-typescript">// 1. Constraint to a type
+function process&lt;T extends string&gt;(value: T): T {
+    return value;
+}
+
+// 2. Constraint to an interface
+interface HasName {
+    name: string;
+}
+function logName&lt;T extends HasName&gt;(obj: T): T {
+    console.log(obj.name);
+    return obj;
+}
+
+// 3. Constraint to a type alias
+type Identifiable = { id: number };
+function getById&lt;T extends Identifiable&gt;(obj: T): number {
+    return obj.id;
+}
+
+// 4. Constraint to multiple requirements
+type HasName = { name: string };
+type HasAge = { age: number };
+function logPerson&lt;T extends HasName & HasAge&gt;(obj: T): T {
+    console.log(obj.name, obj.age);
+    return obj;
+}</code></pre>
+      </section>
+
+      <section id="set-constraints">
+        <h2>Part 4: Constraints in the form of sets</h2>
+
+        <h3>1. Two kinds of constraints: shape vs set</h3>
+        <p>So far you’ve seen shape constraints:</p>
+        <pre><code class="language-typescript">T extends { length: number }
+T extends { id: string; name: string }</code></pre>
+        <p>These say: “T must have at least these properties.”</p>
+
+        <p>There’s another very important way to think about constraints:</p>
+        <p>
+          <strong
+            >A generic type parameter can be constrained to a set of allowed
+            types.</strong
+          >
+        </p>
+        <p>Informally, you can imagine:</p>
+        <pre><code class="language-typescript">T ∈ { string, number, boolean }</code></pre>
+        <p>
+          In TypeScript syntax, that “set of allowed types” is usually a union
+          type:
+        </p>
+        <pre><code class="language-typescript">function parseId&lt;T extends string | number&gt;(id: T) {
+  // T is allowed to be string OR number, nothing else
+}</code></pre>
+        <p>Here:</p>
+        <ul>
+          <li>
+            The set of allowed types for T is <code>{ string, number }</code>.
+          </li>
+          <li>
+            If you try to pass a boolean, TypeScript rejects it because boolean
+            is not in that set.
+          </li>
+        </ul>
+        <p>
+          So:<br />
+          “constraints in the form of sets” = “T can only be one of these
+          specific types”.
+        </p>
+
+        <h3>2. Concrete example: constraint as a set</h3>
+        <p>Look at this:</p>
+        <pre><code class="language-typescript">type AllowedStatus = "pending" | "success" | "failed";
+
+function handleStatus&lt;T extends AllowedStatus&gt;(status: T) {
+  // T must be one of "pending" | "success" | "failed"
+}</code></pre>
+        <p>Think of it like:</p>
+        <pre><code class="language-text">T ∈ { "pending", "success", "failed" }</code></pre>
+        <ul>
+          <li>If you call <code>handleStatus("pending")</code> → OK.</li>
+          <li>
+            If you call <code>handleStatus("foo")</code> → Error, because "foo"
+            is not in the allowed set.
+          </li>
+        </ul>
+
+        <p>Same idea with primitive types:</p>
+        <pre><code class="language-typescript">function logValue&lt;T extends string | number | boolean&gt;(value: T) {
+  console.log(value);
+}</code></pre>
+        <p>
+          Here, the allowed set is
+          <code>{ string, number, boolean }</code>.<br />
+          Anything outside that set (like null or {}) is rejected.
+        </p>
+
+        <h3>3. Combining “set of types” with “shape”</h3>
+        <p>You can mix both ideas:</p>
+
+        <p><strong>Set of shapes</strong></p>
+        <pre><code class="language-typescript">type HasId = { id: string };
+type HasName = { name: string };
+
+function printEntity&lt;T extends HasId | HasName&gt;(entity: T) {
+  // T is either { id: string } OR { name: string } OR something that matches one of those
+}</code></pre>
+        <p>
+          Here: The allowed set for T is types that look like
+          <code>{ id: string }</code> OR <code>{ name: string }</code>.
+        </p>
+
+        <p><strong>Set of primitive types</strong></p>
+        <pre><code class="language-typescript">function asString&lt;T extends string | number&gt;(value: T): string {
+  return String(value);
+}</code></pre>
+        <p>Set for T = <code>{ string, number }</code>.</p>
+        <p>
+          This is very similar to how you might think about enums or finite
+          allowed values, but at the type level.
+        </p>
+
+        <h3>4. Why “set” thinking is useful</h3>
+        <p>Thinking in terms of sets helps you reason like this:</p>
+        <ul>
+          <li>
+            <strong>Unconstrained generic:</strong> T can be any type (the set
+            of all possible types).
+          </li>
+          <li>
+            <strong>Constrained generic (shape):</strong> T is limited to types
+            that have certain properties (subset of all types that have that
+            shape).
+          </li>
+          <li>
+            <strong>Constrained generic (union/set):</strong> T is limited to a
+            specific finite set of types: <code>T ∈ { string, number }</code>,
+            or <code>T ∈ { "pending", "success", "failed" }</code>.
+          </li>
+        </ul>
+
+        <p>So when you write:</p>
+        <pre><code class="language-typescript">function fn&lt;T extends A | B | C&gt;(value: T) { ... }</code></pre>
+        <p>
+          you can mentally read:<br />
+          “T must be one of the types in the set { A, B, C }.”
+        </p>
+      </section>
+
+      <section id="extends-keyword">
+        <h2>Part 5: The extends Keyword & Check Process</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>In TypeScript</th>
+              <th>What It Means</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>T extends string</code></td>
+              <td>
+                T must be a subtype of string (string or a literal like "hello")
+              </td>
+            </tr>
+            <tr>
+              <td><code>T extends object</code></td>
+              <td>T must be an object</td>
+            </tr>
+            <tr>
+              <td><code>T extends { name: string }</code></td>
+              <td>T must have a name property of type string</td>
+            </tr>
+            <tr>
+              <td><code>T extends keyof U</code></td>
+              <td>T must be a key of U</td>
+            </tr>
+            <tr>
+              <td><code>T extends U</code></td>
+              <td>T must be assignable to U</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>The Type Check Process</h3>
+        <pre><code class="language-typescript">// Step 1: Define the function with constraint
+function getLength&lt;T extends { length: number }&gt;(value: T): number {
+    return value.length;
+}
+
+// Step 2: You call it with a string
+getLength("hello");
+
+// Step 3: TypeScript checks:
+// Does string extend { length: number }?
+// string has length: number → YES
+// ✅ Allowed
+
+// Step 4: You call it with a number
+getLength(42);
+
+// Step 5: TypeScript checks:
+// Does number extend { length: number }?
+// number does NOT have length → NO
+// ❌ Error!</code></pre>
+      </section>
+
+      <section id="common-patterns">
+        <h2>Part 6: Common Constraint Patterns</h2>
+
+        <h3>Pattern 1: Constraint to Object</h3>
+        <pre><code class="language-typescript">// T must be an object
+function logObject&lt;T extends object&gt;(obj: T): T {
+    console.log(obj);
+    return obj;
+}
+
+// Works:
+logObject({ name: "Alice" }); // ✅
+logObject([]); // ✅ (array is an object)
+logObject(new Date()); // ✅
+
+// Fails:
+logObject("hello"); // ❌ string is not an object
+logObject(42); // ❌ number is not an object</code></pre>
+
+        <h3>Pattern 2: Constraint to Specific Shape</h3>
+        <pre><code class="language-typescript">// T must have a 'name' property
+function logName&lt;T extends { name: string }&gt;(obj: T): T {
+    console.log(obj.name);
+    return obj;
+}
+
+// Works:
+logName({ name: "Alice" }); // ✅
+logName({ name: "Bob", age: 25 }); // ✅
+
+// Fails:
+logName({ age: 25 }); // ❌ missing 'name'
+logName({ name: 42 }); // ❌ 'name' must be string</code></pre>
+
+        <h3>Pattern 3: Constraint with keyof</h3>
+        <pre><code class="language-typescript">// K must be a key of T
+function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}
+
+const user = { name: "Alice", age: 25 };
+
+getProperty(user, "name"); // ✅ Works: returns string
+getProperty(user, "age"); // ✅ Works: returns number
+getProperty(user, "email"); // ❌ Error: 'email' is not in user</code></pre>
+      </section>
+
+      <section id="unpacking-typeof">
+        <h2>Part 7: Unpacking typeof in Constraints</h2>
+        <p>Let’s unpack this step by step.</p>
+
+        <h3>1. What does typeof config mean here?</h3>
+        <p>
+          In a type position, <code>typeof</code> does not mean the JS runtime
+          <code>"string" | "number"</code> thing.<br />
+          Instead, it means “give me the TypeScript type of this variable.”
+        </p>
+
+        <p>For your <code>config</code>, TypeScript infers a type like:</p>
+        <pre><code class="language-typescript">type ConfigType = {
+  apiUrl: string;
+  timeout: number;
+  retries: number;
+};</code></pre>
+        <p>So:</p>
+        <pre><code class="language-typescript">typeof config  // is that object type above</code></pre>
+        <p>
+          So <code>typeof config</code> is just a type alias for “an object with
+          apiUrl: string, timeout: number, retries: number”.
+        </p>
+
+        <h3>2. What does T extends typeof config mean?</h3>
+        <p>Your generic function:</p>
+        <pre><code class="language-typescript">function getConfig&lt;T extends typeof config&gt;(value: T): T {
+    return value;
+}</code></pre>
+        <p>reads as:</p>
+        <ul>
+          <li><code>T</code> is a generic type parameter.</li>
+          <li>
+            <code>T</code> is constrained by <code>extends typeof config</code>.
+          </li>
+        </ul>
+        <p>
+          So the rule is:<br />
+          “Whatever type T is, it must be assignable to the type of config.”
+        </p>
+
+        <p>In other words, T must at least have:</p>
+        <pre><code class="language-typescript">{
+  apiUrl: string;
+  timeout: number;
+  retries: number;
+}</code></pre>
+        <p>It can be:</p>
+        <ul>
+          <li>exactly that type, or</li>
+          <li>
+            a more specific/narrow version (for example, stricter literals or
+            extra properties, depending on settings).
+          </li>
+        </ul>
+
+        <h3>3. Why each call behaves the way it does</h3>
+
+        <h4>Call 1</h4>
+        <pre><code class="language-typescript">getConfig(config);</code></pre>
+        <p>
+          Type of config is <code>typeof config</code>.<br />
+          So here T is inferred as <code>typeof config</code>.<br />
+          That clearly satisfies <code>T extends typeof config</code>, so it
+          works.
+        </p>
+
+        <h4>Call 2</h4>
+        <pre><code class="language-typescript">getConfig({ apiUrl: "https://dev.com", timeout: 1000, retries: 1 });</code></pre>
+        <p>
+          TypeScript infers the type of that literal as something compatible
+          with:
+        </p>
+        <pre><code class="language-typescript">{
+  apiUrl: string;
+  timeout: number;
+  retries: number;
+}</code></pre>
+        <p>
+          Even though the exact literal types might be
+          <code>"https://dev.com" | 1000 | 1</code>, those are still assignable
+          to <code>string | number</code>. So this object matches the shape of
+          <code>typeof config</code>, and the constraint is satisfied.
+        </p>
+
+        <h4>Call 3</h4>
+        <pre><code class="language-typescript">getConfig({ apiUrl: "https://dev.com" });</code></pre>
+        <p>TypeScript infers the type as:</p>
+        <pre><code class="language-typescript">{
+  apiUrl: string;
+}</code></pre>
+        <p>
+          Now the compiler checks:<br />
+          “Is <code>{ apiUrl: string }</code> assignable to
+          <code>typeof config</code> (which requires apiUrl, timeout, and
+          retries)?”
+        </p>
+        <p>
+          Answer: no. It’s missing timeout and retries.<br />
+          So <code>T extends typeof config</code> is not satisfied →
+          compile-time error.
+        </p>
+      </section>
+
+      <section id="constructor-intro">
+        <h2>Part 8: Constructor Constraints - Complete Guide from Scratch</h2>
+
+        <h3>What You'll Learn</h3>
+        <ul>
+          <li>What a constructor is in JavaScript/TypeScript</li>
+          <li>What a constructor constraint is</li>
+          <li>Why we need constructor constraints</li>
+          <li>The new keyword in types</li>
+          <li>How it works step by step</li>
+          <li>Real-world examples</li>
+        </ul>
+
+        <h3>What is a Constructor? (The Foundation)</h3>
+        <h4>In JavaScript</h4>
+        <p>A constructor is a function that creates an instance of a class.</p>
+        <pre><code class="language-javascript">// This is a constructor
+class Person {
+    constructor(name) {
+        this.name = name;
+    }
+}
+
+// You call it with 'new' to create an instance
+const alice = new Person("Alice");
+//           ↑
+//           |
+//      'new' calls the constructor</code></pre>
+
+        <h4>In JavaScript, A Constructor Is Just a Function</h4>
+        <pre><code class="language-javascript">// A constructor function (old way)
+function Person(name) {
+    this.name = name;
+}
+
+// Same usage with 'new'
+const alice = new Person("Alice");</code></pre>
+
+        <h4>The Role of new</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>When you use new</th>
+              <th>What happens</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>new Person("Alice")</code></td>
+              <td>
+                1. Creates a new empty object<br />2. Calls the constructor with
+                <code>this = new object</code><br />3. Returns the new object
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>The Problem (Without Constructor Constraints)</h3>
+        <h4>Scenario: Creating Instances from a Class</h4>
+        <pre><code class="language-typescript">// You have a class
+class Person {
+    name: string;
+    constructor(name: string) {
+        this.name = name;
+    }
+}
+
+// You want a function that creates an instance
+function createInstance(ctor: any, ...args: any[]): any {
+    return new ctor(...args);
+}
+
+const alice = createInstance(Person, "Alice");
+// ❌ TypeScript doesn't know what this returns
+// ❌ TypeScript doesn't know what 'ctor' should be
+// ❌ No type safety!</code></pre>
+
+        <h4>The Problem Explained</h4>
+        <pre><code class="language-typescript">// ❌ This function accepts ANYTHING
+function createInstance(ctor: any, ...args: any[]): any {
+    return new ctor(...args);
+}
+
+// This works:
+createInstance(Person, "Alice"); // ✅
+
+// But this ALSO compiles:
+createInstance(42, "Alice"); // ❌ Runtime error! 42 is not a constructor
+createInstance("hello", "Alice"); // ❌ Runtime error! "hello" is not a constructor
+createInstance(null, "Alice"); // ❌ Runtime error! null is not a constructor
+
+// TypeScript allows all of these because 'any' disables type checking</code></pre>
+      </section>
+
+      <section id="constructor-solution">
+        <h2>Part 9: The Solution (Constructor Constraints)</h2>
+
+        <h3>What is a Constructor Constraint?</h3>
+        <p>
+          <strong>Definition:</strong> A constructor constraint is a rule that
+          says: "T must be a class/constructor that can be called with new."
+        </p>
+
+        <h3>The Syntax</h3>
+        <pre><code class="language-typescript">function createInstance&lt;T&gt;(ctor: new (...args: any[]) =&gt; T, ...args: any[]): T {
+    return new ctor(...args);
+}
+//                    ↑
+//                    |
+//              This is the constraint!</code></pre>
+
+        <h3>Breaking Down the Syntax</h3>
+        <pre><code class="language-typescript">new (...args: any[]) =&gt; T
+// ↑      ↑          ↑
+// |      |          |
+// |      |          Returns an instance of T
+// |      The constructor takes any number of arguments
+// Must be callable with 'new'</code></pre>
+
+        <h3>Complete Syntax Breakdown</h3>
+        <pre><code class="language-typescript">function createInstance&lt;T&gt;(
+    ctor: new (...args: any[]) =&gt; T,
+    //   ↑          ↑          ↑
+    //   |          |          |
+    //   |          |          Returns T
+    //   |          Takes any number of arguments
+    //   Must be callable with 'new'
+
+    ...args: any[]
+    //     ↑
+    //     |
+    //     Arguments to pass to the constructor
+
+): T {
+    // ↑
+    // |
+    // Returns an instance of T
+
+    return new ctor(...args);
+}</code></pre>
+
+        <h3>How It Works (Step by Step)</h3>
+
+        <h4>Step 1: Define Your Classes</h4>
+        <pre><code class="language-typescript">class Person {
+    name: string;
+    constructor(name: string) {
+        this.name = name;
+    }
+    greet(): string {
+        return `Hello, I'm ${this.name}`;
+    }
+}
+
+class Product {
+    name: string;
+    price: number;
+    constructor(name: string, price: number) {
+        this.name = name;
+        this.price = price;
+    }
+    getInfo(): string {
+        return `${this.name}: $${this.price}`;
+    }
+}</code></pre>
+
+        <h4>Step 2: Create the Generic Factory Function</h4>
+        <pre><code class="language-typescript">function createInstance&lt;T&gt;(
+    ctor: new (...args: any[]) =&gt; T,
+    ...args: any[]
+): T {
+    return new ctor(...args);
+}</code></pre>
+
+        <h4>Step 3: Use It</h4>
+        <pre><code class="language-typescript">// Creating a Person
+const alice = createInstance(Person, "Alice");
+//                ↑           ↑        ↑
+//                |           |        |
+//                |           |    Arguments for Person constructor
+//                |        The Person class (a constructor)
+//                Result is Person
+
+console.log(alice.greet()); // "Hello, I'm Alice"
+// ✅ TypeScript knows alice is Person
+// ✅ alice.greet() is type-safe
+
+// Creating a Product
+const laptop = createInstance(Product, "Laptop", 999.99);
+console.log(laptop.getInfo()); // "Laptop: $999.99"
+// ✅ TypeScript knows laptop is Product
+// ✅ laptop.getInfo() is type-safe</code></pre>
+
+        <h4>Step 4: What TypeScript Does</h4>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW TYPESCRIPT CHECKS THIS                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  createInstance(Person, "Alice")                               │
+│                                                                  │
+│  1. T = Person (inferred from the first argument)             │
+│                                                                  │
+│  2. Check: Is Person assignable to new (...args: any[]) => T? │
+│                                                                  │
+│     Person is a class with a constructor                      │
+│     Person can be called with 'new'                           │
+│     ✅ YES                                                    │
+│                                                                  │
+│  3. Result: createInstance returns Person                     │
+│                                                                  │
+│  ───────────────────────────────────────────────────────────── │
+│                                                                  │
+│  createInstance(42, "Alice")                                   │
+│                                                                  │
+│  1. T = number (inferred from 42)                             │
+│                                                                  │
+│  2. Check: Is 42 assignable to new (...args: any[]) => T?     │
+│                                                                  │
+│     42 is a number, not a class                               │
+│     42 cannot be called with 'new'                            │
+│     ❌ NO                                                     │
+│                                                                  │
+│  3. Error: Type 'number' does not satisfy the constraint      │
+│     'new (...args: any[]) => T'                               │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>REAL WORLD EXAMPLES</h3>
+        <h4>1 :- Creating Object (Simple)</h4>
+        <pre><code class="language-typescript">class Product {
+    name: string;
+    price: number
+
+    constructor(PrName: string, PrPrice: number) {
+        this.name = PrName
+        this.price = PrPrice
+    }
+
+    getInfo(): string {
+        return `${this.name}: $${this.price}`;
+    }
+}
+
+
+function createInsForProdcut&lt;T&gt;(Ctor: new (namee: string, pricee: number) =&gt; T, namee: string, pricee: number): T {
+    return new Ctor(namee, pricee)
+}
+let pr1 = createInsForProdcut&lt;Product&gt;(Product, "String", 3300)
+
+console.log(pr1.getInfo());</code></pre>
+      </section>
+
+      <section id="instance-type">
+        <h2>Part 10: Introducing InstanceType & ConstructorParameters</h2>
+        <p>By Little Re-Teaching of Constructor Constraints</p>
+
+        <h3>1. What is a “constructor type”?</h3>
+        <p>In JS/TS, a class has two “faces”:</p>
+        <pre><code class="language-typescript">class User {
+  constructor(public name: string) {}
+  greet() { console.log("hi"); }
+}</code></pre>
+        <ul>
+          <li>
+            <strong>As a value (runtime):</strong> <code>User</code> is a
+            constructor function you can call with
+            <code>new User("arman")</code>.
+          </li>
+          <li>
+            <strong>As a type (compile time):</strong> <code>User</code> is the
+            type of instances created by <code>new User(...)</code>.
+          </li>
+        </ul>
+
+        <p>
+          TypeScript has a way to describe “something you can call with new” at
+          the type level:
+        </p>
+        <pre><code class="language-typescript">type UserCtor = new (name: string) =&gt; User;</code></pre>
+        <p>
+          Read this as:<br />
+          “A constructor that takes a string and returns a User instance.”
+        </p>
+        <p>That’s a constructor type.</p>
+
+        <h3>2. Constraining a generic to “must be a constructor”</h3>
+        <p>
+          Say you want a function that only accepts constructors you can call
+          with new:
+        </p>
+        <pre><code class="language-typescript">function make&lt;T extends new (...args: any[]) =&gt; any&gt;(Ctor: T) {
+  return new Ctor(); // OK because T is guaranteed to be 'new'-able
+}</code></pre>
+        <p>Key points:</p>
+        <ul>
+          <li><code>T</code> is a type parameter.</li>
+          <li>
+            <code>T extends new (...args: any[]) =&gt; any</code> means: “T must
+            be a type that has a construct signature.”
+          </li>
+          <li>
+            In plain language: “T must be something you can do
+            <code>new T(...)</code> on.”
+          </li>
+        </ul>
+
+        <p>Now calling:</p>
+        <pre><code class="language-typescript">class Service {}
+make(Service); // OK: Service has a constructor
+make(123);     // Error: number is not a constructor</code></pre>
+        <p>
+          So constructor constraint =
+          <code>T extends new (...args: any[]) =&gt; Something</code>.
+        </p>
+
+        <p>You can also restrict arguments:</p>
+        <pre><code class="language-typescript">function makeUser&lt;T extends new (name: string) =&gt; any&gt;(Ctor: T) {
+  return new Ctor("arman");
+}</code></pre>
+        <p>
+          This now says:<br />
+          “T must be a constructor that takes a single string parameter.”
+        </p>
+
+        <h3>3. Where InstanceType and ConstructorParameters come in</h3>
+        <p>
+          Once you are comfortable with “T is a constructor”, two common
+          questions appear:
+        </p>
+        <ul>
+          <li>
+            “What is the type of the instance I get from this constructor?”
+          </li>
+          <li>“What are the types of the constructor’s parameters?”</li>
+        </ul>
+        <p>TypeScript has built-in utility types to answer exactly those:</p>
+        <ul>
+          <li>
+            <code>InstanceType&lt;TCtor&gt;</code> → the instance type produced
+            by constructor TCtor.
+          </li>
+          <li>
+            <code>ConstructorParameters&lt;TCtor&gt;</code> → the constructor
+            argument types as a tuple.
+          </li>
+        </ul>
+
+        <h4>3.1. Example with a class</h4>
+        <pre><code class="language-typescript">class Logger {
+  constructor(public level: "info" | "error") {}
+  log(msg: string) {}
+}</code></pre>
+        <p>At type level:</p>
+        <ul>
+          <li>
+            <code>typeof Logger</code> is the constructor type:
+            <code>new (level: "info" | "error") =&gt; Logger</code>.
+          </li>
+          <li><code>Logger</code> (without typeof) is the instance type.</li>
+        </ul>
+        <p>Now:</p>
+        <pre><code class="language-typescript">type LoggerInstance = InstanceType&lt;typeof Logger&gt;;         // Logger
+type LoggerArgs = ConstructorParameters&lt;typeof Logger&gt;;    // [level: "info" | "error"]</code></pre>
+        <p>
+          <code>InstanceType&lt;typeof Logger&gt;</code> extracts “what new
+          Logger(...) returns” → <code>Logger</code>.
+        </p>
+        <p>
+          <code>ConstructorParameters&lt;typeof Logger&gt;</code> extracts “what
+          parameters the constructor takes” → a tuple
+          <code>["info" | "error"]</code>.
+        </p>
+        <p>
+          So these utilities just read information out of the constructor type.
+        </p>
+
+        <h4>3.2. Putting it together: a generic factory</h4>
+        <p>Now combine everything:</p>
+        <pre><code class="language-typescript">function make&lt;T extends new (...args: any[]) =&gt; any&gt;(
+  Ctor: T,
+  ...args: ConstructorParameters&lt;T&gt;  // use whatever args that constructor expects
+): InstanceType&lt;T&gt; {                 // return the correct instance type
+  return new Ctor(...args);
+}</code></pre>
+        <p>Line by line:</p>
+        <ul>
+          <li>
+            <code>T extends new (...args: any[]) =&gt; any</code
+            ><br />Constraint: T must be a constructor.
+          </li>
+          <li><code>Ctor: T</code><br />The actual constructor passed in.</li>
+          <li>
+            <code>...args: ConstructorParameters&lt;T&gt;</code><br />“The args
+            you pass must match the constructor parameters of T.”
+          </li>
+          <li>
+            <code>: InstanceType&lt;T&gt;</code><br />“The function returns
+            whatever instance type that constructor creates.”
+          </li>
+        </ul>
+
+        <p>Usage:</p>
+        <pre><code class="language-typescript">class User {
+  constructor(public name: string) {}
+}
+
+const u = make(User, "Arman"); // u: User</code></pre>
+        <p>
+          This is just type-level plumbing to avoid repeating
+          <code>name: string</code> or <code>User</code> manually.
+        </p>
+
+        <h4>Second RealWorld Example</h4>
+        <pre><code class="language-typescript">class User {
+    constructor(
+        public id: number,
+        public name: string,
+        public email: string
+    ) { }
+}
+
+class Product {
+    constructor(
+        public id: number,
+        public name: string,
+        public price: number
+    ) { }
+}
+
+class Order {
+    constructor(
+        public id: number,
+        public userId: number,
+        public productIds: number[]
+    ) { }
+}
+
+//Generics Factory
+class Factory {
+    static create&lt;T extends new (...args: any[]) =&gt; any&gt;(Ctor: T, ...args: ConstructorParameters&lt;T&gt;): InstanceType&lt;T&gt; {
+        return new Ctor(...args)
+    }
+}
+
+let product = Factory.create(Product, 32, "laptop", 34000)
+let User1 = Factory.create(User, 97, "Arman khan", "armanIhsan@gmail.com")
+let Order1 = Factory.create(Order, 33, User1.id, [1])
+console.log({ product, User1, Order1 });</code></pre>
+      </section>
+
+      <section id="recap">
+        <h2>Quick Recap: What You Now Know</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Your Understanding</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>What constraints are</td>
+              <td>Rules that limit what types can be used</td>
+            </tr>
+            <tr>
+              <td>Why we need them</td>
+              <td>To safely access properties/methods</td>
+            </tr>
+            <tr>
+              <td>Syntax</td>
+              <td><code>&lt;T extends { property: type }&gt;</code></td>
+            </tr>
+            <tr>
+              <td>The new constraint</td>
+              <td><code>new (...args: any[]) =&gt; T</code></td>
+            </tr>
+            <tr>
+              <td>keyof constraint</td>
+              <td><code>&lt;K extends keyof T&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Multiple constraints</td>
+              <td><code>&lt;T extends A &amp; B&gt;</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div
+          class="note-box"
+          style="
+            background: var(--accent-dim);
+            border-left: 4px solid var(--accent);
+            margin-top: 2rem;
+          "
+        >
+          <span class="note-title" style="color: var(--accent)"
+            ><i class="fa-solid fa-lightbulb"></i> The 1% Realization</span
+          >
+          <p style="margin-bottom: 0">
+            "A constraint doesn't ADD anything to T. It REQUIRES T to already
+            have something."
+          </p>
+          <pre
+            style="
+              margin-top: 10px;
+              margin-bottom: 0;
+              background: rgba(0, 0, 0, 0.2) !important;
+            "
+          ><code class="language-typescript">// ❌ Wrong mental model:
+// "I'm adding a 'length' property to T"
+function getLength&lt;T extends { length: number }&gt;(value: T): number {
+    return value.length;
+}
+
+// ✅ Correct mental model:
+// "I'm telling TypeScript: T MUST already have 'length'"
+// "Only allow types that have 'length'"
+// "Then I can safely access value.length"</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

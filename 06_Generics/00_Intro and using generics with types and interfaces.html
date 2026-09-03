@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Introduction to Generics in TypeScript</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <i class="fa-brands fa-js"></i> TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Fundamentals</div>
+        <a href="#what-are-generics" class="nav-link">1. What Are Generics?</a>
+        <a href="#why-generics" class="nav-link">2. Why Is It Called "Generics"?</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Problem & Solution</div>
+        <a href="#the-problem" class="nav-link">3. The Problem</a>
+        <a href="#the-solution" class="nav-link">4. The Solution: Generics</a>
+        <a href="#benefits" class="nav-link">5. Benefits of Generics</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Syntax & Usage</div>
+        <a href="#syntax" class="nav-link">6. Syntax of Generics</a>
+        <a href="#type-aliases" class="nav-link">7. Generics in Type Aliases</a>
+        <a href="#interfaces" class="nav-link">8. Generics in Interfaces</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Wrap Up</div>
+        <a href="#summary" class="nav-link">9. Summary Table</a>
+        <a href="#takeaways" class="nav-link">10. Key Takeaways</a>
+      </div>
+      
+      <!-- Author Links -->
+      <div class="nav-section" style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <div class="nav-title">Author</div>
+        <a href="https://pro.armanihsan.com" target="_blank" class="nav-link" style="color: var(--accent);"><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+            <a href="https://github.com/armanihsan-dev" style="color: var(--text-secondary);"><i class="fa-brands fa-github fa-lg"></i></a>
+            <a href="https://www.linkedin.com/in/arman-ihsan-5a790430a/" style="color: var(--text-secondary);"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Core Concepts</span>
+        <h1>INTRODUCTION TO GENERICS</h1>
+        <p>WRITE REUSABLE CODE THAT WORKS WITH ANY TYPE, WHILE PRESERVING TYPE SAFETY.</p>
+      </section>
+
+      <section id="what-are-generics">
+        <h2>1. What Are Generics?</h2>
+        
+        <h3>Definition:</h3>
+        <p>Generics are a TypeScript feature that allows you to write reusable code that works with any type, while still preserving type safety.</p>
+
+        <h3>The Word "Generic":</h3>
+        <ul>
+            <li>"Generic" means "relating to a whole group or class."</li>
+            <li>In TypeScript, it means: one piece of code that works for any type.</li>
+        </ul>
+      </section>
+
+      <section id="why-generics">
+        <h2>2. Why Is It Called "Generics"?</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Term</th>
+                    <th>Meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Generic</strong></td><td>"Not specific; general"</td></tr>
+                <tr><td><strong>In TypeScript</strong></td><td>Code that works with any type, not just one specific type</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Example:</h3>
+        <pre><code class="language-typescript">// ❌ Specific: only works with strings
+function identityString(value: string): string {
+    return value;
+}
+
+// ✅ Generic: works with ANY type
+function identity<T>(value: T): T {
+    return value;
+}</code></pre>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-lightbulb"></i> Why the name fits:</span>
+            <p style="margin-bottom: 0;">Just like a "generic" product works for everyone, generic code works for every type.</p>
+        </div>
+      </section>
+
+      <section id="the-problem">
+        <h2>3. The Problem: Without Generics</h2>
+        
+        <h3>Problem 1: Using any</h3>
+        <pre><code class="language-typescript">function identity(value: any): any {
+    return value;
+}
+
+const result = identity("hello");
+// ❌ TypeScript doesn't know 'result' is a string
+result.toUpperCase(); // Works at runtime, but TypeScript can't help</code></pre>
+        <p><strong>Issues:</strong></p>
+        <ul>
+            <li>❌ Type safety is lost</li>
+            <li>❌ No autocomplete</li>
+            <li>❌ Bugs can slip through</li>
+        </ul>
+
+        <h3>Problem 2: Using Specific Types</h3>
+        <pre><code class="language-typescript">function identityString(value: string): string {
+    return value;
+}
+
+function identityNumber(value: number): number {
+    return value;
+}
+
+function identityBoolean(value: boolean): boolean {
+    return value;
+}
+
+// 😫 We have to repeat the same logic for EVERY type!</code></pre>
+        <p><strong>Issues:</strong></p>
+        <ul>
+            <li>❌ Code duplication</li>
+            <li>❌ Hard to maintain</li>
+            <li>❌ Not reusable</li>
+        </ul>
+      </section>
+
+      <section id="the-solution">
+        <h2>🟢 4. The Solution: Generics</h2>
+        <p>The Same Example, With Generics.<br>
+        we'll learn working with generics function in next chapter but this is just for example.</p>
+
+        <pre><code class="language-typescript">function identity<T>(value: T): T {
+    return value;
+}</code></pre>
+
+        <table>
+            <tbody>
+                <tr><td><code>&lt;T&gt;</code></td><td>"I’m going to use a type called T"</td></tr>
+                <tr><td><code>value: T</code></td><td>"The argument is of type T"</td></tr>
+                <tr><td><code>: T</code></td><td>"The return value is of type T"</td></tr>
+                <tr><td><strong>T is replaced</strong></td><td>When you call the function, T becomes the actual type</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Usage</h3>
+        <pre><code class="language-typescript">const result = identity("hello"); // TypeScript knows: string
+const result2 = identity(42);     // TypeScript knows: number
+const result3 = identity(true);   // TypeScript knows: boolean
+
+// We can also pass a specific type
+const result4 = identity<string>("hiii"); </code></pre>
+        <p>here the string is passes into T.</p>
+
+        <h3>How It Works (Step by Step)</h3>
+        <pre><code class="language-typescript">// Step 1: You write the generic function
+function identity<T>(value: T): T {
+    return value;
+}
+
+// Step 2: You call it with a string
+identity("hello");
+
+// Step 3: TypeScript replaces T with string
+function identity<string>(value: string): string {
+    return value;
+}
+
+// Step 4: You call it with a number
+identity(42);
+
+// Step 5: TypeScript replaces T with number
+function identity<number>(value: number): number {
+    return value;
+}</code></pre>
+
+        <div class="note-box" style="background: var(--accent-dim); border-left: 4px solid var(--accent);">
+            <span class="note-title" style="color: var(--accent);"><i class="fa-solid fa-brain"></i> Think of it like this:</span>
+            <p style="margin-bottom: 0;">Generics are like function parameters, but for types instead of values.</p>
+        </div>
+
+        <pre><code class="language-typescript">// Value parameter
+function add(a: number, b: number): number {
+    return a + b;
+}
+add(5, 10); // 5 and 10 are the VALUES passed
+
+// Type parameter
+function identity<T>(value: T): T {
+    return value;
+}
+identity<string>("hello"); // string is the TYPE passed</code></pre>
+      </section>
+
+      <section id="benefits">
+        <h2>✅ 5. Benefits of Using Generics in Types</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Benefit</th>
+                    <th>Explanation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Type Safety</strong></td><td>TypeScript knows the exact type</td></tr>
+                <tr><td><strong>Reusability</strong></td><td>One piece of code works for all types</td></tr>
+                <tr><td><strong>Flexibility</strong></td><td>Works with any type you pass</td></tr>
+                <tr><td><strong>Autocomplete</strong></td><td>IDE knows what properties are available</td></tr>
+                <tr><td><strong>No Duplication</strong></td><td>Write once, use everywhere</td></tr>
+            </tbody>
+        </table>
+      </section>
+
+      <section id="syntax">
+        <h2>6. Syntax of Generics</h2>
+        
+        <h3>The &lt;T&gt; Syntax</h3>
+        <pre><code class="language-typescript">type TypeName<T> = {
+    // Use T here
+};</code></pre>
+
+        <h3>Generic Type Alias (Basic Syntax)</h3>
+        <pre><code class="language-typescript">type Box<T> = {
+    value: T;
+};</code></pre>
+      </section>
+
+      <section id="type-aliases">
+        <h2>🧩 7. Generics in Types (Type Aliases)</h2>
+        
+        <h3>Example 1: Box Type</h3>
+        <pre><code class="language-typescript">type Box<T> = {
+    value: T;
+};
+
+// Usage:
+const stringBox: Box<string> = { value: "hello" };
+const numberBox: Box<number> = { value: 42 };
+const booleanBox: Box<boolean> = { value: true };</code></pre>
+
+        <h3>Example 2: Nullable Type</h3>
+        <pre><code class="language-typescript">type Nullable<T> = T | null;
+
+// Usage:
+let name: Nullable<string> = "Alice";
+name = null; // ✅ Allowed</code></pre>
+
+        <h3>Example 3: Pair Type</h3>
+        <pre><code class="language-typescript">type Pair<T, U> = {
+    first: T;
+    second: U;
+};
+
+// Usage:
+const pair: Pair<string, number> = {
+    first: "hello",
+    second: 42
+};</code></pre>
+        <p>here the string passes into T and number passes into U, so the type becomes:</p>
+        <pre><code class="language-typescript">type Pair<string, number> = {
+    first: string;
+    second: number;
+};</code></pre>
+
+        <h3>Example 4: Array Wrapper</h3>
+        <pre><code class="language-typescript">type ArrayWrapper<T> = T[];
+
+// Usage:
+const numbers: ArrayWrapper<number> = [1, 2, 3];
+const names: ArrayWrapper<string> = ["Arman", "Khan","Munnu"];</code></pre>
+
+        <h3>Example 5: ApiResponse Type</h3>
+        <pre><code class="language-typescript">type ApiResponse<T> = {
+    status: number;
+    data: T;
+    message: string;
+};
+
+// Usage:
+type User = { id: number; name: string };
+const response: ApiResponse<User> = {
+    status: 200,
+    data: { id: 1, name: "Alice" },
+    message: "Success"
+};</code></pre>
+      </section>
+
+      <section id="interfaces">
+        <h2>8. Generics in Interfaces</h2>
+        
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">interface InterfaceName<T> {
+    // Use T here
+}</code></pre>
+
+        <h3>Example 1: Box Interface</h3>
+        <pre><code class="language-typescript">interface Box<T> {
+    value: T;
+    getValue(): T;
+}
+
+// Usage:
+const stringBox: Box<string> = {
+    value: "Munnu",
+    getValue() {
+        return this.value;
+    }
+};
+
+console.log(stringBox.getValue()); // "Munnu"</code></pre>
+
+        <h3>Example 2: Repository Interface</h3>
+        <pre><code class="language-typescript">interface Repository<T> {
+    items: T[];
+    add(item: T): void;
+    get(index: number): T | undefined;
+    getAll(): T[];
+}
+
+let userRepo: Repository<string> = {
+    items: [],
+    add(item: string) {
+        this.items.push(item)
+    },
+    get(index: number) {
+        return this.items[index]
+    },
+    getAll() {
+        return this.items
+    },
+}
+
+userRepo.add("Mnnnu");
+userRepo.add("Shunnu");
+console.log(userRepo.getAll()); // ['Munnu','Shunnu']</code></pre>
+      </section>
+
+      <section id="summary">
+        <h2>9. Summary Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Concept</th>
+                    <th>Syntax</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Generic Type</strong></td><td><code>type Name&lt;T&gt; = { ... }</code></td><td><code>type Box&lt;T&gt; = { value: T }</code></td></tr>
+                <tr><td><strong>Generic Interface</strong></td><td><code>interface Name&lt;T&gt; { ... }</code></td><td><code>interface Box&lt;T&gt; { value: T }</code></td></tr>
+                <tr><td><strong>Multiple Types</strong></td><td><code>&lt;T, U&gt;</code></td><td><code>type Pair&lt;T, U&gt; = { first: T; second: U }</code></td></tr>
+                <tr><td><strong>Usage</strong></td><td><code>TypeName&lt;Type&gt;</code></td><td><code>Box&lt;string&gt;</code></td></tr>
+            </tbody>
+        </table>
+      </section>
+
+      <section id="takeaways">
+        <h2>10. Key Takeaways</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Point</th>
+                    <th>Explanation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>What</strong></td><td>Generics are placeholders for types</td></tr>
+                <tr><td><strong>Why</strong></td><td>To make code reusable and type-safe</td></tr>
+                <tr><td><strong>Where</strong></td><td>Types, interfaces, functions, classes</td></tr>
+                <tr><td><strong>Syntax</strong></td><td><code>&lt;T&gt;</code> after the type/interface name</td></tr>
+                <tr><td><strong>Benefits</strong></td><td>Type safety, reusability, flexibility</td></tr>
+            </tbody>
+        </table>
+      </section>
+
+      <footer>
+        <p>Introduction to Generics in TypeScript</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

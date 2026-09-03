@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generic Functions & Multiple Parameters</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" style="width:24px; height:24px;" alt="TS Logo" />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#intro" class="nav-link">Overview</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Function Syntaxes</div>
+        <a href="#func-decl" class="nav-link">1. Function Declaration</a>
+        <a href="#func-expr" class="nav-link">2. Function Expression</a>
+        <a href="#arrow-func" class="nav-link">3. Arrow Function</a>
+        <a href="#arrow-param" class="nav-link">4. Type Parameter Position</a>
+        <a href="#func-object" class="nav-link">5. Function in Object</a>
+        <a href="#method-class" class="nav-link">6. Method in Class</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Multiple Parameters</div>
+        <a href="#multi-basic" class="nav-link">2.1 Basic Multiple Parameters</a>
+        <a href="#multi-arrow" class="nav-link">2.3 Arrow Function Multiple</a>
+      </div>
+      
+      <!-- Author Links -->
+      <div class="nav-section" style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <div class="nav-title">Author</div>
+        <a href="https://pro.armanihsan.com" target="_blank" class="nav-link" style="color: var(--accent);"><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+            <a href="https://github.com/armanihsan-dev" target="_blank" style="color: var(--text-secondary);"><i class="fa-brands fa-github fa-lg"></i></a>
+            <a href="https://www.linkedin.com/in/arman-ihsan-5a790430a/" target="_blank" style="color: var(--text-secondary);"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Generics</span>
+        <h1>GENERIC FUNCTIONS</h1>
+        <p>DIFFERENT WAYS TO CREATE GENERIC FUNCTIONS & MULTIPLE GENERIC PARAMETERS</p>
+      </section>
+
+      <section id="intro">
+        <ul>
+            <li>Different syntaxes for generic functions</li>
+            <li>Generic arrow functions</li>
+            <li>Generic function declarations</li>
+            <li>Multiple generic parameters</li>
+        </ul>
+      </section>
+
+      <section id="func-decl">
+        <h2>Part 1: Different Ways to Write Generic Functions</h2>
+        
+        <h3>1. Function Declaration (Standard)</h3>
+        <pre><code class="language-typescript">function identity<T>(value: T): T {
+    return value;
+}
+
+// Usage:
+const result = identity<string>("hello");
+// Or with inference:
+const result2 = identity("hello");</code></pre>
+      </section>
+
+      <section id="func-expr">
+        <h3>2. Function Expression</h3>
+        <pre><code class="language-typescript">const identity = function<T>(value: T): T {
+    return value;
+};
+
+// Usage:
+const result = identity<string>("hello");</code></pre>
+      </section>
+
+      <section id="arrow-func">
+        <h3>3. Arrow Function (Most Common)</h3>
+        <pre><code class="language-typescript">const identity = <T>(value: T): T => {
+    return value;
+};
+
+// One-liner:
+const identity = <T>(value: T): T => value;
+
+// Usage:
+const result = identity("hello");</code></pre>
+      </section>
+
+      <section id="arrow-param">
+        <h3>4. Arrow Function with Type Parameter Before the Arrow</h3>
+        <pre><code class="language-typescript">// ✅ Works: T is declared before the arrow
+const identity = <T>(value: T): T => value;
+
+// ❌ Fails: T can't be declared after the arrow
+const identity = (value: T): T => value; // ❌ Error: T is not defined</code></pre>
+      </section>
+
+      <section id="func-object">
+        <h3>5. Function in Object</h3>
+        <pre><code class="language-typescript">const utils = {
+    identity<T>(value: T): T {
+        return value;
+    }
+};
+
+const result = utils.identity("hello");</code></pre>
+      </section>
+
+      <section id="method-class">
+        <h3>6. Method in Class</h3>
+        <pre><code class="language-typescript">class Utils {
+    identity<T>(value: T): T {
+        return value;
+    }
+}
+
+const utils = new Utils();
+const result = utils.identity("hello");</code></pre>
+      </section>
+
+      <section id="multi-basic">
+        <h2>Part 2: Multiple Generic Parameters</h2>
+        
+        <h3>2.1 Basic Multiple Parameters</h3>
+        <pre><code class="language-typescript">function pair<T, U>(first: T, second: U): [T, U] {
+    return [first, second];
+}
+
+// Usage with explicit types:
+const result1 = pair<string, number>("hello", 42);
+// result1 type: [string, number]
+
+// Usage with inference:
+const result2 = pair("hello", 42);
+// TypeScript infers: T = string, U = number</code></pre>
+      </section>
+
+      <section id="multi-arrow">
+        <h3>2.3 Multiple Parameters in Arrow Function</h3>
+        <pre><code class="language-typescript">const pair = <T, U>(first: T, second: U): [T, U] => [first, second];
+
+// Usage:
+const result = pair("hello", 42);</code></pre>
+      </section>
+
+      <footer>
+        <p>Generic Functions & Parameters Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

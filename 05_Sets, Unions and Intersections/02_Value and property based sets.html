@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Value-Based vs Property-Based Sets</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#core-idea" class="nav-link">1. The Core Idea</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Set Types</div>
+        <a href="#value-based" class="nav-link">2. Value-Based Sets</a>
+        <a href="#property-based" class="nav-link">3. Property-Based Sets</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Comparisons</div>
+        <a href="#key-insight" class="nav-link">4. The Key Insight</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Implementation</div>
+        <a href="#typescript" class="nav-link">7. In TypeScript</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Set Theory & Types</span>
+        <h1>VALUE VS PROPERTY-BASED SETS</h1>
+        <p>THE COMPLETE GUIDE TO UNDERSTANDING SET CONDITIONS</p>
+      </section>
+
+      <section id="core-idea">
+        <h2>Part 1: The Core Idea (The "Aha!" Moment)</h2>
+        
+        <h3>Both Are Exactly the Same Thing!</h3>
+        <p>Here's the secret: Both Value-Based and Property-Based sets follow the exact same rule:</p>
+
+        <div class="note-box" style="background: var(--accent-dim); border-left: 4px solid var(--accent);">
+            <span class="note-title" style="color: var(--accent);"><i class="fa-solid fa-lightbulb"></i> The Golden Rule</span>
+            <p style="color: var(--text-primary); margin-bottom: 0;">A set = ALL elements that satisfy a condition</p>
+        </div>
+
+        <p>The ONLY difference is <strong>WHAT</strong> you're checking the condition on:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>What you check</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Value-Based</strong></td><td>Check the value itself</td><td><code>x > 5</code> (is the number greater than 5?)</td></tr>
+                <tr><td><strong>Property-Based</strong></td><td>Check a property of the value</td><td><code>person.age > 5</code> (is the person's age greater than 5?)</td></tr>
+            </tbody>
+        </table>
+
+        <p>That's it! That's literally the only difference!</p>
+      </section>
+
+      <section id="value-based">
+        <h2>Part 2: Value-Based Sets (Simple Values)</h2>
+        
+        <h3>Definition</h3>
+        <p>A Value-Based Set is a set where the elements are simple values (numbers, letters, etc.), and membership is decided by checking the value itself.</p>
+
+        <h3>The Pattern</h3>
+        <pre><code class="language-text">Set = { x | CONDITION on x }
+
+where x is a simple value (number, character, etc.)</code></pre>
+
+        <h3>Examples with Clear Explanations</h3>
+        
+        <h4>Example 1: Even Numbers</h4>
+        <pre><code class="language-text">A = { x | x % 2 = 0 }
+
+Read as: "The set of all x such that x is even"</code></pre>
+
+        <p><strong>What we're checking:</strong> Is x divisible by 2?<br>
+        The condition is applied DIRECTLY to x.</p>
+
+        <p>Which numbers qualify?</p>
+        <ul>
+            <li>→ 2 qualifies (2 % 2 = 0) ✅</li>
+            <li>→ 4 qualifies (4 % 2 = 0) ✅</li>
+            <li>→ 3 does NOT (3 % 2 = 1) ❌</li>
+        </ul>
+        <p>So: <code>A = {..., -4, -2, 0, 2, 4, 6, ...}</code></p>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">x = 2  →  Check: 2 % 2 = 0?  → YES → IN THE SET
+x = 3  →  Check: 3 % 2 = 0?  → NO  → NOT IN THE SET
+x = 4  →  Check: 4 % 2 = 0?  → YES → IN THE SET</code></pre>
+
+        <h4>Example 2: Numbers Less Than 5</h4>
+        <pre><code class="language-text">B = { x | x < 5 and x is a natural number }
+
+Read as: "The set of all x such that x is less than 5 and x is a natural number"</code></pre>
+
+        <p><strong>What we're checking:</strong> Is x < 5?<br>
+        The condition is applied DIRECTLY to x.</p>
+
+        <p>Which numbers qualify?</p>
+        <ul>
+            <li>→ 1 qualifies (1 < 5) ✅</li>
+            <li>→ 4 qualifies (4 < 5) ✅</li>
+            <li>→ 6 does NOT (6 < 5) ❌</li>
+        </ul>
+        <p>So: <code>B = {1, 2, 3, 4}</code></p>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">x = 1  →  Check: 1 < 5?  → YES → IN THE SET
+x = 4  →  Check: 4 < 5?  → YES → IN THE SET
+x = 6  →  Check: 6 < 5?  → NO  → NOT IN THE SET</code></pre>
+      </section>
+
+      <section id="property-based">
+        <h2>Part 3: Property-Based Sets (Objects with Properties)</h2>
+        
+        <h3>Definition</h3>
+        <p>A Property-Based Set is a set where the elements are objects (with properties), and membership is decided by checking the properties of those objects.</p>
+
+        <h3>The Pattern</h3>
+        <pre><code class="language-text">Set = { x | CONDITION on x.property }
+
+where x is an object with properties</code></pre>
+
+        <h3>Examples with Clear Explanations</h3>
+        
+        <h4>Example 1: Mangoes by Color</h4>
+        <pre><code class="language-text">M = { m | m is a mango and m.color = "yellow" }
+
+Read as: "The set of all mangoes m such that m's color is yellow"</code></pre>
+
+        <p><strong>What we're checking:</strong> Is the mango's color yellow?<br>
+        The condition is applied to the COLOR property of the mango.</p>
+
+        <p>Which mangoes qualify?</p>
+        <ul>
+            <li>→ Mango A: color = "yellow" → YES → IN THE SET</li>
+            <li>→ Mango B: color = "green"  → NO  → NOT IN THE SET</li>
+            <li>→ Mango C: color = "yellow" → YES → IN THE SET</li>
+        </ul>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">Mango A = { color: "yellow", weight: 200g }
+→ Check: mango.color = "yellow"? → YES → IN SET
+
+Mango B = { color: "green", weight: 180g }
+→ Check: mango.color = "yellow"? → NO → NOT IN SET</code></pre>
+
+        <h4>Example 2: Students with High Marks</h4>
+        <pre><code class="language-text">S = { s | s.marks > 90 }
+
+Read as: "The set of all students s such that s's marks are greater than 90"</code></pre>
+
+        <p><strong>What we're checking:</strong> Is the student's marks > 90?<br>
+        The condition is applied to the MARKS property of the student.</p>
+
+        <p>Which students qualify?</p>
+        <ul>
+            <li>→ Alice: marks = 95 → YES (95 > 90) → IN THE SET</li>
+            <li>→ Bob:   marks = 85 → NO  (85 > 90) → NOT IN THE SET</li>
+            <li>→ Carol: marks = 98 → YES → IN THE SET</li>
+        </ul>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">Student A = { name: "Alice", marks: 95 }
+→ Check: student.marks > 90? → 95 > 90? → YES → IN SET
+
+Student B = { name: "Bob", marks: 85 }
+→ Check: student.marks > 90? → 85 > 90? → NO → NOT IN SET</code></pre>
+      </section>
+
+      <section id="key-insight">
+        <h2>Part 4: The Key Insight (Side-by-Side Comparison)</h2>
+        
+        <h3>Same Operation, Different Focus</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    THE ONLY DIFFERENCE                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  VALUE-BASED SET:                                                  │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Check the VALUE itself                                     │   │
+│  │                                                             │   │
+│  │  A = { x | x > 5 }                                        │   │
+│  │           ↑                                                │   │
+│  │      Check x directly                                      │   │
+│  │                                                             │   │
+│  │  Example: x = 7 → 7 > 5 → YES                             │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  PROPERTY-BASED SET:                                               │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Check a PROPERTY of the value                              │   │
+│  │                                                             │   │
+│  │  P = { p | p.price > 5 }                                  │   │
+│  │              ↑                                            │   │
+│  │         Check p.price                                     │   │
+│  │                                                             │   │
+│  │  Example: p = { price: 7 } → p.price > 5 → YES           │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="typescript">
+        <h2>Part 7: In TypeScript</h2>
+        
+        <h3>Value-Based Sets in TypeScript</h3>
+        <pre><code class="language-typescript">// Value-Based: Check the value directly
+type GreaterThan5 = 6 | 7 | 8 | 9 | 10;  // Or use conditional types
+
+// Example: Filter numbers greater than 5
+type Numbers = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+type GreaterThan5 = Exclude<Numbers, 1 | 2 | 3 | 4 | 5>;  // 6 | 7 | 8 | 9 | 10
+
+// Or using conditional types
+type FilterGreaterThan5<T extends number> = T extends 5 | 4 | 3 | 2 | 1 ? never : T;
+type Result = FilterGreaterThan5<Numbers>;  // 6 | 7 | 8 | 9 | 10</code></pre>
+
+        <h3>Property-Based Sets in TypeScript</h3>
+        <pre><code class="language-typescript">// Property-Based: Check a property of the object
+type Person = { name: string; age: number };
+
+// Filter people older than 25
+type OldPeople<T extends Person> = T extends { age: infer A } 
+    ? A extends number 
+        ? (A extends 26 | 27 | 28 | 29 | 30 ... ? T : never)
+        : never
+    : never;
+
+// Better approach using conditional types with property checking
+type FilterByAge<T extends Person, MinAge extends number> = 
+    T extends { age: infer A } 
+        ? A extends MinAge 
+            ? T 
+            : never 
+        : never;
+
+// Or simply:
+type OldPerson = Person & { age: 26 | 27 | 28 | 29 | 30 };
+
+
+// Property based sets
+type Mango = {
+    name: string;
+    color: string;
+    weight: number;
+};
+
+// 2. Now 'Mango' is a Property-Based Set!
+// It represents the set of ALL objects that have these properties.
+
+// 3. Create elements of the set
+const mango1: Mango = { name: "Alphonso", color: "yellow", weight: 200 };
+const mango2: Mango = { name: "Green Mango", color: "green", weight: 180 };
+const mango3: Mango = { name: "Honey Mango", color: "yellow", weight: 250 };
+
+const yellowMangoes = [mango1, mango2, mango3].filter(m => m.color == "yellow")
+console.log(yellowMangoes);</code></pre>
+      </section>
+
+      <footer>
+        <p>Value-Based vs Property-Based Sets Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+              Connect on LinkedIn
+            </a>
+          </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

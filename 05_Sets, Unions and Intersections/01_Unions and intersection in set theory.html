@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unions and Intersections in Set Theory</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-solid fa-layer-group"></i> SET THEORY</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Fundamentals</div>
+        <a href="#the-big-picture" class="nav-link">1. The Big Picture</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Operations</div>
+        <a href="#union-of-sets" class="nav-link">2. Union of Sets (A ∪ B)</a>
+        <a href="#intersection-of-sets" class="nav-link">3. Intersection of Sets (A ∩ B)</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Comparisons</div>
+        <a href="#union-vs-intersection" class="nav-link">4. Union vs Intersection</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. TypeScript</div>
+        <a href="#ts-representations" class="nav-link">6. Sets in TypeScript</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Discrete Math & TypeScript</span>
+        <h1>UNIONS AND INTERSECTIONS</h1>
+        <p>COMPLETE GUIDE TO SET OPERATIONS AND TYPESCRIPT IMPLEMENTATIONS</p>
+      </section>
+
+      <section id="the-big-picture">
+        <h2>Part 1: What are Unions and Intersections?</h2>
+        
+        <h3>The Big Picture</h3>
+        <p>Unions and intersections are two fundamental operations you can perform on sets. They allow you to combine or overlap sets to create new sets.</p>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    THE TWO OPERATIONS                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  UNION (∪)                                                         │
+│  "Everything in A OR in B"                                         │
+│  → Combines ALL elements from both sets                           │
+│  → No duplicates!                                                 │
+│                                                                     │
+│  INTERSECTION (∩)                                                  │
+│  "Everything in A AND in B"                                        │
+│  → Elements that are SHARED between both sets                     │
+│  → Only common elements!                                          │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="union-of-sets">
+        <h2>Part 2: Union of Sets (A ∪ B)</h2>
+        
+        <h3>Definition</h3>
+        <p>The union of two sets A and B (written as A ∪ B) is the set of all elements that are in A, OR in B, OR in both.</p>
+
+        <h3>Formula</h3>
+        <pre><code class="language-text">A ∪ B = { x | x ∈ A OR x ∈ B }
+
+Read as: "The set of all x such that x is in A OR x is in B"</code></pre>
+
+        <h3>Key Points</h3>
+        <ul>
+            <li>"OR" in math means inclusive OR (either, or both)</li>
+            <li>No element appears twice (duplicates are removed)</li>
+            <li>If an element is in both sets, it appears only once in the union</li>
+        </ul>
+
+        <h3>Venn Diagram for Union</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    A ∪ B (Union)                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                       U                                      │   │
+│  │                                                              │   │
+│  │    ┌─────────────────┐    ┌─────────────────┐              │   │
+│  │    │                 │    │                 │              │   │
+│  │    │       A         │    │       B         │              │   │
+│  │    │                 │    │                 │              │   │
+│  │    │   ┌─────────┐   │    │                 │              │   │
+│  │    │   │  A ∩ B  │   │    │                 │              │   │
+│  │    │   │(Shared) │   │    │                 │              │   │
+│  │    │   └─────────┘   │    │                 │              │   │
+│  │    │                 │    │                 │              │   │
+│  │    └─────────────────┘    └─────────────────┘              │   │
+│  │                                                              │   │
+│  │  EVERYTHING in A OR B is shaded (A ∪ B)                    │   │
+│  │                                                              │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  A ∪ B = All elements in BOTH circles (the entire shaded area)    │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Simple Examples</h3>
+        
+        <h4>Example 1: Numbers</h4>
+        <pre><code class="language-text">A = {1, 2, 3, 4, 5}
+B = {4, 5, 6, 7, 8}
+
+A ∪ B = {1, 2, 3, 4, 5, 6, 7, 8}
+
+Explanation:
+- A has: 1, 2, 3, 4, 5
+- B has: 4, 5, 6, 7, 8
+- Union = All elements from both sets
+- 4 and 5 are in both, but we list them only ONCE</code></pre>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">A = {1, 2, 3, 4, 5}
+B = {4, 5, 6, 7, 8}
+
+A ∪ B = {1, 2, 3, 4, 5, 6, 7, 8}
+
+┌─────────────┐     ┌─────────────┐
+│     A        │     │     B        │
+│  {1,2,3}     │     │  {6,7,8}    │
+│     ┌────────┼─────┼────────┐    │
+│     │ {4,5}  │     │        │    │
+│     └────────┼─────┼────────┘    │
+│              │     │              │
+└──────────────┘     └──────────────┘
+     A ∪ B = EVERYTHING (no gaps)!</code></pre>
+
+        <h4>Example 2: Colors</h4>
+        <pre><code class="language-text">Colors = {red, green, blue, yellow, orange, purple}
+Primary = {red, green, blue}
+Secondary = {orange, purple, green}  // Green is in both
+
+Primary ∪ Secondary = {red, green, blue, orange, purple}
+
+Explanation:
+- Primary has: red, green, blue
+- Secondary has: orange, purple, green
+- Union: red, green, blue, orange, purple
+- Green appears in both but is listed once</code></pre>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">Primary = {red, green, blue}
+Secondary = {orange, purple, green}
+
+Primary ∪ Secondary = {red, green, blue, orange, purple}
+
+┌─────────────┐     ┌─────────────┐
+│  Primary    │     │  Secondary  │
+│  {red,     │     │  {orange,   │
+│   blue}    │     │   purple}   │
+│     ┌──────┼─────┼──────┐      │
+│     │{green}│     │      │      │
+│     └──────┼─────┼──────┘      │
+└────────────┘     └─────────────┘
+     Union = ALL colors shown</code></pre>
+      </section>
+
+      <section id="intersection-of-sets">
+        <h2>Part 3: Intersection of Sets (A ∩ B)</h2>
+        
+        <h3>Definition</h3>
+        <p>The intersection of two sets A and B (written as A ∩ B) is the set of all elements that are in BOTH A and B.</p>
+
+        <h3>Formula</h3>
+        <pre><code class="language-text">A ∩ B = { x | x ∈ A AND x ∈ B }
+
+Read as: "The set of all x such that x is in A AND x is in B"</code></pre>
+
+        <h3>Key Points</h3>
+        <ul>
+            <li>"AND" means the element must be in both sets</li>
+            <li>Only common elements are included</li>
+            <li>If sets have no common elements, the intersection is empty (∅)</li>
+            <li>The intersection is always a subset of both A and B</li>
+        </ul>
+
+        <h3>Venn Diagram for Intersection</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    A ∩ B (Intersection)                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                       U                                      │   │
+│  │                                                              │   │
+│  │    ┌─────────────────┐    ┌─────────────────┐              │   │
+│  │    │                 │    │                 │              │   │
+│  │    │       A         │    │       B         │              │   │
+│  │    │                 │    │                 │              │   │
+│  │    │   ┌─────────┐   │    │                 │              │   │
+│  │    │   │  A ∩ B  │   │    │                 │              │   │
+│  │    │   │(Shared) │   │    │                 │              │   │
+│  │    │   └─────────┘   │    │                 │              │   │
+│  │    │                 │    │                 │              │   │
+│  │    └─────────────────┘    └─────────────────┘              │   │
+│  │                                                              │   │
+│  │  ONLY the overlapping region is shaded (A ∩ B)             │   │
+│  │                                                              │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  A ∩ B = Elements in the OVERLAP (shared by both circles)         │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Simple Examples</h3>
+        
+        <h4>Example 1: Numbers</h4>
+        <pre><code class="language-text">A = {1, 2, 3, 4, 5}
+B = {4, 5, 6, 7, 8}
+
+A ∩ B = {4, 5}
+
+Explanation:
+- A has: 1, 2, 3, 4, 5
+- B has: 4, 5, 6, 7, 8
+- Which elements appear in BOTH?
+- 4 is in both ✅
+- 5 is in both ✅
+- All others are only in one set
+- So A ∩ B = {4, 5}</code></pre>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">A = {1, 2, 3, 4, 5}     B = {4, 5, 6, 7, 8}
+
+A ∩ B = {4, 5}
+
+┌─────────────┐     ┌─────────────┐
+│     A        │     │     B        │
+│  {1,2,3}     │     │  {6,7,8}    │
+│     ┌────────┼─────┼────────┐    │
+│     │ {4,5}  │     │        │    │
+│     └────────┼─────┼────────┘    │
+│              │     │              │
+└──────────────┘     └──────────────┘
+     ONLY the middle part!</code></pre>
+
+        <h4>Example 2: Colors</h4>
+        <pre><code class="language-text">Primary = {red, green, blue}
+Secondary = {orange, purple, green}
+
+Primary ∩ Secondary = {green}
+
+Explanation:
+- Primary has: red, green, blue
+- Secondary has: orange, purple, green
+- Only green appears in both sets
+- So intersection = {green}</code></pre>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">Primary = {red, green, blue}
+Secondary = {orange, purple, green}
+
+Primary ∩ Secondary = {green}
+
+┌─────────────┐     ┌─────────────┐
+│  Primary    │     │  Secondary  │
+│  {red,     │     │  {orange,   │
+│   blue}    │     │   purple}   │
+│     ┌──────┼─────┼──────┐      │
+│     │{green}│     │      │      │
+│     └──────┼─────┼──────┘      │
+└────────────┘     └─────────────┘
+     ONLY the overlap</code></pre>
+
+        <h4>Example 3: Disjoint Sets (No Intersection)</h4>
+        <pre><code class="language-text">A = {1, 2, 3}
+B = {4, 5, 6}
+
+A ∩ B = ∅ (empty set)
+
+Explanation:
+- No elements appear in both sets
+- The sets are DISJOINT
+- Intersection is empty</code></pre>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">A = {1, 2, 3}     B = {4, 5, 6}
+
+A ∩ B = ∅
+
+┌─────────────┐     ┌─────────────┐
+│     A        │     │     B        │
+│  {1,2,3}    │     │  {4,5,6}    │
+│              │     │              │
+│              │     │              │
+└──────────────┘     └──────────────┘
+     NO OVERLAP!</code></pre>
+      </section>
+
+      <section id="union-vs-intersection">
+        <h2>Part 4: Union vs Intersection - Side by Side</h2>
+        
+        <h3>Complete Comparison</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Union (A ∪ B)</th>
+                    <th>Intersection (A ∩ B)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Definition</strong></td><td>Elements in A OR B</td><td>Elements in A AND B</td></tr>
+                <tr><td><strong>Operation</strong></td><td>Combines ALL elements</td><td>Finds ONLY common elements</td></tr>
+                <tr><td><strong>Set Relationship</strong></td><td>A ∪ B is a SUPERSET of both</td><td>A ∩ B is a SUBSET of both</td></tr>
+                <tr><td><strong>If sets are disjoint</strong></td><td>A ∪ B = both sets combined</td><td>A ∩ B = ∅ (empty)</td></tr>
+                <tr><td><strong>If sets are equal</strong></td><td>A ∪ B = A = B</td><td>A ∩ B = A = B</td></tr>
+                <tr><td><strong>Symbol</strong></td><td>∪</td><td>∩</td></tr>
+                <tr><td><strong>Read as</strong></td><td>"Union" or "OR"</td><td>"Intersection" or "AND"</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Visual Side by Side</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    UNION vs INTERSECTION                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  A = {1, 2, 3, 4, 5}                                               │
+│  B = {4, 5, 6, 7, 8}                                               │
+│                                                                     │
+│  UNION (A ∪ B)                    INTERSECTION (A ∩ B)             │
+│  ┌─────────────────┐              ┌─────────────────┐              │
+│  │  {1,2,3,4,5,6,7,8}│            │  {4,5}          │              │
+│  │  ALL elements from             │  ONLY elements  │              │
+│  │  A and B combined!             │  in BOTH sets!  │              │
+│  └─────────────────┘              └─────────────────┘              │
+│                                                                     │
+│  ┌─────────────┐     ┌─────────────┐                              │
+│  │     A        │     │     B        │                              │
+│  │  {1,2,3}     │     │  {6,7,8}    │                              │
+│  │     ┌────────┼─────┼────────┐    │                              │
+│  │     │ {4,5}  │     │        │    │                              │
+│  │     └────────┼─────┼────────┘    │                              │
+│  │              │     │              │                              │
+│  └──────────────┘     └──────────────┘                              │
+│                                                                     │
+│  EVERYTHING (Union)                 ONLY THE OVERLAP (Intersection)│
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="ts-representations">
+        <h2>Part 6: Union and Intersection in TypeScript</h2>
+        
+        <h3>TypeScript Representations</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Set Operation</th>
+                    <th>Mathematical Symbol</th>
+                    <th>TypeScript Syntax</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Union</td><td>A ∪ B</td><td><code>A | B</code></td></tr>
+                <tr><td>Intersection</td><td>A ∩ B</td><td><code>A & B</code></td></tr>
+            </tbody>
+        </table>
+
+        <h3>Examples</h3>
+        
+        <h4>1. Union in TypeScript (|)</h4>
+        <pre><code class="language-typescript">type A = 1 | 2 | 3 | 4 | 5;
+type B = 4 | 5 | 6 | 7 | 8;
+
+type Union = A | B;  // 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8</code></pre>
+
+        <h4>2. Intersection in TypeScript (&)</h4>
+        <pre><code class="language-typescript">type A = 1 | 2 | 3 | 4 | 5;
+type B = 4 | 5 | 6 | 7 | 8;
+
+type Intersection = A & B;  // 4 | 5</code></pre>
+
+        <h4>3. Union with Objects</h4>
+        <pre><code class="language-typescript">type HasName = { name: string };
+type HasAge = { age: number };
+
+// Union: Must have either name OR age
+type UnionType = HasName | HasAge;
+
+let person1: UnionType = { name: "Alice" };  // ✅
+let person2: UnionType = { age: 25 };        // ✅
+let person3: UnionType = { name: "Bob", age: 30 };  // ✅
+
+// Intersection: Must have BOTH name AND age
+type IntersectionType = HasName & HasAge;
+
+let person4: IntersectionType = { name: "Alice", age: 25 };  // ✅
+let person5: IntersectionType = { name: "Alice" };  // ❌ Error: missing age</code></pre>
+      </section>
+
+      <footer>
+        <p>Unions and Intersections in Set Theory</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+              Connect on LinkedIn
+            </a>
+          </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

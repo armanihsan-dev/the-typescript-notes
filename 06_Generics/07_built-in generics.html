@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Built-in Generics in TypeScript: Map, Set, Readonly, and ReadonlyArray
+    </title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#what-you-will-learn" class="nav-link">🎯 What You'll Learn</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Collections</div>
+        <a href="#part-1" class="nav-link">1. Map&lt;K, V&gt; Collection</a>
+        <a href="#part-2" class="nav-link">2. Set&lt;T&gt; Unique Values</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Immutability Utilities</div>
+        <a href="#part-3" class="nav-link">3. Readonly&lt;T&gt; Objects</a>
+        <a href="#part-4" class="nav-link">4. ReadonlyArray&lt;T&gt;</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Wrap-up</div>
+        <a href="#summary" class="nav-link">📝 Summary & Takeaways</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Built-in Generics</span>
+        <h1>BUILT-IN GENERICS</h1>
+        <p>A COMPLETE GUIDE TO MAP, SET, READONLY, AND READONLYARRAY</p>
+      </section>
+
+      <section id="what-you-will-learn">
+        <h2>🎯 What You'll Learn</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Generic</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Map&lt;K, V&gt;</code></td>
+              <td>
+                Key-value pair collection with custom typed keys &amp; values
+              </td>
+            </tr>
+            <tr>
+              <td><code>Set&lt;T&gt;</code></td>
+              <td>Collection of unique values of type <code>T</code></td>
+            </tr>
+            <tr>
+              <td><code>Readonly&lt;T&gt;</code></td>
+              <td>Utility type making all top-level properties immutable</td>
+            </tr>
+            <tr>
+              <td><code>ReadonlyArray&lt;T&gt;</code></td>
+              <td>
+                Immutable array preventing modifications like
+                <code>push</code> or indexing
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Part 1: Map<K, V> -->
+      <section id="part-1">
+        <h2>Part 1: Map&lt;K, V&gt; — Key-Value Collection</h2>
+
+        <h3>Definition</h3>
+        <p>
+          <code>Map&lt;K, V&gt;</code> is a collection of key-value pairs where
+          keys and values can be of any type. Keys are guaranteed to be unique.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">const map = new Map&lt;K, V&gt;();</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">// ✅ Create a Map with string keys and number values
+const scores = new Map&lt;string, number&gt;();
+
+// Add values
+scores.set("Alice", 100);
+scores.set("Bob", 90);
+scores.set("Charlie", 85);
+
+// Get values
+console.log(scores.get("Alice")); // 100
+console.log(scores.get("Bob"));   // 90
+
+// Check if key exists
+console.log(scores.has("Alice")); // true
+console.log(scores.has("David")); // false
+
+// Delete a key
+scores.delete("Charlie");
+
+// Get size
+console.log(scores.size); // 2
+
+// Iterate
+for (const [key, value] of scores) {
+    console.log(`${key}: ${value}`);
+}
+// Output:
+// Alice: 100
+// Bob: 90</code></pre>
+
+        <h3>Different Key Types</h3>
+        <pre><code class="language-typescript">// ✅ Number keys
+const userMap = new Map&lt;number, string&gt;();
+userMap.set(1, "Alice");
+userMap.set(2, "Bob");
+
+// ✅ Object keys
+const objKey = { id: 1 };
+const objectMap = new Map&lt;object, string&gt;();
+objectMap.set(objKey, "Value for object key");
+
+// ✅ Mixed keys
+const mixedMap = new Map&lt;string | number, string&gt;();
+mixedMap.set("name", "Alice");
+mixedMap.set(42, "The answer");</code></pre>
+
+        <h3>Real-World Example: User Cache</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+class UserCache {
+    private cache = new Map&lt;number, User&gt;();
+
+    set(user: User): void {
+        this.cache.set(user.id, user);
+    }
+
+    get(id: number): User | undefined {
+        return this.cache.get(id);
+    }
+
+    has(id: number): boolean {
+        return this.cache.has(id);
+    }
+
+    delete(id: number): boolean {
+        return this.cache.delete(id);
+    }
+
+    clear(): void {
+        this.cache.clear();
+    }
+
+    getAll(): User[] {
+        return Array.from(this.cache.values());
+    }
+}
+
+// Usage
+const cache = new UserCache();
+cache.set({ id: 1, name: "Alice", email: "alice@email.com" });
+cache.set({ id: 2, name: "Bob", email: "bob@email.com" });
+
+const user = cache.get(1);
+console.log(user?.name); // "Alice"</code></pre>
+
+        <h3>Map Methods Summary</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>What It Does</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>set(key, value)</code></td>
+              <td>Adds a key-value pair</td>
+            </tr>
+            <tr>
+              <td><code>get(key)</code></td>
+              <td>Gets value for a key</td>
+            </tr>
+            <tr>
+              <td><code>has(key)</code></td>
+              <td>Checks if key exists</td>
+            </tr>
+            <tr>
+              <td><code>delete(key)</code></td>
+              <td>Removes key-value pair</td>
+            </tr>
+            <tr>
+              <td><code>clear()</code></td>
+              <td>Removes all entries</td>
+            </tr>
+            <tr>
+              <td><code>size</code></td>
+              <td>Returns number of entries</td>
+            </tr>
+            <tr>
+              <td><code>keys()</code></td>
+              <td>Returns iterator of keys</td>
+            </tr>
+            <tr>
+              <td><code>values()</code></td>
+              <td>Returns iterator of values</td>
+            </tr>
+            <tr>
+              <td><code>entries()</code></td>
+              <td>Returns iterator of [key, value]</td>
+            </tr>
+            <tr>
+              <td><code>forEach(callback)</code></td>
+              <td>Iterates over entries</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Part 2: Set<T> -->
+      <section id="part-2">
+        <h2>Part 2: Set&lt;T&gt; — Unique Values Collection</h2>
+
+        <h3>Definition</h3>
+        <p>
+          <code>Set&lt;T&gt;</code> is a collection of unique values of type
+          <code>T</code>. Duplicate entries are automatically ignored.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">const set = new Set&lt;T&gt;();</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">// ✅ Create a Set of strings
+const names = new Set&lt;string&gt;();
+
+// Add values
+names.add("Alice");
+names.add("Bob");
+names.add("Charlie");
+names.add("Alice"); // ❌ Duplicate! Ignored.
+
+console.log(names.size); // 3
+
+// Check if value exists
+console.log(names.has("Alice")); // true
+console.log(names.has("David")); // false
+
+// Delete a value
+names.delete("Charlie");
+
+// Iterate
+for (const name of names) {
+    console.log(name);
+}
+// Output:
+// Alice
+// Bob</code></pre>
+
+        <h3>Different Value Types</h3>
+        <pre><code class="language-typescript">// ✅ Number Set
+const numbers = new Set&lt;number&gt;();
+numbers.add(1);
+numbers.add(2);
+numbers.add(3);
+numbers.add(1); // ❌ Duplicate! Ignored.
+
+// ✅ Mixed types
+const mixed = new Set&lt;string | number&gt;();
+mixed.add("hello");
+mixed.add(42);
+// mixed.add(true); // ❌ Error: boolean not assignable to string | number
+
+// ✅ Object Set (objects are compared by reference)
+const obj1 = { id: 1 };
+const obj2 = { id: 1 };
+const objectSet = new Set&lt;object&gt;();
+objectSet.add(obj1);
+objectSet.add(obj2); // ✅ Both added (distinct memory references)
+console.log(objectSet.size); // 2
+
+// ❌ Same object reference
+const sameObj = { id: 1 };
+objectSet.add(sameObj);
+objectSet.add(sameObj); // ❌ Duplicate! Ignored.
+console.log(objectSet.size); // 3 (obj1, obj2, sameObj)</code></pre>
+
+        <h3>Real-World Example: Unique Tags</h3>
+        <pre><code class="language-typescript">class TagManager {
+    private tags = new Set&lt;string&gt;();
+
+    addTag(tag: string): void {
+        this.tags.add(tag);
+    }
+
+    addTags(tags: string[]): void {
+        tags.forEach(tag => this.tags.add(tag));
+    }
+
+    hasTag(tag: string): boolean {
+        return this.tags.has(tag);
+    }
+
+    removeTag(tag: string): boolean {
+        return this.tags.delete(tag);
+    }
+
+    getAllTags(): string[] {
+        return Array.from(this.tags);
+    }
+
+    getTagCount(): number {
+        return this.tags.size;
+    }
+
+    clear(): void {
+        this.tags.clear();
+    }
+}
+
+// Usage
+const tags = new TagManager();
+tags.addTags(["javascript", "typescript", "react", "typescript"]);
+console.log(tags.getAllTags()); // ["javascript", "typescript", "react"]
+console.log(tags.getTagCount()); // 3</code></pre>
+
+        <h3>Set Methods Summary</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>What It Does</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>add(value)</code></td>
+              <td>Adds a value (duplicates ignored)</td>
+            </tr>
+            <tr>
+              <td><code>has(value)</code></td>
+              <td>Checks if value exists</td>
+            </tr>
+            <tr>
+              <td><code>delete(value)</code></td>
+              <td>Removes a value</td>
+            </tr>
+            <tr>
+              <td><code>clear()</code></td>
+              <td>Removes all values</td>
+            </tr>
+            <tr>
+              <td><code>size</code></td>
+              <td>Returns number of values</td>
+            </tr>
+            <tr>
+              <td><code>keys()</code></td>
+              <td>Returns iterator of values</td>
+            </tr>
+            <tr>
+              <td><code>values()</code></td>
+              <td>Returns iterator of values</td>
+            </tr>
+            <tr>
+              <td><code>entries()</code></td>
+              <td>Returns iterator of [value, value]</td>
+            </tr>
+            <tr>
+              <td><code>forEach(callback)</code></td>
+              <td>Iterates over values</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Part 3: Readonly<T> -->
+      <section id="part-3">
+        <h2>Part 3: Readonly&lt;T&gt; — Immutable Object Type</h2>
+
+        <h3>Definition</h3>
+        <p>
+          <code>Readonly&lt;T&gt;</code> is a built-in utility type that makes
+          all properties of <code>T</code> read-only. Reassignment to top-level
+          properties will trigger compile-time errors.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Readonly&lt;T&gt; = {
+    readonly [P in keyof T]: T[P];
+};</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+// ❌ Mutable
+const user: User = { id: 1, name: "Alice", email: "a@b.com" };
+user.name = "Bob"; // ✅ Allowed
+
+// ✅ Readonly
+const readonlyUser: Readonly&lt;User&gt; = { id: 1, name: "Alice", email: "a@b.com" };
+// readonlyUser.name = "Bob"; // ❌ Error: Cannot assign to 'name' because it is a read-only property
+// readonlyUser.id = 2;       // ❌ Error: Cannot assign to 'id' because it is a read-only property</code></pre>
+
+        <h3>Deep Readonly (Nested Caution)</h3>
+        <pre><code class="language-typescript">// ❌ Readonly is SHALLOW (only top level)
+interface User {
+    id: number;
+    address: {
+        street: string;
+        city: string;
+    };
+}
+
+const user: Readonly&lt;User&gt; = {
+    id: 1,
+    address: {
+        street: "123 Main St",
+        city: "NYC"
+    }
+};
+
+// user.id = 2;                     // ❌ Error: readonly
+user.address.street = "456 Oak St"; // ✅ Allowed! (nested properties are NOT readonly)</code></pre>
+
+        <h3>Deep Readonly Helper</h3>
+        <pre><code class="language-typescript">// ✅ DeepReadonly: Recursively makes ALL nested properties readonly
+type DeepReadonly&lt;T&gt; = {
+    readonly [P in keyof T]: T[P] extends object
+        ? DeepReadonly&lt;T[P]&gt;
+        : T[P];
+};
+
+interface User {
+    id: number;
+    address: {
+        street: string;
+        city: string;
+    };
+}
+
+const deepUser: DeepReadonly&lt;User&gt; = {
+    id: 1,
+    address: {
+        street: "123 Main St",
+        city: "NYC"
+    }
+};
+
+// deepUser.id = 2;                       // ❌ Error: readonly
+// deepUser.address.street = "456 Oak St"; // ❌ Error: readonly (deep!)</code></pre>
+
+        <h3>When to Use Readonly&lt;T&gt;</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Use Case</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Constants</td>
+              <td><code>const config: Readonly&lt;AppConfig&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Configuration</td>
+              <td><code>const settings: Readonly&lt;Settings&gt;</code></td>
+            </tr>
+            <tr>
+              <td>API Responses</td>
+              <td><code>const response: Readonly&lt;ApiResponse&gt;</code></td>
+            </tr>
+            <tr>
+              <td>State Management</td>
+              <td><code>Readonly&lt;AppState&gt; in Redux / Zustand</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Part 4: ReadonlyArray<T> -->
+      <section id="part-4">
+        <h2>Part 4: ReadonlyArray&lt;T&gt; — Immutable Array</h2>
+
+        <h3>Definition</h3>
+        <p>
+          <code>ReadonlyArray&lt;T&gt;</code> represents an immutable array
+          where mutating actions (such as adding, deleting, or reassigning
+          indexed values) are forbidden.
+        </p>
+
+        <h3>Syntax &amp; Shorthand</h3>
+        <pre><code class="language-typescript">// Long syntax
+const array1: ReadonlyArray&lt;T&gt; = [];
+
+// Shorthand syntax (most common)
+const array2: readonly T[] = [];</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">// ✅ ReadonlyArray
+const numbers: ReadonlyArray&lt;number&gt; = [1, 2, 3, 4, 5];
+
+// ❌ Cannot mutate
+// numbers.push(6);  // ❌ Error: Property 'push' does not exist on 'readonly number[]'
+// numbers[0] = 10;  // ❌ Error: Index signature in type only permits reading
+// numbers.pop();    // ❌ Error: Property 'pop' does not exist
+
+// ✅ Can read
+console.log(numbers[0]);     // 1
+console.log(numbers.length); // 5
+
+// ✅ Can iterate
+for (const num of numbers) {
+    console.log(num);
+}
+
+// ✅ Can create new arrays using non-mutating methods
+const doubled = numbers.map(n =&gt; n * 2);    // ✅ Returns new array
+const filtered = numbers.filter(n =&gt; n &gt; 2); // ✅ Returns new array</code></pre>
+
+        <h3>Real-World Example: Immutable Settings</h3>
+        <pre><code class="language-typescript">// ✅ Immutable configuration array
+const config: readonly string[] = [
+    "development",
+    "production",
+    "testing"
+];
+
+// ✅ Function that accepts a readonly array
+function processConfig(settings: readonly string[]): void {
+    // Read-only access
+    settings.forEach(setting =&gt; console.log(setting));
+    // settings.push("staging"); // ❌ Error: Cannot mutate
+}
+
+processConfig(config);
+
+// ✅ Return readonly array
+function getDefaultRoles(): readonly string[] {
+    return ["admin", "editor", "viewer"];
+}
+
+const roles = getDefaultRoles();
+// roles.push("guest"); // ❌ Error: Mutation forbidden</code></pre>
+
+        <h3>Converting Between Mutable and Readonly</h3>
+        <pre><code class="language-typescript">// ✅ Mutable to Readonly (Safe assignment)
+const mutable: number[] = [1, 2, 3];
+const readonlyArr: readonly number[] = mutable; // ✅ Allowed
+
+// ❌ Readonly to Mutable (Direct assignment disallowed)
+const readonlySource: readonly number[] = [1, 2, 3];
+// const mutableTarget: number[] = readonlySource; // ❌ Error
+
+// ✅ Clone to make a mutable array
+const mutableCopy1: number[] = [...readonlySource];  // ✅ Spread clone
+const mutableCopy2: number[] = readonlySource.slice(); // ✅ Slice clone</code></pre>
+
+        <h3>ReadonlyArray Methods Summary</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Allowed (Non-Mutating)</th>
+              <th>Not Allowed (Mutating)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>length</code></td>
+              <td><code>push()</code></td>
+            </tr>
+            <tr>
+              <td><code>[index] (read)</code></td>
+              <td><code>pop()</code></td>
+            </tr>
+            <tr>
+              <td><code>forEach()</code></td>
+              <td><code>shift()</code></td>
+            </tr>
+            <tr>
+              <td><code>map()</code></td>
+              <td><code>unshift()</code></td>
+            </tr>
+            <tr>
+              <td><code>filter()</code></td>
+              <td><code>splice()</code></td>
+            </tr>
+            <tr>
+              <td><code>reduce()</code></td>
+              <td><code>sort()</code></td>
+            </tr>
+            <tr>
+              <td><code>find()</code></td>
+              <td><code>reverse()</code></td>
+            </tr>
+            <tr>
+              <td><code>includes()</code></td>
+              <td><code>[index] = value (write)</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Summary -->
+      <section id="summary">
+        <h2>📝 Summary &amp; Key Takeaways</h2>
+
+        <h3>Quick Comparison</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Generic</th>
+              <th>Purpose</th>
+              <th>Syntax</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Map&lt;K, V&gt;</code></td>
+              <td>Key-value collection</td>
+              <td><code>new Map&lt;K, V&gt;()</code></td>
+              <td><code>new Map&lt;string, number&gt;()</code></td>
+            </tr>
+            <tr>
+              <td><code>Set&lt;T&gt;</code></td>
+              <td>Unique values</td>
+              <td><code>new Set&lt;T&gt;()</code></td>
+              <td><code>new Set&lt;string&gt;()</code></td>
+            </tr>
+            <tr>
+              <td><code>Readonly&lt;T&gt;</code></td>
+              <td>Immutable object properties</td>
+              <td><code>Readonly&lt;T&gt;</code></td>
+              <td><code>Readonly&lt;User&gt;</code></td>
+            </tr>
+            <tr>
+              <td><code>ReadonlyArray&lt;T&gt;</code></td>
+              <td>Immutable array</td>
+              <td><code>readonly T[]</code></td>
+              <td><code>readonly string[]</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>🎯 Key Takeaways</h3>
+        <ul>
+          <li>
+            <strong>Map&lt;K, V&gt;:</strong> Use when you need dictionary-like
+            lookups where keys are objects, numbers, or complex types, rather
+            than just simple strings.
+          </li>
+          <li>
+            <strong>Set&lt;T&gt;:</strong> Use when values must be strictly
+            unique without needing explicit deduplication logic.
+          </li>
+          <li>
+            <strong>Readonly&lt;T&gt;:</strong> Provides shallow immutability
+            for object properties. Use recursive mapped types like
+            <code>DeepReadonly</code> for nested structures.
+          </li>
+          <li>
+            <strong>ReadonlyArray&lt;T&gt;:</strong> Prevents mutation on lists.
+            Can be quickly declared using the
+            <code>readonly T[]</code> shorthand.
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

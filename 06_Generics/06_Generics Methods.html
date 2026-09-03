@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generic Methods in TypeScript</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" style="width:24px; height:24px;" alt="TS Logo" />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Fundamentals</div>
+        <a href="#what-are" class="nav-link">What Are Generic Methods?</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#basic-syntax" class="nav-link">Basic Syntax</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Examples</div>
+        <a href="#examples" class="nav-link">5 Core Examples</a>
+        <a href="#return-type" class="nav-link">Return Type = Variable Type</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Real-World</div>
+        <a href="#api-client" class="nav-link">API Client</a>
+        <a href="#json-helper" class="nav-link">JSON Helper</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Wrap Up</div>
+        <a href="#mental-model" class="nav-link">Mental Model</a>
+        <a href="#reference" class="nav-link">Quick Reference Table</a>
+        <a href="#practice" class="nav-link">Practice Yourself</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div class="nav-section" style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <div class="nav-title">Author</div>
+        <a href="https://pro.armanihsan.com" target="_blank" class="nav-link" style="color: var(--accent);"><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+            <a href="https://github.com/armanihsan-dev" target="_blank" style="color: var(--text-secondary);"><i class="fa-brands fa-github fa-lg"></i></a>
+            <a href="https://www.linkedin.com/in/arman-ihsan-5a790430a/" target="_blank" style="color: var(--text-secondary);"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Generics</span>
+        <h1>GENERIC METHODS</h1>
+        <p>COMPLETE NOTES ON BUILDING TYPE-SAFE METHODS IN OBJECTS</p>
+      </section>
+
+      <section id="what-are">
+        <h2>🎯 What Are Generic Methods?</h2>
+        
+        <h3>Definition:</h3>
+        <p>A generic method is a method (a function inside an object) that declares its own type parameters (<code>&lt;T&gt;</code>). It can work with any type while preserving type safety.</p>
+
+        <pre><code class="language-typescript">const objectName = {
+    methodName<T>(param: T): T {
+        return param;
+    }
+};</code></pre>
+
+        <ul>
+            <li><code>&lt;T&gt;</code> is declared on the method</li>
+            <li><code>T</code> is used for parameter types and/or return type</li>
+            <li>Each call can have a different type</li>
+        </ul>
+      </section>
+
+      <section id="how-it-works">
+        <h2>🧠 How It Works</h2>
+        
+        <pre><code class="language-typescript">const utils = {
+    identity<T>(value: T): T {
+        return value;
+    }
+};
+
+const a = utils.identity("hello"); // T = string
+const b = utils.identity(42);      // T = number
+const c = utils.identity(true);    // T = boolean</code></pre>
+
+        <h3>What Happens:</h3>
+        <ul>
+            <li><code>T</code> is a placeholder for any type</li>
+            <li>TypeScript infers <code>T</code> from the argument</li>
+            <li>The return type is exactly the same type</li>
+            <li>The variable storing the result gets that type</li>
+        </ul>
+      </section>
+
+      <section id="basic-syntax">
+        <h2>✅ Basic Syntax</h2>
+        <pre><code class="language-typescript">const myObject = {
+    // Single generic type
+    methodName<T>(param: T): T {
+        return param;
+    },
+
+    // Multiple generic types
+    pair<T, U>(first: T, second: U): [T, U] {
+        return [first, second];
+    },
+
+    // With constraint
+    getLength<T extends { length: number }>(item: T): number {
+        return item.length;
+    },
+
+    // Arrow function syntax
+    wrap: <T>(value: T): T[] => [value]
+};</code></pre>
+      </section>
+
+      <section id="examples">
+        <h2>📦 Examples</h2>
+        
+        <h4>1. Identity — Same Type In, Same Type Out</h4>
+        <pre><code class="language-typescript">const utils = {
+    identity<T>(value: T): T {
+        return value;
+    }
+};
+
+const result = utils.identity("hello");
+// result: string</code></pre>
+
+        <h4>2. Pair — Two Different Types</h4>
+        <pre><code class="language-typescript">const utils = {
+    pair<T, U>(first: T, second: U): [T, U] {
+        return [first, second];
+    }
+};
+
+const result = utils.pair("hello", 42);
+// result: [string, number]</code></pre>
+
+        <h4>3. Length — With Constraint</h4>
+        <pre><code class="language-typescript">const utils = {
+    getLength<T extends { length: number }>(item: T): number {
+        return item.length;
+    }
+};
+
+const a = utils.getLength("hello");   // 5
+const b = utils.getLength([1, 2, 3]); // 3
+// utils.getLength(42);              // ❌ Error: number has no length</code></pre>
+
+        <h4>4. Array Wrapper</h4>
+        <pre><code class="language-typescript">const utils = {
+    wrapInArray: <T>(value: T): T[] => [value]
+};
+
+const result = utils.wrapInArray(42);
+// result: number[]</code></pre>
+
+        <h4>5. First Element of Array</h4>
+        <pre><code class="language-typescript">const utils = {
+    first<T>(items: T[]): T | undefined {
+        return items[0];
+    }
+};
+
+const result = utils.first([1, 2, 3]);
+// result: number | undefined</code></pre>
+      </section>
+
+      <section id="return-type">
+        <h2>🔁 Return Type = Variable Type</h2>
+        <pre><code class="language-typescript">const transformer = {
+    toString<T>(value: T): string {
+        return String(value);
+    },
+
+    logAndReturn<T>(value: T): T {
+        console.log(value);
+        return value;
+    }
+};
+
+// ──────────────────────────────────────────
+
+const a = transformer.toString(42);
+// a: string
+
+const b = transformer.logAndReturn("hello");
+// b: string
+
+const c = transformer.logAndReturn(100);
+// c: number
+
+const d = transformer.logAndReturn({ name: "Alice" });
+// d: { name: string }</code></pre>
+      </section>
+
+      <section id="api-client">
+        <h2>📦 Real‑World Example: API Client</h2>
+        <pre><code class="language-typescript">const apiClient = {
+    get<T>(url: string): Promise<T> {
+        return fetch(url).then(res => res.json());
+    },
+
+    post<T, U>(url: string, body: U): Promise<T> {
+        return fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        }).then(res => res.json());
+    }
+};
+
+// Usage:
+interface User {
+    id: number;
+    name: string;
+}
+
+const user = await apiClient.get<User>("/users/1");
+// user: User
+
+const newUser = await apiClient.post<User, { name: string }>(
+    "/users",
+    { name: "Alice" }
+);
+// newUser: User</code></pre>
+      </section>
+
+      <section id="json-helper">
+        <h2>📦 JSON Helper (Practical)</h2>
+        <pre><code class="language-typescript">const jsonHelper = {
+    stringify<T>(data: T): string {
+        return JSON.stringify(data);
+    },
+
+    parse<T>(json: string): T {
+        return JSON.parse(json) as T;
+    }
+};
+
+// Usage:
+const user = { id: 1, name: "Alice" };
+const json = jsonHelper.stringify(user);   // string
+const parsed = jsonHelper.parse<User>(json); // User</code></pre>
+      </section>
+
+      <section id="mental-model">
+        <h2>🧠 Mental Model</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    GENERIC METHOD IN OBJECT                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  const utils = {                                               │
+│      identity<T>(value: T): T {                               │
+│          return value;                                         │
+│      }                                                         │
+│  };                                                            │
+│                                                                  │
+│  T is:                                                         │
+│  1. Declared on the method                                     │
+│  2. Inferred when you call the method                          │
+│  3. Used for parameter type                                    │
+│  4. Used for return type                                       │
+│                                                                  │
+│  utils.identity("hello") → T = string                         │
+│  utils.identity(42)      → T = number                         │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="reference">
+        <h2>📋 Quick Reference Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Situation</th>
+                    <th>Syntax</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Single generic</td><td><code>methodName&lt;T&gt;(param: T): T</code></td><td><code>identity&lt;T&gt;(value: T): T</code></td></tr>
+                <tr><td>Multiple generics</td><td><code>methodName&lt;T, U&gt;(a: T, b: U)</code></td><td><code>pair&lt;T, U&gt;(first: T, second: U)</code></td></tr>
+                <tr><td>With constraint</td><td><code>methodName&lt;T extends U&gt;(param: T)</code></td><td><code>getLength&lt;T extends { length: number }&gt;</code></td></tr>
+                <tr><td>Arrow function</td><td><code>methodName: &lt;T&gt;(param: T): T =&gt; param</code></td><td><code>wrap: &lt;T&gt;(value: T): T[] =&gt; [value]</code></td></tr>
+                <tr><td>With array</td><td><code>methodName&lt;T&gt;(items: T[]): T</code></td><td><code>first&lt;T&gt;(items: T[]): T | undefined</code></td></tr>
+            </tbody>
+        </table>
+      </section>
+
+      <section id="practice">
+        <h2>🧪 Practice Yourself</h2>
+        <p>Try writing these in your editor:</p>
+        <pre><code class="language-typescript">// 1. Generic method that returns the type of the argument
+const utils = {
+    typeOf<T>(value: T): string {
+        return typeof value;
+    }
+};
+
+// 2. Generic method that returns the length of a string/array
+const utils2 = {
+    size<T extends { length: number }>(item: T): number {
+        return item.length;
+    }
+};
+
+// 3. Generic method that returns a new array with the value wrapped
+const utils3 = {
+    wrap: <T>(value: T): T[] => [value]
+};</code></pre>
+
+        <div class="note-box" style="background: var(--accent-dim); border-left: 4px solid var(--accent); margin-top: 2rem;">
+            <span class="note-title" style="color: var(--accent);"><i class="fa-solid fa-star"></i> ✅ Key Takeaway</span>
+            <p>A generic method inside an object:</p>
+            <ul>
+                <li>Declares its own <code>&lt;T&gt;</code></li>
+                <li>Infers <code>T</code> from the argument</li>
+                <li>Returns the exact type you need</li>
+                <li>The variable storing the result gets that type</li>
+            </ul>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript: Unions & Intersections (1% Knowledge)</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" style="width:24px; height:24px;" alt="TS Logo" />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. The 1% Truth</div>
+        <a href="#the-1-percent-truth" class="nav-link">1. Distribution Rules</a>
+        <a href="#distributive-law" class="nav-link">2. Distributive Law in Code</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Advanced Traps</div>
+        <a href="#the-never-trap" class="nav-link">3. The "Never" Trap</a>
+        <a href="#discriminated-unions" class="nav-link">4. Discriminated Unions</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Deep Mechanics</div>
+        <a href="#union-in-generic" class="nav-link">5. Unions in Generics</a>
+        <a href="#intersection-of-functions" class="nav-link">6. Function Intersections</a>
+        <a href="#final-summary" class="nav-link">7. Final Summary</a>
+      </div>
+
+      <!-- Social Links -->
+      <div class="nav-section" style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <div class="nav-title">Author</div>
+        <a href="https://pro.armanihsan.com" target="_blank" class="nav-link" style="color: var(--accent);"><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+            <a href="#" style="color: var(--text-secondary);"><i class="fa-brands fa-github fa-lg"></i></a>
+            <a href="#" style="color: var(--text-secondary);"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+            <a href="#" style="color: var(--text-secondary);"><i class="fa-brands fa-twitter fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Advanced TypeScript</span>
+        <h1>UNIONS & INTERSECTIONS</h1>
+        <p>THE 1% DEVELOPER KNOWLEDGE: UNLOCKING THE DEEP, HIDDEN WORLD OF TYPE BEHAVIOR</p>
+      </section>
+
+      <section id="the-1-percent-truth">
+        <h2>Part 1: The 1% Truth</h2>
+        <p>You already know the basics: <code>|</code> for union, <code>&amp;</code> for intersection. But there's a deep, hidden world of union/intersection behavior that most developers never discover. Let's unlock that.</p>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-lightbulb"></i> The Core Secret</span>
+            <p style="margin-bottom: 0;"><strong>Unions distribute over intersections, but intersections don't distribute over unions.</strong></p>
+        </div>
+
+        <p>Most developers don't even know this is a thing. Here's what I mean:</p>
+        <pre><code class="language-typescript">// ✅ Union distributes over Intersection
+type Result1 = (A | B) & C;  // = (A & C) | (B & C)
+
+// ❌ Intersection does NOT distribute over Union
+type Result2 = (A & B) | C;  // NOT equal to (A | C) & (B | C)</code></pre>
+
+        <h3>Explanation of Distribution</h3>
+        <p>First, think of:</p>
+        <ul>
+            <li><code>|</code> (union) = <strong>OR</strong></li>
+            <li><code>&amp;</code> (intersection) = <strong>AND</strong></li>
+        </ul>
+
+        <p>For example:</p>
+        <pre><code class="language-typescript">type A = { a: number }
+type B = { b: string }
+type C = { c: boolean }</code></pre>
+
+        <p>What does "union distributes over intersection" mean?</p>
+        <p>Just like in algebra:</p>
+        <pre><code class="language-text">x & (y | z) = (x & y) | (x & z)</code></pre>
+
+        <p>In TypeScript:</p>
+        <pre><code class="language-typescript">type Result = A & (B | C)</code></pre>
+        <p>TypeScript automatically treats this as:</p>
+        <pre><code class="language-typescript">type Result = (A & B) | (A & C)</code></pre>
+        
+        <p>So instead of saying:<br>
+        <em>"An object with <code>a</code> AND either <code>b</code> or <code>c</code>"</em><br>
+        It becomes:<br>
+        <em>"Either: an object with <code>a</code> and <code>b</code> OR an object with <code>a</code> and <code>c</code>"</em></p>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">type X = { a: number }
+type Y = { b: string }
+type Z = { c: boolean }
+
+type T = X & (Y | Z)
+
+// TypeScript sees this as
+type T =
+    | { a: number; b: string }
+    | { a: number; c: boolean }
+
+// Both are valid:
+const t1: T = {
+    a: 1,
+    b: "hello"
+}
+
+const t2: T = {
+    a: 1,
+    c: true
+}</code></pre>
+
+        <h3>But intersections DON'T distribute over unions</h3>
+        <p>Suppose we start with:</p>
+        <pre><code class="language-typescript">type T = (A & B) | C</code></pre>
+        <p>TypeScript doesn't rewrite it into:</p>
+        <pre><code class="language-typescript">(A | C) & (B | C)   // ❌ Not what TypeScript does</code></pre>
+        <p>It simply stays:</p>
+        <pre><code class="language-typescript">(A & B) | C</code></pre>
+
+        <p><strong>Why? Because distributing it changes the meaning.</strong></p>
+        <p>Imagine:</p>
+        <pre><code class="language-typescript">type A = { a: number }
+type B = { b: string }
+type C = { c: boolean }</code></pre>
+        
+        <p>Original: <code>(A &amp; B) | C</code> means:</p>
+        <pre><code class="language-text">{ a, b }
+OR
+{ c }</code></pre>
+
+        <p>If we distributed: <code>(A | C) &amp; (B | C)</code>, that expands into:</p>
+        <pre><code class="language-text">(A & B)
+|
+(A & C)
+|
+(C & B)
+|
+(C)</code></pre>
+
+        <p>Notice all these extra possibilities: <code>{ a, c }</code> and <code>{ b, c }</code>. Those were not allowed in the original type. So distribution would change the meaning, which is why TypeScript doesn't do it.</p>
+
+        <h3>A visual way to remember</h3>
+        <p>Think of intersection (<code>&amp;</code>) as attaching something to every option in a union.</p>
+        <pre><code class="language-text">A & (B | C)
+
+        B
+      /
+A ----
+      \
+        C
+
+Attach A to every branch:
+(A & B) | (A & C)</code></pre>
+        
+        <p>But going backwards: <code>(A &amp; B) | C</code>, there's no common thing you can safely pull out.</p>
+
+        <h3>Real-world example</h3>
+        <pre><code class="language-typescript">type Success = {
+    ok: true
+    data: string
+}
+
+type Error = {
+    ok: false
+    message: string
+}
+
+type Timestamp = {
+    createdAt: Date
+}
+
+// Now:
+type Response = Timestamp & (Success | Error)
+
+// becomes
+type Response =
+    | (Timestamp & Success)
+    | (Timestamp & Error)
+
+// which is
+type Response =
+    | {
+        createdAt: Date
+        ok: true
+        data: string
+      }
+    | {
+        createdAt: Date
+        ok: false
+        message: string
+      }</code></pre>
+        <p>Every response has a timestamp, regardless of whether it's a success or an error.</p>
+
+        <div class="note-box" style="background: var(--accent-dim); border-left: 4px solid var(--accent);">
+            <span class="note-title" style="color: var(--accent);"><i class="fa-solid fa-star"></i> The Key Takeaway</span>
+            <p>✅ <code>A & (B | C)</code> becomes <code>(A & B) | (A & C)</code> — intersections distribute across unions.</p>
+            <p style="margin-bottom: 0;">❌ <code>(A & B) | C</code> does not become <code>(A | C) & (B | C)</code> — because that would introduce new, unintended type combinations and change the meaning.</p>
+        </div>
+      </section>
+
+      <section id="distributive-law">
+        <h2>Part 2: The Distributive Law in TypeScript</h2>
+        
+        <h3>2.1 Union over Intersection (Distribution Works)</h3>
+        <pre><code class="language-typescript">type A = { a: string };
+type B = { b: number };
+type C = { c: boolean };
+
+// ✅ Union distributes over intersection
+// (A | B) & C = (A & C) | (B & C)
+
+type Left = (A | B) & C;
+// Left = { a: string; c: boolean } | { b: number; c: boolean }
+
+type Right = (A & C) | (B & C);
+// Right = { a: string; c: boolean } | { b: number; c: boolean }
+
+// Left and Right are IDENTICAL!
+// TypeScript handles this automatically</code></pre>
+
+        <h3>2.2 Intersection over Union (Distribution DOES NOT Work)</h3>
+        <pre><code class="language-typescript">type A = { a: string };
+type B = { b: number };
+type C = { c: boolean };
+
+// ❌ Intersection does NOT distribute over union
+// (A & B) | C ≠ (A | C) & (B | C)
+
+type Left = (A & B) | C;
+// Left = { a: string; b: number } | { c: boolean }
+
+type Right = (A | C) & (B | C);
+// Right = { a: string; b: number; c: boolean } | { a: string; c: boolean } | { b: number; c: boolean }
+
+// Left and Right are NOT the same!</code></pre>
+
+        <p>Visual:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    DISTRIBUTION LAWS                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ✅ (A ∪ B) ∩ C = (A ∩ C) ∪ (B ∩ C)                              │
+│     Union over Intersection = DISTRIBUTES                         │
+│                                                                     │
+│  ❌ (A ∩ B) ∪ C ≠ (A ∪ C) ∩ (B ∪ C)                              │
+│     Intersection over Union = DOES NOT DISTRIBUTE                 │
+│                                                                     │
+│  This is why TypeScript behaves the way it does with unions       │
+│  and intersections of object types.                                │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="the-never-trap">
+        <h2>Part 3: The "Never" Trap (1% Knowledge)</h2>
+        
+        <h3>3.1 Intersecting with never = never</h3>
+        <pre><code class="language-typescript">// ❌ Most developers think this would work
+type A = string & number;
+// A = never (no value can be both string AND number)
+
+// ✅ But what about:
+type B = { name: string } & { name: number };
+// B = { name: never }
+// The 'name' property is never
+
+// 🧠 1% knowledge: This creates a property that can't exist
+function test(obj: B) {
+    obj.name; // Type: never
+    // You can't assign anything to obj.name
+    // obj.name = "hello"; // ❌ Type 'string' is not assignable to type 'never'
+}</code></pre>
+
+        <h3>3.2 The Real-World "Never" Trap</h3>
+        <pre><code class="language-typescript">// Most developers write this and get confused:
+type ApiResponse = {
+    data: string;
+} & {
+    data: number;
+};
+
+// Response = { data: never }
+
+// They expected: data to be string | number
+// But got: data is never (impossible!)
+
+// ✅ The correct way:
+type ApiResponse = {
+    data: string | number;  // Union on the property level
+};
+
+// Or:
+type ApiResponse = 
+    | { data: string }
+    | { data: number };  // Union on the type level</code></pre>
+      </section>
+
+      <section id="discriminated-unions">
+        <h2>Part 4: The Discriminated Union Pattern (1% Pattern)</h2>
+        
+        <h3>4.1 What Most Developers Do</h3>
+        <pre><code class="language-typescript">// ❌ Common mistake: Checking without a discriminator
+type Success = { data: string };
+type Error = { error: string };
+type Response = Success | Error;
+
+function handle(res: Response) {
+    // ❌ Can't tell which one it is!
+    // if (res.data) // This works, but it's fragile
+}</code></pre>
+
+        <h3>4.2 The 1% Way: Discriminated Unions</h3>
+        <pre><code class="language-typescript">// ✅ The 1% pattern: Add a discriminator
+type Success = {
+    kind: "success";
+    data: string;
+};
+
+type Error = {
+    kind: "error";
+    error: string;
+};
+
+type Response = Success | Error;
+
+function handle(res: Response) {
+    // ✅ TypeScript now knows exactly which one it is!
+    if (res.kind === "success") {
+        console.log(res.data); // ✅ Type-safe
+    } else {
+        console.log(res.error); // ✅ Type-safe
+    }
+}</code></pre>
+
+        <h3>4.3 The "Exhaustiveness Check" (1% Advanced)</h3>
+        <pre><code class="language-typescript">type Loading = { kind: "loading" };
+type Success = { kind: "success"; data: string };
+type Error = { kind: "error"; error: string };
+
+type State = Loading | Success | Error;
+
+function handleState(state: State): string {
+    switch (state.kind) {
+        case "loading":
+            return "Loading...";
+        case "success":
+            return state.data;
+        case "error":
+            return state.error;
+        default:
+            // 🔥 1% knowledge: Exhaustiveness checking
+            const _exhaustive: never = state;
+            return _exhaustive;
+    }
+}
+
+// If you add a new state, TypeScript will error!
+// type State = Loading | Success | Error | Idle;
+// ❌ Error: Type 'Idle' is not assignable to type 'never'</code></pre>
+      </section>
+
+      <section id="union-in-generic">
+        <h2>Part 5: The "Union in Generic" Behavior (1% Knowledge)</h2>
+        
+        <h3>5.1 What Most Developers Think</h3>
+        <pre><code class="language-typescript">// Most think this works the same:
+type Result<T> = T extends string ? "Yes" : "No";
+
+type Test1 = Result<"hello">; // "Yes"
+type Test2 = Result<"hello" | "world">; // "Yes" (they think)</code></pre>
+
+        <h3>5.2 What Actually Happens (The 1% Truth)</h3>
+        <pre><code class="language-typescript">// 🔥 Naked type parameters DISTRIBUTE over unions!
+type Result<T> = T extends string ? "Yes" : "No";
+
+type Test1 = Result<"hello">; // "Yes"
+type Test2 = Result<"hello" | "world">; // "Yes" | "Yes" = "Yes"
+
+// ✅ Wait, that's the same? Let's try with mixed:
+type Test3 = Result<"hello" | 42>; 
+// ✅ "Yes" | "No" (not just "No"!)
+
+// Why? Because the conditional DISTRIBUTES:
+// ("hello" extends string ? "Yes" : "No") | (42 extends string ? "Yes" : "No")
+// = "Yes" | "No"</code></pre>
+      </section>
+
+      <section id="intersection-of-functions">
+        <h2>Part 6: The "Intersection of Functions" Behavior (1% Knowledge)</h2>
+        
+        <h3>6.1 Most Developers Think</h3>
+        <pre><code class="language-typescript">// Most think this creates a function that can do both:
+type A = (x: string) => void;
+type B = (x: number) => void;
+
+type C = A & B;
+
+// They think: C can take string OR number
+// ❌ WRONG!</code></pre>
+
+        <h3>6.2 The 1% Truth</h3>
+        <pre><code class="language-typescript">// 🔥 Intersection of functions creates an OVERLOAD
+type A = (x: string) => void;
+type B = (x: number) => void;
+
+type C = A & B;
+
+// C = { (x: string): void; (x: number): void }
+// This is an overloaded function!
+
+const c: C = (x: string | number) => {
+    console.log(x);
+};
+
+c("hello"); // ✅ Works
+c(42);      // ✅ Works
+c(true);    // ❌ Error: Argument of type 'boolean' is not assignable to parameter of type 'string & number'</code></pre>
+      </section>
+
+      <section id="final-summary">
+        <h2>Final Summary</h2>
+        <p>The 1% truth: TypeScript's union and intersection types follow the rules of set theory exactly. Understanding this reveals:</p>
+        
+        <ul>
+            <li><strong>Distribution laws</strong> - Why <code>(A | B) &amp; C</code> works but <code>(A &amp; B) | C</code> doesn't</li>
+            <li><strong>Never absorption</strong> - Why <code>never</code> disappears in unions and dominates in intersections</li>
+            <li><strong>Conditional distribution</strong> - Why naked type parameters distribute over unions</li>
+            <li><strong>Function intersections</strong> - Why they create function overloads</li>
+        </ul>
+      </section>
+
+      <footer>
+        <p>TypeScript Unions & Intersections Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

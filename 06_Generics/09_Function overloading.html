@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Function Overloading in TypeScript — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-is-overloading" class="nav-link"
+          >🎯 What is Overloading?</a
+        >
+        <a href="#mental-model" class="nav-link">🧠 The Mental Model</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Implementation</div>
+        <a href="#syntax" class="nav-link">📐 Syntax &amp; Structure</a>
+        <a href="#examples" class="nav-link">🧪 Practical Examples</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Troubleshooting</div>
+        <a href="#error-handling" class="nav-link">⚠️ "No Overload Matches"</a>
+        <a href="#common-causes" class="nav-link">🔍 Causes &amp; Solutions</a>
+      </div>
+
+      <!-- Author Links -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Functions</span>
+        <h1>FUNCTION OVERLOADING</h1>
+        <p>COMPLETE GUIDE: DEFINING MULTIPLE CALL SIGNATURES SAFELY</p>
+      </section>
+
+      <!-- Part 1: Definition & Core Idea -->
+      <section id="what-is-overloading">
+        <h2>Part 1: What is Function Overloading?</h2>
+
+        <h3>Definition</h3>
+        <p>
+          <strong>Function overloading</strong> is a TypeScript feature that
+          allows a single function name to declare multiple type signatures.
+          This enables a function to accept different combinations of parameter
+          types, parameter counts, or return types while maintaining strict type
+          safety at call sites.
+        </p>
+
+        <h3>The Core Idea</h3>
+        <pre><code class="language-typescript">// ❌ Without overloading: single signature restricts flexible inputs
+function greet(name: string): string {
+    return `Hello ${name}`;
+}
+greet("Alice"); // ✅ Works
+greet(42);      // ❌ Error: Argument of type 'number' is not assignable to 'string'
+
+// ✅ With overloading: multiple signatures declare valid callers
+function greet(name: string): string;
+function greet(age: number): string;
+function greet(value: string | number): string {
+    if (typeof value === "string") {
+        return `Hello ${value}`;
+    }
+    return `You are ${value} years old`;
+}
+
+greet("Alice"); // ✅ "Hello Alice"
+greet(25);      // ✅ "You are 25 years old"</code></pre>
+      </section>
+
+      <!-- Part 2: Mental Model -->
+      <section id="mental-model">
+        <h2>Part 2: The Mental Model</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    FUNCTION OVERLOADING                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Without overloading:                                           │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ function add(a: number, b: number): number;            │   │
+│  │                                                         │   │
+│  │ Only ONE signature → Only ONE way to call              │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  With overloading:                                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ function add(a: number, b: number): number;            │   │
+│  │ function add(a: string, b: string): string;            │   │
+│  │ function add(a: number, b: string): string;            │   │
+│  │                                                         │   │
+│  │ Multiple signatures → Multiple valid caller patterns    │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 3: Syntax -->
+      <section id="syntax">
+        <h2>Part 3: Syntax: Overload Signatures + Implementation</h2>
+
+        <h3>The Anatomy: Overloads vs. Implementation</h3>
+        <pre><code class="language-typescript">// 1. Overload Signatures (Public visible API signatures)
+function process(value: string): string;
+function process(value: number): number;
+function process(value: boolean): boolean;
+
+// 2. Implementation Signature (Internal logic — not callable directly!)
+function process(value: string | number | boolean): string | number | boolean {
+    if (typeof value === "string") return value.toUpperCase();
+    if (typeof value === "number") return value * 2;
+    return !value;
+}</code></pre>
+
+        <h3>Visual Breakdown</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    SYNTAX BREAKDOWN                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  function process(value: string): string;    ← Overload 1      │
+│  function process(value: number): number;    ← Overload 2      │
+│  function process(value: boolean): boolean;  ← Overload 3      │
+│                                                                  │
+│  ─────────────────────────────────────────────────────────────   │
+│                                                                  │
+│  function process(value: string | number | boolean)             │
+│  : string | number | boolean {                                 │
+│      // Implementation logic                                    │
+│  }                                                              │
+│  ↑                                                              │
+│  Implementation Signature (Must be compatible with all above)  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 4: Examples -->
+      <section id="examples">
+        <h2>Part 4: Practical Examples</h2>
+
+        <h3>Example 1: Handling Different Parameter Types</h3>
+        <pre><code class="language-typescript">// Overloads
+function format(value: string): string;
+function format(value: number): string;
+function format(value: Date): string;
+
+// Implementation
+function format(value: string | number | Date): string {
+    if (typeof value === "string") return value;
+    if (typeof value === "number") return value.toFixed(2);
+    return value.toISOString();
+}
+
+// Usage
+format("hello");    // ✅ Returns "hello"
+format(42.123);     // ✅ Returns "42.12"
+format(new Date()); // ✅ Returns "2024-01-01T00:00:00.000Z"</code></pre>
+
+        <h3>Example 2: Varying Parameter Counts (Arity)</h3>
+        <pre><code class="language-typescript">// Overloads
+function createElement(tag: string): HTMLElement;
+function createElement(tag: string, className: string): HTMLElement;
+function createElement(tag: string, className: string, id: string): HTMLElement;
+
+// Implementation with optional parameters
+function createElement(
+    tag: string,
+    className?: string,
+    id?: string
+): HTMLElement {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (id) element.id = id;
+    return element;
+}
+
+// Usage
+const div1 = createElement("div");                     // ✅ Allowed
+const div2 = createElement("div", "container");        // ✅ Allowed
+const div3 = createElement("div", "container", "app"); // ✅ Allowed
+// const div4 = createElement("div", "container", "app", "extra"); // ❌ Compile Error!</code></pre>
+      </section>
+
+      <!-- Part 5: Error Handling -->
+      <section id="error-handling">
+        <h2>Part 5: ⚠️ Understanding "No overload matches this call"</h2>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    ERROR MEANING                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  "No overload matches this call"                               │
+│                                                                  │
+│  Means: You invoked the function with arguments that fail      │
+│  to satisfy ANY of the defined overload signatures.            │
+│                                                                  │
+│  Example:                                                       │
+│  function greet(name: string): string;                        │
+│  function greet(age: number): string;                         │
+│  function greet(value: string | number): string { ... }      │
+│                                                                  │
+│  greet(true); // ❌ No overload matches this call              │
+│  // Reason: 'boolean' is assignable to neither string nor number│
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 6: Causes & Solutions -->
+      <section id="common-causes">
+        <h2>Part 6: Common Causes &amp; Solutions</h2>
+
+        <h3>Cause 1: Incorrect Argument Type</h3>
+        <pre><code class="language-typescript">// Overloads
+function getLength(value: string): number;
+function getLength(value: number[]): number;
+function getLength(value: any): number {
+    return value.length;
+}
+
+// ❌ Error: No overload matches this call
+getLength(true); // boolean is not string or number[]
+
+// ✅ Fix: Only call with allowed types
+getLength("hello");   // ✅
+getLength([1, 2, 3]); // ✅</code></pre>
+
+        <h3>Cause 2: Missing Overload for a Valid Use Case</h3>
+        <pre><code class="language-typescript">// Overloads
+function process(value: string): string;
+function process(value: number): number;
+function process(value: any): any {
+    return value;
+}
+
+// ❌ Error: No overload matches this call
+process(true); // boolean not declared in overload signatures
+
+// ✅ Fix: Add an overload signature for boolean
+function process(value: string): string;
+function process(value: number): number;
+function process(value: boolean): boolean; // Added
+function process(value: any): any {
+    return value;
+}
+
+process(true); // ✅ Works</code></pre>
+
+        <h3>Cause 3: Incorrect Argument Count</h3>
+        <pre><code class="language-typescript">// Overloads
+function log(message: string): void;
+function log(message: string, level: string): void;
+function log(message: string, level?: string): void {
+    console.log(`[${level || "INFO"}] ${message}`);
+}
+
+// ❌ Error: No overload matches this call
+log("hello", "INFO", "extra"); // 3 arguments passed, but max supported is 2
+
+// ✅ Fix: Call within allowed arity
+log("hello");         // ✅
+log("hello", "INFO"); // ✅</code></pre>
+
+        <h3>Cause 4: Incorrect Generic / Return Signatures</h3>
+        <pre><code class="language-typescript">// ❌ Overloads without bodies must terminate with a semicolon
+// function getValue&lt;T&gt;(key: string): T
+// function getValue(key: string): any { return data[key]; }
+
+// ✅ Correct overload pattern:
+function getValue(key: "id"): number;
+function getValue(key: "name"): string;
+function getValue(key: string): any {
+    return (data as any)[key];
+}
+
+const id = getValue("id");     // Inferred as number
+const name = getValue("name"); // Inferred as string</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

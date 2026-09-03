@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unions & Intersections with Objects and Arrays</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Object Unions</div>
+        <a href="#object-unions" class="nav-link">1.1 Basic Object Union</a>
+        <a href="#union-access" class="nav-link">1.2 What You CAN Access</a>
+        <a href="#union-golden-rule" class="nav-link"
+          >1.3 Golden Rule for Unions</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Object Intersections</div>
+        <a href="#object-intersections" class="nav-link"
+          >2.1 Basic Object Intersection</a
+        >
+        <a href="#complex-intersections" class="nav-link"
+          >2.2 Complex Objects</a
+        >
+        <a href="#intersection-golden-rule" class="nav-link"
+          >2.3 Golden Rule for Intersections</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Conflicting Types</div>
+        <a href="#conflict-intersection" class="nav-link"
+          >3.1 Conflicts in Intersection</a
+        >
+        <a href="#conflict-union" class="nav-link">3.2 Conflicts in Union</a>
+        <a href="#conflict-shapes" class="nav-link"
+          >3.3 Conflicting Object Shapes</a
+        >
+        <a href="#visualizing-conflicts" class="nav-link"
+          >3.4 Visualizing Conflicts</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Arrays</div>
+        <a href="#array-unions" class="nav-link">4. Unions of Arrays</a>
+        <a href="#array-intersections" class="nav-link"
+          >5. Intersections of Arrays</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">V. Wrap Up</div>
+        <a href="#summary" class="nav-link">Summary Table</a>
+      </div>
+
+      <!-- Author Links -->
+      <div class="nav-section">
+        <div class="nav-title">Author</div>
+        <a href="https://pro.armanihsan.com" target="_blank" class="nav-link"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Advanced Types</span>
+        <h1>OBJECTS AND ARRAYS</h1>
+        <p>COMPLETE GUIDE TO UNIONS & INTERSECTIONS WITH COMPLEX TYPES</p>
+      </section>
+
+      <section id="intro">
+        <p>
+          This is where TypeScript's type system becomes truly powerful.
+          Understanding how unions and intersections work with complex types
+          like objects and arrays will unlock the 1% knowledge.
+        </p>
+      </section>
+
+      <section id="object-unions">
+        <h2>Part 1: Unions of Objects (OR)</h2>
+
+        <h3>1.1 Basic Object Union</h3>
+        <pre><code class="language-typescript">// 👇 A type that can be EITHER a Dog OR a Cat
+type Dog = {
+    type: "dog";
+    name: string;
+    bark(): void;
+};
+
+type Cat = {
+    type: "cat";
+    name: string;
+    meow(): void;
+};
+
+type Pet = Dog | Cat;
+
+// ✅ Valid pets:
+const dog: Pet = {
+    type: "dog",
+    name: "Rex",
+    bark: () => console.log("Woof!")
+};
+
+const cat: Pet = {
+    type: "cat",
+    name: "Whiskers",
+    meow: () => console.log("Meow!")
+};
+
+// ❌ Invalid:
+const invalid: Pet = {
+    type: "dog",
+    name: "Rex",
+    meow: () => console.log("Meow!") // ❌ Error: missing bark
+};</code></pre>
+      </section>
+
+      <section id="union-access">
+        <h3>1.2 What You CAN Access in a Union</h3>
+        <pre><code class="language-typescript">type Dog = {
+    type: "dog";
+    name: string;
+    bark(): void;
+};
+
+type Cat = {
+    type: "cat";
+    name: string;
+    meow(): void;
+};
+
+type Pet = Dog | Cat;
+
+function handlePet(pet: Pet) {
+    // ✅ YOU CAN ONLY ACCESS PROPERTIES THAT EXIST IN BOTH!
+    console.log(pet.type); // ✅ "dog" | "cat" (exists in both)
+    console.log(pet.name); // ✅ string (exists in both)
+    
+    // ❌ CANNOT ACCESS PROPERTIES UNIQUE TO EITHER:
+    // pet.bark(); // ❌ Error: Property 'bark' does not exist on type 'Pet'
+    // pet.meow(); // ❌ Error: Property 'meow' does not exist on type 'Pet'
+    
+    // ✅ Must check first (Type Narrowing):
+    if (pet.type === "dog") {
+        pet.bark(); // ✅ Now TypeScript knows it's a Dog
+    } else {
+        pet.meow(); // ✅ Now TypeScript knows it's a Cat
+    }
+}</code></pre>
+      </section>
+
+      <section id="union-golden-rule">
+        <h3>1.3 The Golden Rule for Unions</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    UNION GOLDEN RULE                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  In a UNION (|), you can ONLY access properties that               │
+│  are COMMON to ALL types in the union.                             │
+│                                                                     │
+│  Pet = Dog | Cat                                                   │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Common: type, name  ✅ (you can access these)             │   │
+│  │  Not Common: bark, meow ❌ (you CANNOT access these)       │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  To access unique properties, you MUST NARROW the type.            │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="object-intersections">
+        <h2>Part 2: Intersections of Objects (AND)</h2>
+
+        <h3>2.1 Basic Object Intersection</h3>
+        <pre><code class="language-typescript">// 👇 A type that MUST be BOTH
+type HasName = { name: string };
+type HasAge = { age: number };
+
+type Person = HasName & HasAge;
+// Person = { name: string; age: number }
+
+const person: Person = {
+    name: "Alice",
+    age: 25
+};
+
+// ❌ Missing age:
+const invalid: Person = {
+    name: "Alice"
+    // Error: Property 'age' is missing
+};</code></pre>
+      </section>
+
+      <section id="complex-intersections">
+        <h3>2.2 Intersecting More Complex Objects</h3>
+        <pre><code class="language-typescript">type Employee = {
+    id: number;
+    department: string;
+    salary: number;
+};
+
+type Person = {
+    name: string;
+    age: number;
+    email: string;
+};
+
+type EmployeePerson = Employee & Person;
+// EmployeePerson = {
+//     id: number;
+//     department: string;
+//     salary: number;
+//     name: string;
+//     age: number;
+//     email: string;
+// }
+
+const employee: EmployeePerson = {
+    id: 1,
+    department: "Engineering",
+    salary: 75000,
+    name: "Alice",
+    age: 30,
+    email: "alice@company.com"
+};</code></pre>
+      </section>
+
+      <section id="intersection-golden-rule">
+        <h3>2.3 The Golden Rule for Intersections</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    INTERSECTION GOLDEN RULE                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  In an INTERSECTION (&), you MUST have ALL properties              │
+│  from ALL types in the intersection.                               │
+│                                                                     │
+│  Person = HasName & HasAge                                         │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Required: name ✅ age ✅                                   │   │
+│  │  You can access BOTH properties directly!                   │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  Intersection = MORE requirements = FEWER possible objects        │
+│  But MORE guarantees (you know everything exists)                │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="conflict-intersection">
+        <h2>Part 3: Conflicting Property Types</h2>
+
+        <h3>3.1 Conflicting Types in Intersection</h3>
+        <pre><code class="language-typescript">// 🔥 When properties conflict, the type becomes NEVER!
+type A = { value: string };
+type B = { value: number };
+
+type C = A & B;
+// C = { value: never } 
+// No value can be both string AND number!
+
+// ❌ This is impossible:
+const c: C = {
+    value: "hello" // ❌ Error: Type 'string' is not assignable to type 'never'
+};
+
+// ❌ This is also impossible:
+const c2: C = {
+    value: 42 // ❌ Error: Type 'number' is not assignable to type 'never'
+};</code></pre>
+      </section>
+
+      <section id="conflict-union">
+        <h3>3.2 Conflicting Types in Union</h3>
+        <pre><code class="language-typescript">// 🔥 Conflicting types in UNION work differently!
+type A = { value: string };
+type B = { value: number };
+
+type C = A | B;
+// C = { value: string } | { value: number }
+
+// ✅ Both are valid:
+const c1: C = { value: "hello" }; // ✅ Works
+const c2: C = { value: 42 };      // ✅ Works
+const c3: C = { value: true };    // ❌ Error: boolean not allowed
+
+// The key difference:
+function process(c: C) {
+    console.log(c.value); // Type: string | number (union of types)
+    // You can access it, but it's a union type
+}</code></pre>
+      </section>
+
+      <section id="conflict-shapes">
+        <h3>3.3 Conflicting Object Shapes</h3>
+        <pre><code class="language-typescript">// Conflicting property shapes
+type A = { 
+    user: { name: string; age: number };
+};
+
+type B = { 
+    user: { name: string; email: string };
+};
+
+// 🔥 Intersection becomes:
+type C = A & B;
+// C = {
+//     user: { name: string; age: number; email: string } // Combined!
+// }
+
+// ✅ This works! The shapes combine (not conflict)
+const c: C = {
+    user: {
+        name: "Alice",
+        age: 25,
+        email: "alice@email.com"
+    }
+};
+
+// 🔥 But if the properties conflict directly:
+type D = { 
+    user: string; 
+};
+
+type E = { 
+    user: number; 
+};
+
+type F = D & E;
+// F = { user: never } // ❌ Conflict!
+
+const f: F = {
+    user: "hello" // ❌ Error: never
+};</code></pre>
+      </section>
+
+      <section id="visualizing-conflicts">
+        <h3>3.4 Visualizing Conflicts</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    CONFLICTING PROPERTIES                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  Type A: { value: string }                                         │
+│  Type B: { value: number }                                         │
+│                                                                     │
+│  A & B = { value: never }  ← IMPOSSIBLE!                          │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  No value can be BOTH a string AND a number simultaneously  │   │
+│  │  "This object can never exist"                             │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  A | B = { value: string } | { value: number }                    │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  A value can be EITHER a string OR a number               │   │
+│  │  "This object can exist in two different ways"            │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="array-unions">
+        <h2>Part 4: Unions of Arrays</h2>
+
+        <h3>4.1 Basic Array Union</h3>
+        <pre><code class="language-typescript">// Array that can contain EITHER strings OR numbers
+type StringOrNumberArray = string[] | number[];
+
+// ✅ Valid:
+const strings: StringOrNumberArray = ["a", "b", "c"]; // ✅
+const numbers: StringOrNumberArray = [1, 2, 3]; // ✅
+
+// ❌ Invalid:
+const mixed: StringOrNumberArray = ["a", 1, "b"]; 
+// ❌ Error: Cannot mix string and number in same array</code></pre>
+
+        <h3>4.2 Complex Array Union</h3>
+        <pre><code class="language-typescript">type NumberArray = number[];
+type StringArray = string[];
+type BooleanArray = boolean[];
+
+type ArrayUnion = NumberArray | StringArray | BooleanArray;
+
+// ✅ Valid:
+let data: ArrayUnion = [1, 2, 3];        // ✅
+data = ["a", "b", "c"];                  // ✅
+data = [true, false, true];              // ✅
+data = [1, "a", true];                   // ❌ Error: Mixed types!</code></pre>
+      </section>
+
+      <section id="array-intersections">
+        <h2>Part 5: Intersections of Arrays</h2>
+
+        <h3>5.1 Basic Array Intersection</h3>
+        <pre><code class="language-typescript">// 🔥 Intersection of arrays = Arrays that fit BOTH types
+type NumberArray = number[];
+type StringArray = string[];
+
+type ArrayIntersection = NumberArray & StringArray;
+// ArrayIntersection = never[] (empty set)
+// No array can be BOTH number[] and string[]!
+
+// ❌ This is impossible:
+const arr: ArrayIntersection = [1, 2, 3]; // ❌ Error</code></pre>
+
+        <h3>5.2 Intersection of Array Types That Overlap</h3>
+        <pre><code class="language-typescript">// 🔥 Intersection works when types overlap
+type User = { name: string; age: number };
+type Admin = { name: string; role: string };
+
+type UserList = User[];
+type AdminList = Admin[];
+
+type UserAdminList = UserList & AdminList;
+// UserAdminList = (User & Admin)[]
+// = { name: string; age: number; role: string }[]
+
+const users: UserAdminList = [
+    { name: "Alice", age: 25, role: "admin" },
+    { name: "Bob", age: 30, role: "moderator" }
+];</code></pre>
+
+        <h3>5.3 Mixed Arrays vs Arrays of Unions</h3>
+        <pre><code class="language-typescript">// 🔥 Array of Union (can contain different types)
+type ArrayOfUnion = (string | number)[];
+
+// 🔥 Union of Arrays (can be one type OR another)
+type UnionOfArrays = string[] | number[];
+
+// KEY DIFFERENCE:
+// ArrayOfUnion:     ["a", 1, "b", 2] ✅ (mixed types in one array)
+// UnionOfArrays:    ["a", 1, "b", 2] ❌ (mixed types not allowed)
+
+// Visual:
+// ArrayOfUnion = { ["a", 1, "b"], ["a", "b"], [1, 2] }  // BIGGER
+// UnionOfArrays = { ["a", "b"], [1, 2] }                 // SMALLER
+
+// Example:
+let mixed: (string | number)[] = ["a", 1, "b", 2]; // ✅ Works
+let unionArr: string[] | number[] = ["a", 1, "b", 2]; // ❌ Error</code></pre>
+      </section>
+
+      <section id="summary">
+        <h2>Summary</h2>
+
+        <h3>Quick Reference Table</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Union (|)</th>
+              <th>Intersection (&amp;)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Objects</strong></td>
+              <td><code>A | B</code> = EITHER shape</td>
+              <td><code>A &amp; B</code> = BOTH shapes</td>
+            </tr>
+            <tr>
+              <td><strong>Properties</strong></td>
+              <td>Only common properties accessible</td>
+              <td>All properties accessible</td>
+            </tr>
+            <tr>
+              <td><strong>Conflict</strong></td>
+              <td><code>A.value</code> = union type</td>
+              <td><code>A.value</code> = never (if conflict)</td>
+            </tr>
+            <tr>
+              <td><strong>Arrays</strong></td>
+              <td><code>A[] | B[]</code> = either type array</td>
+              <td><code>A[] &amp; B[]</code> = (A &amp; B)[]</td>
+            </tr>
+            <tr>
+              <td><strong>Mixed</strong></td>
+              <td><code>(A | B)[]</code> = mixed array</td>
+              <td><code>A[] &amp; B[]</code> = homogeneous array</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <footer>
+        <p>Unions & Intersections with Objects and Arrays Guide</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+      </footer>
+    </main>
+  </body>
+</html>

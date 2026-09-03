@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Union & Intersection in Property-Based Sets</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fa-brands fa-js"></i> TYPESCRIPT</div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Foundations</div>
+        <a href="#universal-set" class="nav-link">1. The Universal Set (U)</a>
+        <a href="#property-based" class="nav-link">2. Property-Based Sets</a>
+        <a href="#two-sets" class="nav-link">3. The Two Sets Defined</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Set Operations</div>
+        <a href="#union" class="nav-link">4. Union of Sets (A ∪ B)</a>
+        <a href="#intersection" class="nav-link">5. Intersection (A ∩ B)</a>
+        <a href="#fixing-intersection" class="nav-link">6. Fixing the Intersection</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. The Golden Rule</div>
+        <a href="#golden-rule-math" class="nav-link">7. The Core Insight</a>
+        <a href="#golden-rule-ts" class="nav-link">8. Golden Rule in TypeScript</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. TypeScript Examples</div>
+        <a href="#ts-union-examples" class="nav-link">9. Union Type Examples</a>
+        <a href="#ts-intersection-examples" class="nav-link">10. Intersection Type Examples</a>
+        <a href="#guarantees-practice" class="nav-link">11. Guarantees in Practice</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Set Theory & Types</span>
+        <h1>PROPERTY-BASED SETS</h1>
+        <p>UNION & INTERSECTION IN PROPERTY-BASED SETS - COMPLETE GUIDE</p>
+      </section>
+
+      <section id="universal-set">
+        <h2>Part 1: The Foundation - Understanding the Universal Set</h2>
+        
+        <h3>What is the Universal Set (U)?</h3>
+        <p>The Universal Set is the set of ALL possible elements we're considering.</p>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    UNIVERSAL SET (U)                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  U = All learners enrolled in the TypeScript course               │
+│                                                                     │
+│  Each learner has these properties:                                │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  name: string                                              │   │
+│  │  age: number                                               │   │
+│  │  city: string                                              │   │
+│  │  qualification: string                                     │   │
+│  │  occupation: string                                        │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  The Universal Set contains EVERY learner in the course.          │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="property-based">
+        <h2>Part 2: What are Property-Based Sets?</h2>
+        <p><strong>Definition:</strong> A Property-Based Set is a subset of the Universal Set, defined by conditions on the properties of elements.</p>
+
+        <h3>Visualization</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    PROPERTY-BASED SETS AS FILTERS                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    U (All Learners)                         │   │
+│  │  ┌───────────────────────────────────────────────────────┐  │   │
+│  │  │  A = Learners with:                                   │  │   │
+│  │  │  • age = 20                                          │  │   │
+│  │  │  • city = "Delhi"                                    │  │   │
+│  │  │  • qualification = "B.Tech"                          │  │   │
+│  │  └───────────────────────────────────────────────────────┘  │   │
+│  │                                                              │   │
+│  │  ┌───────────────────────────────────────────────────────┐  │   │
+│  │  │  B = Learners with:                                   │  │   │
+│  │  │  • occupation = "student"                            │  │   │
+│  │  │  • city = "Delhi"                                    │  │   │
+│  │  │  • qualification = "BCA"                             │  │   │
+│  │  └───────────────────────────────────────────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  Think of each set as a FILTER applied to the Universal Set.      │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="two-sets">
+        <h2>Part 3: The Two Sets Defined</h2>
+        
+        <h3>Set A</h3>
+        <pre><code class="language-text">A = { learners | age = 20 AND city = "Delhi" AND qualification = "B.Tech" }
+
+Read as: "All learners who are 20 years old, live in Delhi, and have a B.Tech degree"</code></pre>
+        
+        <h3>Set B</h3>
+        <pre><code class="language-text">B = { learners | occupation = "student" AND city = "Delhi" AND qualification = "BCA" }
+
+Read as: "All learners who are students, live in Delhi, and have a BCA degree"</code></pre>
+
+        <h3>Visualizing the Sets</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    SET A AND SET B                                 │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    U (All Learners)                         │   │
+│  │                                                              │   │
+│  │  ┌─────────────────────────────────────────────────────┐    │   │
+│  │  │                 SET A                               │    │   │
+│  │  │  age = 20                                          │    │   │
+│  │  │  city = "Delhi"                                    │    │   │
+│  │  │  qualification = "B.Tech"                          │    │   │
+│  │  └─────────────────────────────────────────────────────┘    │   │
+│  │                                                              │   │
+│  │  ┌─────────────────────────────────────────────────────┐    │   │
+│  │  │                 SET B                               │    │   │
+│  │  │  occupation = "student"                            │    │   │
+│  │  │  city = "Delhi"                                    │    │   │
+│  │  │  qualification = "BCA"                             │    │   │
+│  │  └─────────────────────────────────────────────────────┘    │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  Note: Both sets share "city = Delhi"                              │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="union">
+        <h2>Part 4: Union of Sets (A ∪ B)</h2>
+        
+        <h3>Definition</h3>
+        <pre><code class="language-text">A ∪ B = { learners | learner satisfies A OR satisfies B }
+
+Read as: "All learners who are in A, OR in B, OR in both"</code></pre>
+
+        <h3>Visualizing the Union</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    UNION (A ∪ B)                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    U (All Learners)                         │   │
+│  │                                                              │   │
+│  │  ┌───────────────────────────────────────────────────────┐  │   │
+│  │  │              A ∪ B (Shaded Area)                       │  │   │
+│  │  │                                                         │  │   │
+│  │  │  ┌─────────────────┐   ┌─────────────────┐           │  │   │
+│  │  │  │   SET A          │   │   SET B          │           │  │   │
+│  │  │  │  age = 20       │   │  occupation =    │           │  │   │
+│  │  │  │  city = Delhi   │   │  student         │           │  │   │
+│  │  │  │  qual = B.Tech  │   │  city = Delhi    │           │  │   │
+│  │  │  │                 │   │  qual = BCA      │           │  │   │
+│  │  │  └─────────────────┘   └─────────────────┘           │  │   │
+│  │  │                                                         │  │   │
+│  │  └───────────────────────────────────────────────────────┘  │   │
+│  │                                                              │   │
+│  │  UNION = EVERYTHING in A OR B (Both circles combined)       │   │
+│  │                                                              │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>What Can We GUARANTEE in the Union?</h3>
+        <p>Let's check each property:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Guaranteed in A ∪ B?</th>
+                    <th>Why?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>city = "Delhi"</code></td><td>✅ YES</td><td>Both A and B require this. Every learner in either set has city = Delhi</td></tr>
+                <tr><td><code>age = 20</code></td><td>❌ NO</td><td>Only set A requires this. Set B has no age condition</td></tr>
+                <tr><td><code>occupation = "student"</code></td><td>❌ NO</td><td>Only set B requires this. Set A has no occupation condition</td></tr>
+                <tr><td><code>qualification = "B.Tech"</code></td><td>❌ NO</td><td>Only set A has this. Set B has "BCA"</td></tr>
+                <tr><td><code>qualification = "BCA"</code></td><td>❌ NO</td><td>Only set B has this. Set A has "B.Tech"</td></tr>
+            </tbody>
+        </table>
+
+        <h3>The Key Insight</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    UNION = BIGGER GROUP = FEWER GUARANTEES         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  When we take the UNION of two sets:                              │
+│  • The set becomes LARGER (more learners included)               │
+│  • The guarantees become FEWER                                    │
+│                                                                     │
+│  WHY? Because in a union, we're including learners from BOTH     │
+│  sets. A learner from Set A might not have Set B's conditions,   │
+│  and vice versa. So the only things we can guarantee are the     │
+│  properties that appear in BOTH original sets.                   │
+│                                                                     │
+│  "The only guarantee in a union is what's COMMON in both sets"  │
+│                                                                     │
+│  In this case: Only "city = Delhi" is common to both.            │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Example Learners in A ∪ B</h3>
+        <ul>
+            <li>✅ <strong>Anas</strong> (20, Delhi, B.Tech, Engineer) → In A (satisfies A)</li>
+            <li>✅ <strong>Maryam</strong> (22, Delhi, BCA, Student) → In B (satisfies B)</li>
+            <li>✅ <strong>Sabaoon</strong> (20, Delhi, B.Tech, Student) → In BOTH (satisfies both)</li>
+        </ul>
+        <p>All three are in A ∪ B, but they have different properties!</p>
+        <ul>
+            <li>Anas is an Engineer (not a student)</li>
+            <li>Maryam is 22 (not 20)</li>
+            <li>Sabaoon has B.Tech (not BCA)</li>
+        </ul>
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-flag-checkered"></i> Conclusion</span>
+            <p style="margin-bottom: 0;">The union is DIVERSE. We can't guarantee much!</p>
+        </div>
+      </section>
+
+      <section id="intersection">
+        <h2>Part 5: Intersection of Sets (A ∩ B)</h2>
+        
+        <h3>Definition</h3>
+        <pre><code class="language-text">A ∩ B = { learners | learner satisfies A AND satisfies B }
+
+Read as: "All learners who are in BOTH A and B"</code></pre>
+
+        <h3>Visualizing the Intersection</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    INTERSECTION (A ∩ B)                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    U (All Learners)                         │   │
+│  │                                                              │   │
+│  │  ┌───────────────────────────────────────────────────────┐  │   │
+│  │  │                                                         │  │   │
+│  │  │  ┌─────────────────┐   ┌─────────────────┐           │  │   │
+│  │  │  │   SET A          │   │   SET B          │           │  │   │
+│  │  │  │  age = 20       │   │  occupation =    │           │  │   │
+│  │  │  │  city = Delhi   │   │  student         │           │  │   │
+│  │  │  │  qual = B.Tech  │   │  city = Delhi    │           │  │   │
+│  │  │  │                 │   │  qual = BCA      │           │  │   │
+│  │  │  │   ┌─────────┐   │   │                 │           │  │   │
+│  │  │  │   │ A ∩ B   │   │   │                 │           │  │   │
+│  │  │  │   │ (Empty) │   │   │                 │           │  │   │
+│  │  │  │   └─────────┘   │   │                 │           │  │   │
+│  │  │  └─────────────────┘   └─────────────────┘           │  │   │
+│  │  │                                                         │  │   │
+│  │  └───────────────────────────────────────────────────────┘  │   │
+│  │                                                              │   │
+│  │  INTERSECTION = ONLY the OVERLAP (shared by both sets)      │   │
+│  │                                                              │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>The Conflict: Qualification Mismatch</h3>
+        <p>When we combine the conditions:</p>
+        
+        <p><strong>From A:</strong></p>
+        <pre><code class="language-text">age = 20
+city = "Delhi"
+qualification = "B.Tech"   ← A's qualification</code></pre>
+        
+        <p><strong>From B:</strong></p>
+        <pre><code class="language-text">occupation = "student"
+city = "Delhi"
+qualification = "BCA"      ← B's qualification</code></pre>
+
+        <p><strong>Combined (for Intersection):</strong></p>
+        <pre><code class="language-text">age = 20
+occupation = "student"
+city = "Delhi"
+qualification = "B.Tech" AND qualification = "BCA"  ← CONFLICT!</code></pre>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    THE CONFLICT                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  A says: qualification = "B.Tech"                                  │
+│  B says: qualification = "BCA"                                    │
+│                                                                     │
+│  For a learner to be in BOTH sets, they must have BOTH            │
+│  qualifications simultaneously:                                     │
+│                                                                     │
+│  qualification = "B.Tech" AND qualification = "BCA"               │
+│                                                                     │
+│  This is IMPOSSIBLE!                                               │
+│  A single person cannot have two different qualifications.         │
+│                                                                     │
+│  ❌ Result: No learner can satisfy both sets.                      │
+│  ✅ A ∩ B = ∅ (empty set)                                         │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="fixing-intersection">
+        <h2>Part 6: Fixing the Example (To See a Non-Empty Intersection)</h2>
+        <p>Let's change Set B so there's no conflict:</p>
+
+        <h3>Set B (Modified)</h3>
+        <pre><code class="language-text">occupation = "student"
+city = "Delhi"
+qualification = "B.Tech"   ← Changed from "BCA" to "B.Tech"</code></pre>
+
+        <h3>Now the Intersection Works!</h3>
+        <p><strong>From A:</strong></p>
+        <pre><code class="language-text">age = 20
+city = "Delhi"
+qualification = "B.Tech"</code></pre>
+
+        <p><strong>From B:</strong></p>
+        <pre><code class="language-text">occupation = "student"
+city = "Delhi"
+qualification = "B.Tech"</code></pre>
+
+        <p><strong>Combined (Intersection):</strong></p>
+        <pre><code class="language-text">age = 20
+occupation = "student"
+city = "Delhi"
+qualification = "B.Tech"</code></pre>
+
+        <h3>Visualizing the New Intersection</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    NEW INTERSECTION (A ∩ B)                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    U (All Learners)                         │   │
+│  │                                                              │   │
+│  │  ┌───────────────────────────────────────────────────────┐  │   │
+│  │  │                                                         │  │   │
+│  │  │  ┌─────────────────┐   ┌─────────────────┐           │  │   │
+│  │  │  │   SET A          │   │   SET B          │           │  │   │
+│  │  │  │  age = 20       │   │  occupation =    │           │  │   │
+│  │  │  │  city = Delhi   │   │  student         │           │  │   │
+│  │  │  │  qual = B.Tech  │   │  city = Delhi    │           │  │   │
+│  │  │  │                 │   │  qual = B.Tech   │           │  │   │
+│  │  │  │   ┌─────────┐   │   │                 │           │  │   │
+│  │  │  │   │ A ∩ B   │   │   │                 │           │  │   │
+│  │  │  │   │ (Shared)│   │   │                 │           │  │   │
+│  │  │  │   └─────────┘   │   │                 │           │  │   │
+│  │  │  └─────────────────┘   └─────────────────┘           │  │   │
+│  │  │                                                         │  │   │
+│  │  └───────────────────────────────────────────────────────┘  │   │
+│  │                                                              │   │
+│  │  A ∩ B = Learners with:                                     │   │
+│  │  • age = 20                                                │   │
+│  │  • occupation = "student"                                  │   │
+│  │  • city = "Delhi"                                          │   │
+│  │  • qualification = "B.Tech"                                │   │
+│  │                                                              │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>What Can We GUARANTEE in the Intersection?</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Guaranteed?</th>
+                    <th>Why?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>age = 20</code></td><td>✅ YES</td><td>From Set A</td></tr>
+                <tr><td><code>occupation = "student"</code></td><td>✅ YES</td><td>From Set B</td></tr>
+                <tr><td><code>city = "Delhi"</code></td><td>✅ YES</td><td>Present in both</td></tr>
+                <tr><td><code>qualification = "B.Tech"</code></td><td>✅ YES</td><td>Present in both</td></tr>
+            </tbody>
+        </table>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    INTERSECTION = SMALLER GROUP = MORE GUARANTEES  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  When we take the INTERSECTION of two sets:                       │
+│  • The set becomes SMALLER (fewer learners included)              │
+│  • The guarantees become MORE                                     │
+│                                                                     │
+│  WHY? Because to be in the intersection, a learner must satisfy   │
+│  ALL conditions from BOTH sets. This means we can guarantee       │
+│  EVERY property from both original sets.                         │
+│                                                                     │
+│  "The intersection gives us ALL guarantees from both sets"       │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="golden-rule-math">
+        <h2>Part 7: The Golden Rule (Explained)</h2>
+        
+        <h3>The Core Insight</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    THE GOLDEN RULE                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  UNION OF SETS = INTERSECTION OF GUARANTEES                        │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  A ∪ B → You can only guarantee what's COMMON to both       │   │
+│  │  "More values allowed = Fewer guarantees"                   │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  INTERSECTION OF SETS = UNION OF GUARANTEES                        │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  A ∩ B → You can guarantee EVERYTHING from both sets        │   │
+│  │  "Fewer values allowed = More guarantees"                   │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Visualizing the Golden Rule</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    GUARANTEES VISUALIZED                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  SET A:                    SET B:                                  │
+│  ┌──────────────────┐      ┌──────────────────┐                  │
+│  │ age = 20         │      │ occupation =     │                  │
+│  │ city = Delhi     │      │ student          │                  │
+│  │ qual = B.Tech    │      │ city = Delhi     │                  │
+│  │                  │      │ qual = B.Tech    │                  │
+│  └──────────────────┘      └──────────────────┘                  │
+│                                                                     │
+│  UNION (A ∪ B):            INTERSECTION (A ∩ B):                  │
+│  ┌──────────────────┐      ┌──────────────────┐                  │
+│  │ Guarantee:       │      │ Guarantee:       │                  │
+│  │ city = Delhi ✅  │      │ age = 20 ✅      │                  │
+│  │ (Only what's     │      │ occupation =     │                  │
+│  │  common!)        │      │ student ✅       │                  │
+│  │                  │      │ city = Delhi ✅  │                  │
+│  │                  │      │ qual = B.Tech ✅ │                  │
+│  └──────────────────┘      └──────────────────┘                  │
+│                                                                     │
+│  UNION = COMMON only      INTERSECTION = EVERYTHING               │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <div class="note-box" style="background: var(--accent-dim); border-left: 4px solid var(--accent);">
+            <span class="note-title" style="color: var(--accent);"><i class="fa-solid fa-bolt"></i> One-Line Summary</span>
+            <p style="margin-bottom: 0;"><strong>Union</strong> gives you more people but fewer guarantees (only what's common).<br>
+            <strong>Intersection</strong> gives you fewer people but more guarantees (everything from both).</p>
+        </div>
+      </section>
+
+      <section id="golden-rule-ts">
+        <h2>Part 2: The Golden Rule in TypeScript</h2>
+        
+        <h3>The Exact Same Logic Applies!</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    GOLDEN RULE IN TYPESCRIPT                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  UNION (|) = MORE values allowed = FEWER guarantees              │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  type A = { name: string; age: number };                  │   │
+│  │  type B = { name: string; city: string };                 │   │
+│  │                                                             │   │
+│  │  type Union = A | B;                                       │   │
+│  │                                                             │   │
+│  │  ✅ You can GUARANTEE: only what's COMMON                 │   │
+│  │  → name: string (present in BOTH)                        │   │
+│  │                                                             │   │
+│  │  ❌ You CANNOT guarantee:                                  │   │
+│  │  → age: number (only in A)                                │   │
+│  │  → city: string (only in B)                               │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+│  INTERSECTION (&) = FEWER values allowed = MORE guarantees        │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  type Intersection = A & B;                                 │   │
+│  │                                                             │   │
+│  │  ✅ You CAN guarantee EVERYTHING:                          │   │
+│  │  → name: string                                            │   │
+│  │  → age: number                                             │   │
+│  │  → city: string                                            │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="ts-union-examples">
+        <h3>Example 1: API Responses (The Classic)</h3>
+        <pre><code class="language-typescript">// Set A: Success Response
+type SuccessResponse = {
+    status: "success";
+    data: { id: number; name: string };
+    timestamp: string;
+};
+
+// Set B: Error Response
+type ErrorResponse = {
+    status: "error";
+    error: string;
+    code: number;
+};
+
+// UNION: The API can return EITHER
+type APIResponse = SuccessResponse | ErrorResponse;
+
+// What can we GUARANTEE about APIResponse?
+// ✅ status: "success" | "error" (from BOTH)
+// ❌ data (only in Success)
+// ❌ error (only in Error)
+// ❌ code (only in Error)
+// ❌ timestamp (only in Success)
+
+// So TypeScript forces us to CHECK before using!
+function handleResponse(response: APIResponse) {
+    // ❌ Can't access data directly
+    // console.log(response.data); // ERROR!
+    
+    // ✅ Must check first (narrow the type)
+    if (response.status === "success") {
+        console.log(response.data); // ✅ Now we KNOW it's a Success
+    } else {
+        console.log(response.error); // ✅ Now we KNOW it's an Error
+    }
+}</code></pre>
+        <p><strong>The Golden Rule in Action:</strong> The union (<code>|</code>) gives us fewer guarantees, so TypeScript forces us to check before accessing properties that aren't guaranteed.</p>
+
+        <h3>Example 2: User Types</h3>
+        <pre><code class="language-typescript">// Set A: Guest User
+type Guest = {
+    role: "guest";
+    name: string;
+};
+
+// Set B: Logged-in User
+type LoggedInUser = {
+    role: "user";
+    name: string;
+    email: string;
+    preferences: { theme: string };
+};
+
+// Set C: Admin User
+type Admin = {
+    role: "admin";
+    name: string;
+    email: string;
+    permissions: string[];
+};
+
+// UNION: A user can be ANY of these
+type User = Guest | LoggedInUser | Admin;
+
+// What can we GUARANTEE about any User?
+// ✅ role: "guest" | "user" | "admin" (from ALL types)
+// ✅ name: string (from ALL types)
+// ❌ email (only in LoggedInUser and Admin)
+// ❌ preferences (only in LoggedInUser)
+// ❌ permissions (only in Admin)
+
+// TypeScript forces us to check:
+function greetUser(user: User) {
+    console.log(`Hello ${user.name}`); // ✅ Guaranteed!
+    
+    // ❌ Can't access email directly
+    // console.log(user.email); // ERROR!
+    
+    // ✅ Must check first
+    if (user.role === "admin" || user.role === "user") {
+        console.log(user.email); // ✅ Now we KNOW it exists
+    }
+    
+    if (user.role === "admin") {
+        console.log(user.permissions); // ✅ Now we KNOW it's an Admin
+    }
+}</code></pre>
+
+        <h3>Example 3: Form Data (Union for Different States)</h3>
+        <pre><code class="language-typescript">// Set A: Form is empty
+type EmptyForm = {
+    status: "empty";
+};
+
+// Set B: Form is being filled
+type FillingForm = {
+    status: "filling";
+    data: { name: string; email: string };
+    progress: number;
+};
+
+// Set C: Form is submitted
+type SubmittedForm = {
+    status: "submitted";
+    data: { name: string; email: string };
+    submissionId: string;
+};
+
+// UNION: Form can be in ANY state
+type FormState = EmptyForm | FillingForm | SubmittedForm;
+
+// The Golden Rule:
+// UNION = MORE states = FEWER guarantees
+// We can only guarantee: status exists
+// Everything else must be checked!
+
+function processForm(form: FormState) {
+    switch (form.status) {
+        case "empty":
+            console.log("Form is empty"); // ✅ Guaranteed
+            break;
+        case "filling":
+            console.log(`Progress: ${form.progress}%`); // ✅ Now we KNOW it's Filling
+            break;
+        case "submitted":
+            console.log(`ID: ${form.submissionId}`); // ✅ Now we KNOW it's Submitted
+            break;
+    }
+}</code></pre>
+      </section>
+
+      <section id="ts-intersection-examples">
+        <h2>Part 4: Intersection in TypeScript (The "AND" Type)</h2>
+        
+        <h3>Example 1: Combining Features</h3>
+        <pre><code class="language-typescript">// Set A: Has a name
+type HasName = {
+    name: string;
+};
+
+// Set B: Has an age
+type HasAge = {
+    age: number;
+};
+
+// Set C: Has an email
+type HasEmail = {
+    email: string;
+};
+
+// INTERSECTION: Must have ALL of these
+type Person = HasName & HasAge & HasEmail;
+
+// The Golden Rule:
+// INTERSECTION = FEWER values = MORE guarantees
+// We can guarantee EVERY property!
+
+const person: Person = {
+    name: "Alice",
+    age: 25,
+    email: "alice@email.com"
+};
+
+function processPerson(person: Person) {
+    console.log(person.name);  // ✅ Guaranteed
+    console.log(person.age);   // ✅ Guaranteed
+    console.log(person.email); // ✅ Guaranteed
+    // No checks needed! We KNOW everything exists!
+}</code></pre>
+
+        <h3>Example 2: Combining Configuration</h3>
+        <pre><code class="language-typescript">type BaseConfig = {
+    apiUrl: string;
+    timeout: number;
+};
+
+type SecurityConfig = {
+    apiKey: string;
+    encryption: boolean;
+};
+
+type LoggingConfig = {
+    logLevel: "debug" | "info" | "error";
+    logToFile: boolean;
+};
+
+// INTERSECTION: Must have ALL configs
+type FullConfig = BaseConfig & SecurityConfig & LoggingConfig;
+
+// The Golden Rule:
+// INTERSECTION = We can guarantee EVERYTHING!
+
+const config: FullConfig = {
+    apiUrl: "https://api.example.com",
+    timeout: 5000,
+    apiKey: "secret-key",
+    encryption: true,
+    logLevel: "info",
+    logToFile: true
+};
+
+function initializeApp(config: FullConfig) {
+    // NO CHECKS needed! Everything is guaranteed!
+    console.log(config.apiUrl);
+    console.log(config.apiKey);
+    console.log(config.logLevel);
+}</code></pre>
+      </section>
+
+      <section id="guarantees-practice">
+        <h2>Part 5: The "Guarantees" Concept in Practice</h2>
+        
+        <h3>What TypeScript Does With These Guarantees</h3>
+        <pre><code class="language-typescript">type A = { name: string; age: number };
+type B = { name: string; city: string };
+
+// UNION: Fewer guarantees
+type Union = A | B;
+
+let value: Union = { name: "Alice", age: 25 };
+
+// ✅ Allowed: Guaranteed properties
+console.log(value.name); // ✅ Works (guaranteed in both)
+
+// ❌ Error: Not guaranteed
+console.log(value.age);  // ❌ Error! (might be B)
+console.log(value.city); // ❌ Error! (might be A)
+
+
+// INTERSECTION: More guarantees
+type Intersection = A & B;
+
+let value2: Intersection = {
+    name: "Alice",
+    age: 25,
+    city: "Delhi"
+};
+
+// ✅ Allowed: Everything is guaranteed!
+console.log(value2.name); // ✅ Works
+console.log(value2.age);  // ✅ Works
+console.log(value2.city); // ✅ Works</code></pre>
+      </section>
+
+      <footer>
+        <p>Union and Intersection in Property-Based Sets</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+        <div style="margin-top: 1rem;">
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+              Connect on LinkedIn
+            </a>
+          </div>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

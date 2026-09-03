@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generics in Functions - Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" style="width:24px; height:24px;" alt="TS Logo" />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Fundamentals</div>
+        <a href="#what-is-generic" class="nav-link">1. What is a Generic Function?</a>
+        <a href="#syntax" class="nav-link">2. Syntax of Generic Functions</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Execution</div>
+        <a href="#how-they-work" class="nav-link">3. How Generic Functions Work</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Advanced Usage</div>
+        <a href="#multiple-params" class="nav-link">4. Multiple Type Parameters</a>
+        <a href="#types-interfaces" class="nav-link">5. Generics with Types & Interfaces</a>
+        <a href="#inference" class="nav-link">6. Type Inference</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Practical</div>
+        <a href="#real-world" class="nav-link">8. Real-World Examples</a>
+      </div>
+
+      <!-- Author Links -->
+      <div class="nav-section" style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <div class="nav-title">Author</div>
+        <a href="https://pro.armanihsan.com" target="_blank" class="nav-link" style="color: var(--accent);"><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+            <a href="https://github.com/armanihsan-dev" target="_blank" style="color: var(--text-secondary);"><i class="fa-brands fa-github fa-lg"></i></a>
+            <a href="https://www.linkedin.com/in/arman-ihsan-5a790430a/" target="_blank" style="color: var(--text-secondary);"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Generics</span>
+        <h1>GENERICS IN FUNCTIONS</h1>
+        <p>COMPLETE GUIDE TO BUILDING REUSABLE, TYPE-SAFE FUNCTIONS</p>
+      </section>
+
+      <section id="intro">
+        <h2>🎯 What You'll Learn</h2>
+        <ul>
+            <li>What generic functions are</li>
+            <li>Syntax of generic functions</li>
+            <li>How generic functions work (compile-time vs runtime)</li>
+            <li>How generics affect (and don't affect) runtime</li>
+            <li>Multiple type parameters</li>
+            <li>Real-world examples</li>
+        </ul>
+      </section>
+
+      <section id="what-is-generic">
+        <h2>Part 1: What is a Generic Function?</h2>
+        
+        <h3>Definition:</h3>
+        <p>A generic function is a function that works with any type, while still preserving the type information of its inputs and outputs.</p>
+
+        <h3>The Problem Without Generics:</h3>
+        <pre><code class="language-typescript">// ❌ 'any' loses type safety
+function identity(value: any): any {
+    return value;
+}
+
+const result = identity("hello");
+// TypeScript thinks: result is 'any'
+// We lost the type information!</code></pre>
+
+        <h3>The Solution With Generics:</h3>
+        <pre><code class="language-typescript">// ✅ Generic preserves type safety
+function identity<T>(value: T): T {
+    return value;
+}
+
+const result = identity("hello");
+// TypeScript knows: result is 'string'
+// Type information is preserved!</code></pre>
+      </section>
+
+      <section id="syntax">
+        <h2>Part 2: Syntax of Generic Functions</h2>
+        
+        <h3>Basic Syntax</h3>
+        <pre><code class="language-typescript">function functionName<T>(parameter: T): T {
+    // Function body
+    return parameter;
+}</code></pre>
+
+        <h3>Syntax Breakdown</h3>
+        <pre><code class="language-typescript">function identity<T>(value: T): T {
+    //        ↑       ↑       ↑
+    //        |       |       |
+    //   Type      Param   Return
+    //   Parameter  Type    Type
+    return value;
+}</code></pre>
+
+        <h3>Visual Diagram</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    GENERIC FUNCTION SYNTAX                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  function identity < T > ( value : T ) : T {                   │
+│      return value;                                             │
+│  }                                                              │
+│              ↑        ↑          ↑                             │
+│              |        |          |                             │
+│              |        |          Return type uses T            │
+│              |        Parameter type uses T                    │
+│              Type parameter declared here                      │
+│                                                                  │
+│  The type T is used in THREE places:                           │
+│  1. Parameter type: value: T                                   │
+│  2. Return type: : T                                           │
+│  3. Body: return value (must match T)                         │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="how-they-work">
+        <h2>Part 3: How Generic Functions Work</h2>
+        
+        <h3>At Compile Time (TypeScript)</h3>
+        <pre><code class="language-typescript">function identity<T>(value: T): T {
+    return value;
+}
+
+// Step 1: You call the function with a string
+const result = identity("hello");
+
+// Step 2: TypeScript infers T = string
+// The type becomes: function identity<string>(value: string): string
+
+// Step 3: TypeScript checks: Is the argument a string? Yes.
+// Step 4: TypeScript knows: result is string.
+
+// All of this happens BEFORE the code runs!</code></pre>
+
+        <h3>At Runtime (JavaScript)</h3>
+        <pre><code class="language-javascript">// After compilation, the generated JavaScript is:
+
+function identity(value) {
+    return value;
+}
+
+// ❌ The generic syntax is GONE!
+// ❌ T is GONE!
+// ❌ Type information is GONE!</code></pre>
+
+        <div class="note-box">
+            <span class="note-title"><i class="fa-solid fa-lightbulb"></i> The key insight:</span>
+            <p style="margin-bottom: 0;">Generics exist ONLY at compile time. At runtime, they don't exist at all!</p>
+        </div>
+
+        <h3>Visual: Compile-Time vs Runtime</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    COMPILE-TIME VS RUNTIME                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  TypeScript Code (Compile-Time):                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ function identity<T>(value: T): T {                     │   │
+│  │     return value;                                       │   │
+│  │ }                                                       │   │
+│  │                                                         │   │
+│  │ const result = identity<string>("hello");               │   │
+│  │ // T = string                                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                              ↓                                  │
+│                    TypeScript Compiler                          │
+│                              ↓                                  │
+│  JavaScript Code (Runtime):                                    │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ function identity(value) {                              │   │
+│  │     return value;                                       │   │
+│  │ }                                                       │   │
+│  │                                                         │   │
+│  │ const result = identity("hello");                       │   │
+│  │ // No generic information remains!                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  🔥 Generics are 100% compile-time only!                        │
+│  🔥 They don't affect runtime performance!                      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="multiple-params">
+        <h2>Part 4: Multiple Type Parameters</h2>
+        
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">function functionName<T, U>(param1: T, param2: U): [T, U] {
+    return [param1, param2];
+}</code></pre>
+
+        <h3>Example: Pair Function</h3>
+        <pre><code class="language-typescript">function pair<T, U>(first: T, second: U): [T, U] {
+    return [first, second];
+}
+
+// Usage:
+const result = pair<string, number>("hello", 42);
+// result type: [string, number]
+
+// TypeScript can also infer both:
+const result2 = pair("hello", 42);
+// TypeScript knows: T = string, U = number</code></pre>
+
+        <h3>Example: Key-Value Function</h3>
+        <pre><code class="language-typescript">function createEntry<K, V>(key: K, value: V): { key: K; value: V } {
+    return { key, value };
+}
+
+const entry = createEntry("name", "Alice");
+// entry type: { key: string; value: string }
+
+const entry2 = createEntry(1, "Bob");
+// entry2 type: { key: number; value: string }</code></pre>
+      </section>
+
+      <section id="types-interfaces">
+        <h2>Part 5: Generic Functions with Types and Interfaces</h2>
+        
+        <h3>Using Generic Types in Functions</h3>
+        <pre><code class="language-typescript">// Define a generic type
+type Box<T> = {
+    value: T;
+};
+
+// Function that uses the generic type
+function createBox<T>(value: T): Box<T> {
+    return { value };
+}
+
+const box = createBox("hello");
+// box type: Box<string></code></pre>
+
+        <h3>Using Generic Interfaces in Functions</h3>
+        <pre><code class="language-typescript">// Define a generic interface
+interface Repository<T> {
+    items: T[];
+    add(item: T): void;
+}
+
+// Function that creates a repository
+function createRepository<T>(): Repository<T> {
+    return {
+        items: [],
+        add(item: T) {
+            this.items.push(item);
+        }
+    };
+}
+
+const stringRepo = createRepository<string>();
+stringRepo.add("hello");
+stringRepo.add("world");
+// stringRepo.items: string[]
+
+const numberRepo = createRepository<number>();
+numberRepo.add(42);
+// numberRepo.items: number[]</code></pre>
+      </section>
+
+      <section id="inference">
+        <h2>Part 6: Type Inference in Generic Functions</h2>
+        
+        <h3>Automatic Inference</h3>
+        <pre><code class="language-typescript">function identity<T>(value: T): T {
+    return value;
+}
+
+// TypeScript infers T from the argument:
+const result = identity("hello"); // T = string
+const result2 = identity(42);     // T = number
+const result3 = identity(true);   // T = boolean</code></pre>
+
+        <h3>When Inference Fails</h3>
+        <pre><code class="language-typescript">// ❌ Can't infer T (no argument)
+function createEmptyArray<T>(): T[] {
+    return [];
+}
+
+const array = createEmptyArray(); // Error: Could not infer T
+
+// ✅ Fix: Explicitly specify
+const array2 = createEmptyArray<string>(); // Works</code></pre>
+
+        <h3>Partial Inference</h3>
+        <pre><code class="language-typescript">function pair<T, U>(first: T, second: U): [T, U] {
+    return [first, second];
+}
+
+// ✅ Both inferred
+pair("hello", 42); // T = string, U = number
+
+// ✅ Explicit T, inferred U
+pair<string>("hello", 42); // T = string, U = number
+
+// ✅ Both explicit
+pair<string, number>("hello", 42);</code></pre>
+      </section>
+
+      <section id="real-world">
+        <h2>Part 8: Real-World Examples</h2>
+        
+        <h3>Example 1: API Response Handler</h3>
+        <pre><code class="language-typescript">interface ApiResponse<T> {
+    status: number;
+    data: T;
+    message: string;
+}
+
+function handleApiResponse<T>(response: ApiResponse<T>): T {
+    if (response.status !== 200) {
+        throw new Error(response.message);
+    }
+    return response.data;
+}
+
+// Usage:
+type User = { id: number; name: string };
+const response: ApiResponse<User> = {
+    status: 200,
+    data: { id: 1, name: "Alice" },
+    message: "Success"
+};
+
+const user = handleApiResponse(response);
+// user type: User (TypeScript knows!)</code></pre>
+      </section>
+
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

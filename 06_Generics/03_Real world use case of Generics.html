@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real-World Use Case: API Client with Generics</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" style="width:24px; height:24px;" alt="TS Logo" />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#what-you-will-learn" class="nav-link">🎯 What You'll Learn</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Problem vs Solution</div>
+        <a href="#part-1-problem" class="nav-link">1. The Problem (Without Generics)</a>
+        <a href="#part-2-solution" class="nav-link">2. The Solution (With Generics)</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Deep Dive</div>
+        <a href="#part-3-syntax" class="nav-link">3. Breaking Down the Syntax</a>
+        <a href="#part-4-execution" class="nav-link">4. Step-by-Step Execution</a>
+      </div>
+
+      <!-- Author Links -->
+      <div class="nav-section" style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <div class="nav-title">Author</div>
+        <a href="https://pro.armanihsan.com" target="_blank" class="nav-link" style="color: var(--accent);"><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+            <a href="https://github.com/armanihsan-dev" target="_blank" style="color: var(--text-secondary);"><i class="fa-brands fa-github fa-lg"></i></a>
+            <a href="https://www.linkedin.com/in/arman-ihsan-5a790430a/" target="_blank" style="color: var(--text-secondary);"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Generics</span>
+        <h1>API CLIENT WITH GENERICS</h1>
+        <p>REAL-WORLD USE CASE: BUILDING A FULLY TYPE-SAFE API CLIENT</p>
+      </section>
+
+      <section id="what-you-will-learn">
+        <h2>🎯 What You'll Learn</h2>
+        <ul>
+            <li>Why use generics for API calls</li>
+            <li>How to build a type-safe API client</li>
+            <li>Step-by-step explanation of each part</li>
+            <li>How it works in practice</li>
+        </ul>
+      </section>
+
+      <section id="part-1-problem">
+        <h2>Part 1: The Problem (Without Generics)</h2>
+        
+        <h3>What Most Developers Do</h3>
+        <pre><code class="language-typescript">// ❌ Without generics: Type safety is lost
+async function fetchData(url: string): Promise<any> {
+    const response = await fetch(url);
+    return response.json();
+}
+
+// Usage:
+const user = await fetchData("/api/users/1");
+console.log(user.name); // TypeScript doesn't know 'name' exists!
+console.log(user.email); // TypeScript doesn't know 'email' exists!
+// ❌ No autocomplete
+// ❌ No type checking
+// ❌ Bugs can slip through</code></pre>
+
+        <h3>The Problem Explained</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Issue</th>
+                    <th>Why It's Bad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Return type is any</strong></td>
+                    <td>TypeScript can't help you</td>
+                </tr>
+                <tr>
+                    <td><strong>No autocomplete</strong></td>
+                    <td>You have to remember property names</td>
+                </tr>
+                <tr>
+                    <td><strong>No type checking</strong></td>
+                    <td>Typos won't be caught</td>
+                </tr>
+                <tr>
+                    <td><strong>Hard to refactor</strong></td>
+                    <td>Changes break silently</td>
+                </tr>
+            </tbody>
+        </table>
+      </section>
+
+      <section id="part-2-solution">
+        <h2>Part 2: The Solution (With Generics)</h2>
+        
+        <h3>The Complete Code</h3>
+        <pre><code class="language-typescript">// 1. Define the API response structure
+interface ApiResponse<T> {
+    status: number;
+    data: T;
+    message: string;
+}
+
+// 2. Generic API client
+async function apiClient<T>(url: string): Promise<b><</b>ApiResponse<b>></b> {
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    return {
+        status: response.status,
+        data: data as T,
+        message: response.statusText
+    };
+}
+
+// 3. Define your data types
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+}
+
+// 4. Usage
+async function getUsers() {
+    const response = await apiClient<User[]>("/api/users");
+    // response.data is User[]
+    console.log(response.data[0].name); // ✅ Type-safe!
+    return response.data;
+}
+
+async function getProducts() {
+    const response = await apiClient<Product[]>("/api/products");
+    // response.data is Product[]
+    console.log(response.data[0].price); // ✅ Type-safe!
+    return response.data;
+}</code></pre>
+      </section>
+
+      <section id="part-3-syntax">
+        <h2>Part 3: Breaking Down the Syntax</h2>
+        
+        <h3>The Generic API Client</h3>
+        <pre><code class="language-typescript">async function apiClient<T>(url: string): Promise<b><</b>ApiResponse<b>></b>  {
+//                   ↑
+//                   |
+//          Generic type parameter T
+
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    return {
+        status: response.status,
+        data: data as T,  // ← T is used here
+        message: response.statusText
+    };
+}</code></pre>
+
+        <h3>Visual: Syntax Breakdown</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    API CLIENT SYNTAX                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  async function apiClient<T>(url: string): Promise<ApiResponse<T>> │
+│                    ↑                            ↑                │
+│                    |                            |                │
+│                    |                      ApiResponse uses T    │
+│                    T is a placeholder type                       │
+│                                                                  │
+│  When you call: apiClient<User[]>("/api/users")                │
+│                 ↑                                               │
+│                 |                                               │
+│                 T becomes User[]                               │
+│                                                                  │
+│  So the return type becomes: Promise<ApiResponse<User[]>>      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-4-execution">
+        <h2>Part 4: Step-by-Step Execution</h2>
+        
+        <h3>Step 1: Define Your Types</h3>
+        <pre><code class="language-typescript">// You define what the API returns
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}</code></pre>
+
+        <h3>Step 2: Call the API Client</h3>
+        <pre><code class="language-typescript">const response = await apiClient<User[]>("/api/users");
+//               ↑              ↑
+//               |              |
+//               T = User[]   API endpoint</code></pre>
+
+        <h3>Step 3: TypeScript Infers the Types</h3>
+        <pre><code class="language-typescript">// TypeScript now knows:
+// response = {
+//     status: number;
+//     data: User[];  ← T became User[]
+//     message: string;
+// }
+
+// So you can safely access:
+console.log(response.data[0].name); // ✅ TypeScript knows: string
+console.log(response.data[0].email); // ✅ TypeScript knows: string
+console.log(response.data[0].id); // ✅ TypeScript knows: number</code></pre>
+
+        <h3>Step 4: Runtime Execution</h3>
+        <pre><code class="language-typescript">// 1. apiClient calls fetch("/api/users")
+// 2. Gets the JSON data
+// 3. Returns it as ApiResponse<User[]>
+// 4. TypeScript's types are gone (runtime)
+// 5. But we got type safety during development!</code></pre>
+      </section>
+
+      <footer>
+        <p>Real-World Use Case: API Client with Generics</p>
+        <p>Generated for <strong>TypeScript Engineering</strong></p>
+        <p>Built with 💝 by Arman Khan</p>
+      </footer>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

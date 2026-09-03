@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Types as Sets of JavaScript Values</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" style="width:24px; height:24px;" />
+        TYPES AS SETS
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Foundation</div>
+        <a href="#core-truth" class="nav-link">1. The Core Truth</a>
+        <a href="#builtin-types" class="nav-link">2. Built-in Types</a>
+        <a href="#literal-types" class="nav-link">3. Literal Types</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Set Operations</div>
+        <a href="#union-types" class="nav-link">4. Union Types (∪)</a>
+        <a href="#intersection-types" class="nav-link">5. Intersection Types (∩)</a>
+        <a href="#subtypes" class="nav-link">6. Subtypes as Subsets</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Architecture</div>
+        <a href="#complete-hierarchy" class="nav-link">7. Complete Hierarchy</a>
+        <a href="#why-it-matters" class="nav-link">8. Why This Matters</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Wrap Up</div>
+        <a href="#summary" class="nav-link">Summary Table</a>
+      </div>
+      
+      <!-- Social Links (Requested) -->
+      <div class="nav-section" style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <div class="nav-title">Author</div>
+        <a href="https://pro.armanihsan.com" target="_blank" class="nav-link" style="color: var(--accent);"><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+            <a href="#" style="color: var(--text-secondary);"><i class="fa-brands fa-github fa-lg"></i></a>
+            <a href="#" style="color: var(--text-secondary);"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+            <a href="#" style="color: var(--text-secondary);"><i class="fa-brands fa-twitter fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Core Concepts</span>
+        <h1>TYPES AS SETS OF JAVASCRIPT VALUES</h1>
+        <p>THE MOST IMPORTANT CONCEPT IN TYPESCRIPT. ONCE YOU TRULY UNDERSTAND THIS, EVERYTHING ELSE CLICKS INTO PLACE.</p>
+      </section>
+
+      <section id="core-truth">
+        <h2>Part 1: The Core Truth</h2>
+        <p>Every TypeScript type is just a SET of JavaScript values that are allowed to be used where that type is expected.</p>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    TYPES = SETS OF VALUES                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  In TypeScript:                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Every type represents a SET of possible values            │   │
+│  │                                                             │   │
+│  │  string = { "hello", "world", "a", "b", ... }             │   │
+│  │  number = { 1, 2, 3, 3.14, -5, ... }                     │   │
+│  │  boolean = { true, false }                                 │   │
+│  │  null = { null }                                           │   │
+│  │  undefined = { undefined }                                 │   │
+│  │  never = { } (empty set)                                  │   │
+│  │  unknown = { ALL POSSIBLE VALUES }                        │   │
+│  │  any = { ALL POSSIBLE VALUES (with type checking off) }  │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="builtin-types">
+        <h2>Part 2: Built-in Types as Sets</h2>
+        
+        <h3>1. string - The Set of All Strings</h3>
+        <pre><code class="language-typescript">// string = { "hello", "world", "a", "b", "", ... }
+// It includes EVERY possible string value
+
+let name: string = "Alice";        // ✅ In the set
+let city: string = "New York";     // ✅ In the set
+let empty: string = "";            // ✅ In the set
+let number: string = "123";        // ✅ In the set (it's a string)
+let notAString: string = 42;       // ❌ NOT in the set
+
+// TypeScript's error:
+// Type 'number' is not assignable to type 'string'
+// "42" is NOT in the set of strings</code></pre>
+
+        <h3>2. number - The Set of All Numbers</h3>
+        <pre><code class="language-typescript">// number = { 1, 2, 3, 3.14, -5, Infinity, NaN, ... }
+// It includes EVERY possible number value
+
+let age: number = 25;              // ✅ In the set
+let price: number = 99.99;         // ✅ In the set
+let negative: number = -10;        // ✅ In the set
+let infinity: number = Infinity;   // ✅ In the set
+let nan: number = NaN;             // ✅ In the set
+let notANumber: number = "25";     // ❌ NOT in the set
+
+// TypeScript's error:
+// Type 'string' is not assignable to type 'number'</code></pre>
+
+        <h3>3. boolean - The Set of Exactly Two Values</h3>
+        <pre><code class="language-typescript">// boolean = { true, false }
+// That's it! Only two possible values.
+
+let isActive: boolean = true;      // ✅ In the set
+let isDone: boolean = false;       // ✅ In the set
+let maybe: boolean = "true";       // ❌ NOT in the set
+let maybe2: boolean = 1;           // ❌ NOT in the set
+
+// TypeScript's error:
+// Type 'string' is not assignable to type 'boolean'</code></pre>
+
+        <h3>4. null and undefined - Singleton Sets</h3>
+        <pre><code class="language-typescript">// null = { null }
+// undefined = { undefined }
+
+let nothing: null = null;          // ✅ In the set
+let something: null = "hello";     // ❌ NOT in the set
+let notAssigned: undefined = undefined; // ✅ In the set
+let assigned: undefined = "hello"; // ❌ NOT in the set
+
+// Each has exactly ONE possible value!</code></pre>
+
+        <h3>5. never - The Empty Set</h3>
+        <pre><code class="language-typescript">// never = { }
+// No value exists in this set
+
+function throwError(): never {
+    throw new Error("Always throws");
+}
+
+function infiniteLoop(): never {
+    while(true) {
+        // Never returns
+    }
+}
+
+// You can never assign a value to 'never'
+let impossible: never = 5;         // ❌ NOT in the set (nothing is!)</code></pre>
+
+        <h3>6. unknown - The Universal Set</h3>
+        <pre><code class="language-typescript">// unknown = { EVERY POSSIBLE VALUE }
+// All values belong to this set
+
+let anything: unknown = 5;         // ✅ In the set
+anything = "hello";                // ✅ In the set
+anything = true;                   // ✅ In the set
+anything = null;                   // ✅ In the set
+anything = undefined;              // ✅ In the set
+anything = { name: "Alice" };      // ✅ In the set
+anything = [1, 2, 3];              // ✅ In the set
+
+// But you can't DO anything with it
+// unknown = "Can't use this safely!"</code></pre>
+
+        <h3>7. any - The "I Don't Care" Set</h3>
+        <pre><code class="language-typescript">// any = { EVERY POSSIBLE VALUE } (with type checking disabled)
+// Same as unknown, but unsafe
+
+let anything: any = 5;             // ✅ In the set
+anything = "hello";                // ✅ In the set
+anything.toUpperCase();            // ✅ Allowed (could crash at runtime)
+anything.push(5);                  // ✅ Allowed (could crash at runtime)
+// Type checking is OFF for 'any'</code></pre>
+      </section>
+
+      <section id="literal-types">
+        <h2>Part 3: Literal Types as Sets</h2>
+        
+        <h3>1. String Literal Type - Set with One Value</h3>
+        <pre><code class="language-typescript">// "hello" = { "hello" }
+// Only ONE value can be in this set
+
+let greeting: "hello" = "hello";   // ✅ In the set
+let wrong: "hello" = "goodbye";    // ❌ NOT in the set
+
+// TypeScript's error:
+// Type '"goodbye"' is not assignable to type '"hello"'</code></pre>
+
+        <h3>2. Number Literal Type - Set with One Value</h3>
+        <pre><code class="language-typescript">// 42 = { 42 }
+// Only ONE value can be in this set
+
+let answer: 42 = 42;               // ✅ In the set
+let wrong: 42 = 43;                // ❌ NOT in the set
+
+// TypeScript's error:
+// Type '43' is not assignable to type '42'</code></pre>
+
+        <h3>3. Boolean Literal Type - Set with One Value</h3>
+        <pre><code class="language-typescript">// true = { true }
+// false = { false }
+
+let isTrue: true = true;           // ✅ In the set
+let isFalse: true = false;         // ❌ NOT in the set</code></pre>
+      </section>
+
+      <section id="union-types">
+        <h2>Part 4: Union Types as Set Union</h2>
+        
+        <h3>In Set Theory</h3>
+        <pre><code class="language-text">A ∪ B = { x | x ∈ A OR x ∈ B }</code></pre>
+
+        <h3>In TypeScript</h3>
+        <pre><code class="language-typescript">// "hello" ∪ 42 = { "hello", 42 }
+type Greeting = "hello" | 42;
+
+let valid1: Greeting = "hello";    // ✅ In the set
+let valid2: Greeting = 42;         // ✅ In the set
+let invalid: Greeting = "goodbye"; // ❌ NOT in the set
+let invalid2: Greeting = 43;       // ❌ NOT in the set
+
+// string ∪ number = ALL strings AND ALL numbers
+type StringOrNumber = string | number;
+
+let s: StringOrNumber = "hello";   // ✅ In the set
+let n: StringOrNumber = 42;        // ✅ In the set
+let b: StringOrNumber = true;      // ❌ NOT in the set (boolean not included)
+
+// Color set = { "red", "green", "blue" }
+type Color = "red" | "green" | "blue";
+
+let c1: Color = "red";             // ✅ In the set
+let c2: Color = "green";           // ✅ In the set
+let c3: Color = "blue";            // ✅ In the set
+let c4: Color = "yellow";          // ❌ NOT in the set</code></pre>
+
+        <h3>Visual: Union as Set Union</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    UNION AS SET UNION                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  Set A: { "hello" }          Set B: { 42 }                        │
+│  ┌─────────────┐            ┌─────────────┐                       │
+│  │  "hello"    │            │  42         │                       │
+│  └─────────────┘            └─────────────┘                       │
+│                                                                     │
+│  A ∪ B = { "hello", 42 }                                          │
+│  ┌─────────────────────────┐                                       │
+│  │  "hello"    │   42      │                                       │
+│  └─────────────────────────┘                                       │
+│                                                                     │
+│  Set C: { "red", "green", "blue" }                                │
+│  ┌─────────────────────────────────┐                               │
+│  │  "red"    │  "green"  │  "blue" │                               │
+│  └─────────────────────────────────┘                               │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="intersection-types">
+        <h2>Part 5: Intersection Types as Set Intersection</h2>
+        
+        <h3>In Set Theory</h3>
+        <pre><code class="language-text">A ∩ B = { x | x ∈ A AND x ∈ B }</code></pre>
+
+        <h3>In TypeScript</h3>
+        <pre><code class="language-typescript">// Intersection of literals: only common values
+type A = "hello" | "world" | 42;
+type B = "world" | 42 | true;
+
+type Intersection = A & B;
+// Intersection = { "world", 42 }
+// Only values that are in BOTH sets
+
+let i1: Intersection = "world";    // ✅ In the set
+let i2: Intersection = 42;         // ✅ In the set
+let i3: Intersection = "hello";    // ❌ NOT in the set (only in A)
+let i4: Intersection = true;       // ❌ NOT in the set (only in B)
+
+// Intersection of object types: combine properties
+type HasName = { name: string };
+type HasAge = { age: number };
+
+type Person = HasName & HasAge;
+// Person = { name: string; age: number }
+// Must have BOTH properties
+
+let person1: Person = {
+    name: "Alice",                 // ✅ From HasName
+    age: 25                        // ✅ From HasAge
+};
+
+let person2: Person = {
+    name: "Bob"                    // ❌ Missing age
+};</code></pre>
+
+        <h3>Visual: Intersection as Set Intersection</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    INTERSECTION AS SET INTERSECTION                 │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  Set A: { "hello", "world", 42 }                                   │
+│  ┌─────────────────────────────────┐                               │
+│  │  "hello"   │  "world" │  42    │                               │
+│  └─────────────────────────────────┘                               │
+│                                                                     │
+│  Set B: { "world", 42, true }                                      │
+│  ┌─────────────────────────────────┐                               │
+│  │  "world"   │  42     │  true   │                               │
+│  └─────────────────────────────────┘                               │
+│                                                                     │
+│  A ∩ B = { "world", 42 }                                          │
+│  ┌────────────────────┐                                            │
+│  │  "world"  │  42    │                                            │
+│  └────────────────────┘                                            │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="subtypes">
+        <h2>Part 6: Subtypes as Subsets</h2>
+        
+        <h3>In Set Theory</h3>
+        <pre><code class="language-text">A ⊆ B if every element of A is also in B</code></pre>
+
+        <h3>In TypeScript</h3>
+        <pre><code class="language-typescript">// "hello" is a subset of string
+// Every value that is "hello" is also a string
+
+let specific: "hello" = "hello";   // ✅ "hello" is in the set
+let general: string = specific;    // ✅ Allowed! "hello" is in string
+
+// But you can't go the other way
+let general2: string = "world";    // ✅ "world" is in the set
+let specific2: "hello" = general2; // ❌ "world" is NOT in { "hello" }
+
+// Visual:
+// string = { "hello", "world", "a", "b", ... }
+// "hello" = { "hello" }
+// "hello" ⊆ string (subset)
+
+// Object types: Subtypes have MORE properties
+type Animal = { name: string };
+type Dog = Animal & { breed: string };
+
+// Dog is a subset of Animal (every dog is an animal)
+// Animal is NOT a subset of Dog (not every animal is a dog)
+
+let dog: Dog = {
+    name: "Rex",
+    breed: "Golden Retriever"
+};
+
+let animal: Animal = dog;          // ✅ Allowed (Dog ⊆ Animal)
+let dog2: Dog = animal;            // ❌ NOT allowed (Animal ⊄ Dog)
+// Error: Property 'breed' is missing</code></pre>
+      </section>
+
+      <section id="complete-hierarchy">
+        <h2>Part 7: The Complete Hierarchy</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────────┐
+│                    TYPE HIERARCHY AS SETS                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│                         ┌─────────────┐                            │
+│                         │  unknown    │  ← Universal Set          │
+│                         │  (All values)│                            │
+│                         └──────┬──────┘                            │
+│                                │                                    │
+│              ┌─────────────────┼─────────────────┐                │
+│              │                 │                 │                │
+│          ┌───▼───┐       ┌─────▼─────┐   ┌───────▼──────┐       │
+│          │string │       │  number   │   │  boolean    │       │
+│          │ {all  │       │ {all      │   │ {true,false}│       │
+│          │strings}│      │ numbers}  │   └──────────────┘       │
+│          └───┬───┘       └─────┬─────┘                           │
+│              │                 │                                   │
+│          ┌───▼───┐       ┌─────▼─────┐                           │
+│          │"hello"│       │   42      │  ← Literal subsets       │
+│          │ {"hel-│       │  {42}     │                            │
+│          │  lo"} │       └───────────┘                            │
+│          └───────┘                                                │
+│                                                                     │
+│                      ┌─────────────┐                              │
+│                      │   never     │  ← Empty Set                 │
+│                      │   { }       │                              │
+│                      └─────────────┘                              │
+│                                                                     │
+│  Direction: Everything flows DOWN from unknown                    │
+│  "hello" is a subset of string, which is a subset of unknown     │
+│  never is a subset of EVERYTHING                                  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="why-it-matters">
+        <h2>Part 8: Why This Matters</h2>
+        
+        <h3>1. Type Checking = Set Membership</h3>
+        <pre><code class="language-typescript">// TypeScript is asking: "Is this value in this set?"
+
+function greet(name: string): string {
+    return `Hello ${name}`;
+}
+
+greet("Alice");  // ✅ "Alice" ∈ string
+greet(42);       // ❌ 42 ∉ string
+
+// TypeScript's internal logic:
+// if (value ∈ type) { OK } else { ERROR }</code></pre>
+
+        <h3>2. Assignability = Set Containment</h3>
+        <pre><code class="language-typescript">// Can we assign value to variable?
+
+let specific: "hello" = "hello";
+let general: string = specific;
+// ✅ "hello" ⊆ string (specific is subset of string)
+// "Is every value in 'specific' also in 'string'?" → YES
+
+let general2: string = "world";
+let specific2: "hello" = general2;
+// ❌ "world" ∉ "hello"
+// "Is every value in 'string' also in 'hello'?" → NO</code></pre>
+
+        <h3>3. Union = Set Union (More Values)</h3>
+        <pre><code class="language-typescript">// Union increases the set size
+type A = "hello" | "world";
+// A = { "hello", "world" }
+
+type B = A | 42;
+// B = { "hello", "world", 42 }
+
+// More values allowed = fewer guarantees
+function process(value: A | number) {
+    // We can't guarantee it's a string OR a number
+    // Must check first
+}</code></pre>
+
+        <h3>4. Intersection = Set Intersection (Fewer Values)</h3>
+        <pre><code class="language-typescript">// Intersection decreases the set size
+type A = { name: string };
+type B = { age: number };
+type C = A & B;
+// C = { name: string; age: number }
+
+// Fewer values allowed = more guarantees
+function process(person: A & B) {
+    // We can guarantee BOTH name AND age exist
+    console.log(person.name);  // ✅ Guaranteed
+    console.log(person.age);   // ✅ Guaranteed
+}</code></pre>
+      </section>
+
+      <section id="summary">
+        <h2>Part 10: Summary</h2>
+        
+        <h3>The Core Concept</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>TypeScript Type</th>
+                    <th>JavaScript Value Set</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>string</code></td><td>All strings</td></tr>
+                <tr><td><code>number</code></td><td>All numbers</td></tr>
+                <tr><td><code>boolean</code></td><td>{ true, false }</td></tr>
+                <tr><td><code>null</code></td><td>{ null }</td></tr>
+                <tr><td><code>undefined</code></td><td>{ undefined }</td></tr>
+                <tr><td><code>never</code></td><td>{ } (empty)</td></tr>
+                <tr><td><code>unknown</code></td><td>All values</td></tr>
+                <tr><td><code>any</code></td><td>All values (no checking)</td></tr>
+                <tr><td><code>"hello"</code></td><td>{ "hello" }</td></tr>
+                <tr><td><code>42</code></td><td>{ 42 }</td></tr>
+                <tr><td><code>A | B</code></td><td>A ∪ B (union)</td></tr>
+                <tr><td><code>A & B</code></td><td>A ∩ B (intersection)</td></tr>
+                <tr><td><code>A extends B</code></td><td>A ⊆ B (subset)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="note-box" style="background: var(--accent-dim); border-left: 4px solid var(--accent);">
+            <span class="note-title" style="color: var(--accent);"><i class="fa-solid fa-bolt"></i> One-Line Summary</span>
+            <p style="margin-bottom: 0;">Every TypeScript type is a set of JavaScript values, and type checking is just checking if a value belongs to that set.</p>
+        </div>
+      </section>
+<section id="connect">
+        <h2>Let's Connect</h2>
+        <p>Did you find this guide helpful? I'm always building new projects, writing technical guides, and connecting with fellow developers. Check out my portfolio or reach out on social media!</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+            
+            <!-- Portfolio Card -->
+            <a href="https://pro.armanihsan.com" target="_blank" style="text-decoration: none;">
+                <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); border-left: 4px solid var(--accent); transition: transform 0.2s, background 0.2s;" onmouseover="this.style.background='var(--bg-tertiary)'; this.style.transform='translateY(-5px)';" onmouseout="this.style.background='var(--bg-secondary)'; this.style.transform='translateY(0)';">
+                    <h4 style="color: var(--accent); margin-top: 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-globe"></i> Portfolio
+                    </h4>
+                    <p style="color: var(--text-secondary); margin-bottom: 0; font-size: 0.95rem;">pro.armanihsan.com</p>
+                </div>
+            </a>
+
+            <!-- LinkedIn Card -->
+            <a href="https://www.linkedin.com/in/arman-khan-5a790430a/" target="_blank" style="text-decoration: none;">
+                <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); border-left: 4px solid #0a66c2; transition: transform 0.2s, background 0.2s;" onmouseover="this.style.background='var(--bg-tertiary)'; this.style.transform='translateY(-5px)';" onmouseout="this.style.background='var(--bg-secondary)'; this.style.transform='translateY(0)';">
+                    <h4 style="color: #0a66c2; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-brands fa-linkedin"></i> LinkedIn
+                    </h4>
+                    <p style="color: var(--text-secondary); margin-bottom: 0; font-size: 0.95rem;">Let's connect professionally</p>
+                </div>
+            </a>
+
+            <!-- GitHub Card -->
+            <a href="https://github.com/armanihsan-dev" target="_blank" style="text-decoration: none;">
+                <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); border-left: 4px solid #f4f4f5; transition: transform 0.2s, background 0.2s;" onmouseover="this.style.background='var(--bg-tertiary)'; this.style.transform='translateY(-5px)';" onmouseout="this.style.background='var(--bg-secondary)'; this.style.transform='translateY(0)';">
+                    <h4 style="color: #f4f4f5; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-brands fa-github"></i> GitHub
+                    </h4>
+                    <p style="color: var(--text-secondary); margin-bottom: 0; font-size: 0.95rem;">Check out my code & projects</p>
+                </div>
+            </a>
+
+
+
+        </div>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

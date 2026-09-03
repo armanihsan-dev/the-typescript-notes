@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Default Generic Parameters in TypeScript</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" style="width:24px; height:24px;" alt="TS Logo" />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#what-you-will-learn" class="nav-link">🎯 What You'll Learn</a>
+        <a href="#part-1" class="nav-link">1. What Are Default Generics?</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Implementation</div>
+        <a href="#part-2" class="nav-link">2. Basic Syntax & Visuals</a>
+        <a href="#part-3" class="nav-link">3. Why Use Defaults?</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Advanced</div>
+        <a href="#part-4" class="nav-link">4. Multiple Default Parameters</a>
+        <a href="#real-world" class="nav-link">Example: API Response</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div class="nav-section" style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <div class="nav-title">Author</div>
+        <a href="https://pro.armanihsan.com" target="_blank" class="nav-link" style="color: var(--accent);"><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+            <a href="https://github.com/armanihsan-dev" style="color: var(--text-secondary);"><i class="fa-brands fa-github fa-lg"></i></a>
+            <a href="https://www.linkedin.com/in/arman-ihsan-5a790430a/" style="color: var(--text-secondary);"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Generics</span>
+        <h1>DEFAULT GENERIC PARAMETERS</h1>
+        <p>COMPLETE GUIDE: PROVIDING FALLBACK TYPES IN TYPESCRIPT GENERICS</p>
+      </section>
+
+      <section id="what-you-will-learn">
+        <h2>🎯 What You'll Learn</h2>
+        <ul>
+            <li>What default generic parameters are</li>
+            <li>Syntax of default generics</li>
+            <li>How they work</li>
+            <li>Multiple default parameters</li>
+            <li>Real examples</li>
+        </ul>
+      </section>
+
+      <section id="part-1">
+        <h2>Part 1: What Are Default Generic Parameters?</h2>
+        
+        <h3>Definition:</h3>
+        <p>A default generic parameter provides a fallback type when the user doesn't specify one. If no type is provided, TypeScript uses the default.</p>
+
+        <h3>The Core Idea</h3>
+        <pre><code class="language-typescript">// ❌ Without default
+function identity<T>(value: T): T {
+    return value;
+}
+
+identity("hello"); // ✅ T = string (inferred)
+
+// But what if TypeScript can't infer?
+function createArray<T>(): T[] {
+    return [];
+}
+
+const arr = createArray(); // ❌ Error: Could not infer T
+
+// ✅ With default
+function createArray<T = string>(): T[] {
+    return [];
+}
+
+const arr = createArray(); // ✅ T = string (default)
+const arr2 = createArray<number>(); // ✅ T = number (explicit)</code></pre>
+      </section>
+
+      <section id="part-2">
+        <h2>Part 2: Basic Syntax</h2>
+        
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">function functionName<T = DefaultType>(param: T): T {
+    return param;
+}</code></pre>
+
+        <h3>Simple Examples</h3>
+        <pre><code class="language-typescript">// 1. Basic default type
+function identity<T = string>(value: T): T {
+    return value;
+}
+
+// Usage:
+const result1 = identity("hello"); // T = string (default)
+const result2 = identity<number>(42); // T = number (explicit)</code></pre>
+
+        <h3>Visual: How It Works</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW DEFAULTS WORK                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  function identity<T = string>(value: T): T { ... }            │
+│                                                                  │
+│  Case 1: identity("hello")                                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ 1. TypeScript looks at the argument: "hello" is string   │   │
+│  │ 2. T is inferred as string                              │   │
+│  │ 3. Default is ignored (inference wins)                  │   │
+│  │ 4. Result: T = string                                  │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Case 2: identity<number>(42)                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ 1. T is explicitly set to number                        │   │
+│  │ 2. Default is ignored                                   │   │
+│  │ 3. Result: T = number                                  │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Case 3: identity()  (No arguments)                           │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ 1. No argument to infer from                            │   │
+│  │ 2. TypeScript uses the default: T = string             │   │
+│  │ 3. Result: T = string                                  │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-3">
+        <h2>Part 3: Why Use Defaults?</h2>
+        
+        <h3>The Problem (Without Defaults)</h3>
+        <pre><code class="language-typescript">// ❌ Function with no default
+function createArray<T>(): T[] {
+    return [];
+}
+
+const arr1 = createArray<string>(); // ✅ Must specify T
+const arr2 = createArray(); // ❌ Error: Could not infer T</code></pre>
+
+        <h3>The Solution (With Defaults)</h3>
+        <pre><code class="language-typescript">// ✅ Function with default
+function createArray<T = string>(): T[] {
+    return [];
+}
+
+const arr1 = createArray(); // ✅ T = string (default)
+const arr2 = createArray<number>(); // ✅ T = number (explicit)</code></pre>
+
+        <h3>When Defaults Are Useful</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Scenario</th>
+                    <th>Without Default</th>
+                    <th>With Default</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>No arguments</td><td>❌ Must specify</td><td>✅ Uses default</td></tr>
+                <tr><td>Common use case</td><td>❌ Always explicit</td><td>✅ Just works</td></tr>
+                <tr><td>Complex types</td><td>❌ Hard to use</td><td>✅ Easy to use</td></tr>
+                <tr><td>Libraries</td><td>❌ Hard to use</td><td>✅ Easy to use</td></tr>
+            </tbody>
+        </table>
+      </section>
+
+      <section id="part-4">
+        <h2>Part 4: Multiple Default Parameters</h2>
+        
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">function functionName<T = Default1, U = Default2>(param1: T, param2: U): [T, U] {
+    return [param1, param2];
+}</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-typescript">// 1. Two default types
+function pair<T = string, U = number>(first: T, second: U): [T, U] {
+    return [first, second];
+}
+
+// Usage:
+const p1 = pair("hello", 42); // T = string, U = number (both default)
+const p2 = pair<boolean>(true, 42); // T = boolean, U = number (U default)
+const p3 = pair<boolean, string>(true, "hello"); // Both explicit
+
+// 2. Mixed defaults and inference
+function createMap<K = string, V = number>(): Map<K, V> {
+    return new Map();
+}
+
+const map1 = createMap(); // Map<string, number> (both defaults)
+const map2 = createMap<number>(); // Map<number, number> (V default)
+const map3 = createMap<number, string>(); // Map<number, string> (both explicit)</code></pre>
+
+        <h3>Order of Precedence</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    ORDER OF PRECEDENCE                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  function pair<T = string, U = number>(...): [T, U]            │
+│                                                                  │
+│  1. Explicit type > Default type                               │
+│     pair<boolean>(true, 42) → T = boolean, U = number         │
+│                                                                  │
+│  2. Inference > Default type                                    │
+│     pair("hello", 42) → T = string, U = number                │
+│                                                                  │
+│  3. Default used when nothing else works                       │
+│     createMap() → T = string, U = number                      │
+│                                                                  │
+│  TL;DR: Explicit > Inference > Default                         │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="real-world">
+        <h3>Example 1: API Response</h3>
+        <pre><code class="language-typescript">// API response with default type
+interface ApiResponse<T = any> {
+    status: number;
+    data: T;
+    message: string;
+}
+
+// Usage:
+const response1: ApiResponse = {
+    status: 200,
+    data: "Hello", // T = any (default)
+    message: "Success"
+};
+
+const response2: ApiResponse<User> = {
+    status: 200,
+    data: { id: 1, name: "Alice" }, // T = User
+    message: "Success"
+};
+
+// Generic function with default
+function createResponse<T = string>(data: T): ApiResponse<T> {
+    return {
+        status: 200,
+        data,
+        message: "Success"
+    };
+}
+
+// Usage:
+const r1 = createResponse("hello"); // T = string (default)
+const r2 = createResponse(42); // T = number (inferred)
+const r3 = createResponse<User>({ id: 1, name: "Alice" }); // T = User</code></pre>
+      </section>
+
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The const Modifier in Type Parameters — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Fundamentals</div>
+        <a href="#definition" class="nav-link">🎯 What is const Modifier?</a>
+        <a href="#type-widening" class="nav-link">🧠 Widening vs. Narrowing</a>
+        <a href="#syntax" class="nav-link">📐 Syntax &amp; Contexts</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Practical Usage</div>
+        <a href="#examples" class="nav-link">🔍 Practical Examples</a>
+        <a href="#pitfalls" class="nav-link">⚠️ Pitfalls &amp; Solutions</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Key Advantages</div>
+        <a href="#benefits" class="nav-link">🚀 5 Core Benefits</a>
+        <a href="#summary" class="nav-link">📝 Key Takeaways</a>
+      </div>
+
+      <!-- Author Links -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript 5.0+ Feature</span>
+        <h1>THE CONST MODIFIER IN TYPE PARAMETERS</h1>
+        <p>
+          PREVENTING TYPE WIDENING &amp; INFERRING LITERAL TYPES EFFORTLESSLY
+        </p>
+      </section>
+
+      <!-- Part 1: Definition & Problem -->
+      <section id="definition">
+        <h2>Part 1: What is the const Modifier in Type Parameters?</h2>
+
+        <h3>Definition</h3>
+        <p>
+          The <code>const</code> modifier on type parameters (introduced in
+          <strong>TypeScript 5.0</strong>) instructs the compiler to infer the
+          most specific, literal type possible for a generic argument at call
+          sites. It removes the need for callers to manually append
+          <code>as const</code> assertions.
+        </p>
+
+        <h3>The Core Problem (Without <code>const</code>)</h3>
+        <pre><code class="language-typescript">// ❌ Without `const`: TypeScript widens the type to its broad primitive
+function identity&lt;T&gt;(value: T): T {
+    return value;
+}
+
+const result = identity("hello");
+// result type: string (widened to general string, NOT literal "hello")</code></pre>
+
+        <h3>The Solution (With <code>const</code>)</h3>
+        <pre><code class="language-typescript">// ✅ With `const`: TypeScript retains the exact literal type
+function identity&lt;const T&gt;(value: T): T {
+    return value;
+}
+
+const result = identity("hello");
+// result type: "hello" (preserved as exact literal!)</code></pre>
+      </section>
+
+      <!-- Part 2: Type Widening Mechanics -->
+      <section id="type-widening">
+        <h2>Part 2: How Type Widening Works</h2>
+
+        <h3>Default Behavior (Without <code>const</code>)</h3>
+        <p>
+          When you pass values to a standard generic parameter, TypeScript
+          automatically widens them to broader base types:
+        </p>
+        <pre><code class="language-typescript">function identity&lt;T&gt;(value: T): T {
+    return value;
+}
+
+const a = identity("hello");           // string (not "hello")
+const b = identity(42);                // number (not 42)
+const c = identity(true);              // boolean (not true)
+const d = identity({ name: "Alice" }); // { name: string } (not { name: "Alice" })</code></pre>
+
+        <h3>Narrowing Behavior (With <code>const</code>)</h3>
+        <p>
+          Adding <code>const</code> forces TypeScript to produce narrow literal
+          and deeply read-only types:
+        </p>
+        <pre><code class="language-typescript">function identity&lt;const T&gt;(value: T): T {
+    return value;
+}
+
+const a = identity("hello");           // "hello" ✅
+const b = identity(42);                // 42 ✅
+const c = identity(true);              // true ✅
+const d = identity({ name: "Alice" }); // { readonly name: "Alice" } ✅</code></pre>
+      </section>
+
+      <!-- Part 3: Syntax Across Contexts -->
+      <section id="syntax">
+        <h2>Part 3: Syntax &amp; Usage Contexts</h2>
+
+        <h3>Basic Syntax</h3>
+        <pre><code class="language-typescript">function functionName&lt;const T&gt;(parameter: T): T {
+    return parameter;
+}</code></pre>
+
+        <h3>In Different Declarations</h3>
+        <pre><code class="language-typescript">// ✅ Function declaration
+function fn&lt;const T&gt;(value: T): T {
+    return value;
+}
+
+// ✅ Arrow function
+const fnArrow = &lt;const T&gt;(value: T): T =&gt; value;
+
+// ✅ Type alias
+type Factory&lt;const T&gt; = (value: T) =&gt; T;
+
+// ✅ Interface definition
+interface Box&lt;const T&gt; {
+    value: T;
+}
+
+// ✅ Class definition
+class Container&lt;const T&gt; {
+    constructor(public value: T) {}
+}
+
+// ✅ Generic constraints
+function process&lt;const T extends string&gt;(value: T): T {
+    return value;
+}</code></pre>
+      </section>
+
+      <!-- Part 4: Practical Examples -->
+      <section id="examples">
+        <h2>Part 4: Practical Examples</h2>
+
+        <h3>Example 1: Object Literals Become Readonly &amp; Exact</h3>
+        <pre><code class="language-typescript">// ❌ Without const: object properties are widened and mutable
+function createBox&lt;T&gt;(value: T): { value: T } {
+    return { value };
+}
+
+const box1 = createBox({ name: "Alice", age: 25 });
+// box1.value: { name: string; age: number }
+
+// ✅ With const: properties are inferred as literal and readonly
+function createConstBox&lt;const T&gt;(value: T): { value: T } {
+    return { value };
+}
+
+const box2 = createConstBox({ name: "Alice", age: 25 });
+// box2.value: { readonly name: "Alice"; readonly age: 25 }</code></pre>
+
+        <h3>Example 2: Discriminated Unions &amp; Event Narrowing</h3>
+        <pre><code class="language-typescript">// With const: event tag names are preserved as literals
+function createConstEvent&lt;const T&gt;(type: T, data: any): { type: T; data: any } {
+    return { type, data };
+}
+
+const event = createConstEvent("click", { x: 100, y: 200 });
+// event.type is typed as "click", NOT generic string!
+
+if (event.type === "click") {
+    // TypeScript knows with 100% certainty that event.type is "click"
+}</code></pre>
+
+        <h3>Example 3: Path &amp; Routing Parameters</h3>
+        <pre><code class="language-typescript">function createRoute&lt;const T extends string&gt;(path: T) {
+    return {
+        path,
+        navigate: () =&gt; console.log(`Navigating to: ${path}`)
+    };
+}
+
+const route = createRoute("/users/:id");
+// route.path: "/users/:id" (exact string literal preserved)</code></pre>
+      </section>
+
+      <!-- Part 5: Common Pitfalls -->
+      <section id="pitfalls">
+        <h2>Part 5: ⚠️ Common Pitfalls &amp; Solutions</h2>
+
+        <h3>Pitfall 1: Overusing <code>const</code> Unnecessarily</h3>
+        <pre><code class="language-typescript">// ❌ Unnecessary: Primitive constraints don't need literal tracking here
+function getLength&lt;const T extends { length: number }&gt;(value: T): number {
+    return value.length;
+}
+
+// ✅ Better: Keep it simple if the literal identity isn't needed
+function getLength&lt;T extends { length: number }&gt;(value: T): number {
+    return value.length;
+}</code></pre>
+
+        <h3>Pitfall 2: Arrays Turn into Readonly Tuples</h3>
+        <pre><code class="language-typescript">function process&lt;const T&gt;(value: T): T {
+    return value;
+}
+
+const arr = process([1, 2, 3]);
+// arr is inferred as: readonly [1, 2, 3] (tuple, not mutable number[])
+// arr.push(4); // ❌ Error: push does not exist on readonly tuple</code></pre>
+
+        <h3>Pitfall 3: Objects Gain Implicit Readonly Constraints</h3>
+        <pre><code class="language-typescript">function getBox&lt;const T&gt;(value: T): T {
+    return value;
+}
+
+const result = getBox({ name: "Alice", age: 25 });
+// result: { readonly name: "Alice"; readonly age: 25 }
+// result.name = "Bob"; // ❌ Error: Cannot assign to read-only property
+
+// ✅ If mutation is required, omit the const modifier
+function getMutableBox&lt;T&gt;(value: T): T {
+    return value;
+}
+const mutable = getMutableBox({ name: "Alice", age: 25 });
+mutable.name = "Bob"; // ✅ Allowed</code></pre>
+      </section>
+
+      <!-- Part 6: Core Benefits -->
+      <section id="benefits">
+        <h2>
+          Part 6: 🚀 5 Core Benefits of <code>const</code> Type Parameters
+        </h2>
+
+        <h3>1. Preserves Literal Types (No Widening)</h3>
+        <pre><code class="language-typescript">function identity&lt;const T&gt;(value: T): T { return value; }
+const result = identity("hello"); // "hello" ✅</code></pre>
+        <p>
+          Preserving exact primitives yields superior type checking and
+          guarantees values cannot be mistakenly mismatched.
+        </p>
+
+        <h3>2. Objects Become Deeply Readonly and Exact</h3>
+        <pre><code class="language-typescript">function createBox&lt;const T&gt;(value: T): { value: T } { return { value }; }
+const box = createBox({ name: "Alice", age: 25 });
+// box.value.name = "Bob"; // ❌ Compile error prevents accidental side effects</code></pre>
+
+        <h3>3. Flawless Discriminated Unions</h3>
+        <pre><code class="language-typescript">function createEvent&lt;const T&gt;(type: T, payload: unknown) {
+    return { type, payload };
+}
+const evt = createEvent("submit", { formId: 4 });
+// evt.type is "submit" literal, making switch statements exhaustive</code></pre>
+
+        <h3>4. Superior Autocomplete &amp; IntelliSense</h3>
+        <pre><code class="language-typescript">function getRoute&lt;const T&gt;(path: T): T { return path; }
+const route = getRoute("/admin/dashboard");
+// IDE tooltips display "/admin/dashboard" rather than a broad "string"</code></pre>
+
+        <h3>5. Type-Safe Configuration Objects</h3>
+        <pre><code class="language-typescript">function createConfig&lt;const T&gt;(config: T): T {
+    return config;
+}
+
+const config = createConfig({
+    apiUrl: "https://api.com",
+    timeout: 5000,
+    retries: 3
+});
+// config.apiUrl is typed strictly as "https://api.com"
+// config.timeout is typed strictly as 5000</code></pre>
+      </section>
+
+      <!-- Summary -->
+      <section id="summary">
+        <h2>📝 Key Takeaway</h2>
+        <div
+          style="
+            border-left: 4px solid var(--accent);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+          "
+        >
+          <p>
+            The
+            <strong><code>const</code> type parameter modifier</strong> tells
+            TypeScript:
+            <em
+              >"Infer this argument as narrow, specific, and literal as
+              possible."</em
+            >
+          </p>
+          <p>
+            Use <code>&lt;const T&gt;</code> whenever you want callers to get
+            the ergonomics of an <code>as const</code> assertion
+            automatically—ensuring exact literal tracking, deeply immutable
+            properties, and accurate IDE autocompletion.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>
