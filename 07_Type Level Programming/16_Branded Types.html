@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Branded Types in TypeScript — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#what-are-branded-types" class="nav-link">🎯 What Are Branded Types?</a>
+        <a href="#part-2" class="nav-link">Part 2: The Solution — Branded Types</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Implementation</div>
+        <a href="#part-3" class="nav-link">Part 3: Creating Branded Types</a>
+        <a href="#part-4" class="nav-link">Part 4: Creating Branded Values</a>
+        <a href="#part-5" class="nav-link">Part 5: How Branded Types Prevent Bugs</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Practical &amp; Patterns</div>
+        <a href="#part-6" class="nav-link">Part 6: Real-World Use Cases</a>
+        <a href="#part-7" class="nav-link">Part 7: Branded Types with Generics</a>
+        <a href="#part-8" class="nav-link">Part 8: Unbranding</a>
+        <a href="#part-9" class="nav-link">Part 9: Common Mistakes</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Reference</div>
+        <a href="#summary-table" class="nav-link">📝 Summary Table</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+      </div>
+
+      <!-- Author Links -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Branded Types in TypeScript</h1>
+        <p>Complete Guide</p>
+      </section>
+
+      <section id="what-are-branded-types">
+        <h2>🎯 What Are Branded Types?</h2>
+        <h3>Definition:</h3>
+        <p>
+          A branded type (also called opaque type or nominal type) is a type that looks like a primitive type (like string or number) but is treated as a distinct type by TypeScript. It prevents you from accidentally mixing up values that have the same underlying type but different meanings.
+        </p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type UserId = string &amp; { __brand: "UserId" };
+type ProductId = string &amp; { __brand: "ProductId" };
+// Both are strings at runtime, but TypeScript treats them as DIFFERENT types</code></pre>
+
+        <h3>🧠 The Problem It Solves</h3>
+        <h3>The Problem: Structural Typing</h3>
+        <p>
+          TypeScript uses structural typing — if two types have the same shape, they're compatible.
+        </p>
+        <pre><code class="language-typescript">// ❌ Both are just strings
+type UserId = string;
+type ProductId = string;
+
+function getUser(id: UserId): User { /* ... */ }
+function getProduct(id: ProductId): Product { /* ... */ }
+
+const userId: UserId = "user-123";
+const productId: ProductId = "prod-456";
+
+// ❌ These should NOT work, but they do!
+getUser(productId);   // Bug! Passing a product ID to getUser
+getProduct(userId);   // Bug! Passing a user ID to getProduct</code></pre>
+
+        <h3>Visual: The Problem</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    THE PROBLEM                                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  UserId = string                                                │
+│  ProductId = string                                             │
+│                                                                  │
+│  Both are strings → TypeScript can't tell them apart!          │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  getUser("prod-456")  // ❌ Should error, but doesn't!  │   │
+│  │  getProduct("user-123") // ❌ Should error, but doesn't!│   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  You need NOMINAL typing to distinguish them.                  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-2">
+        <h2>Part 2: The Solution — Branded Types</h2>
+        <h3>Basic Syntax</h3>
+        <pre><code class="language-typescript">type Brand&lt;T, B&gt; = T &amp; { __brand: B };
+
+type UserId = Brand&lt;string, "UserId"&gt;;
+type ProductId = Brand&lt;string, "ProductId"&gt;;</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW BRANDING WORKS                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  UserId = string &amp; { __brand: "UserId" }                        │
+│                                                                  │
+│  At RUNTIME:                                                    │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  It's just a string!                                     │   │
+│  │  The __brand property doesn't exist                      │   │
+│  │  No runtime overhead                                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  At COMPILE TIME:                                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  TypeScript sees:                                        │   │
+│  │  - UserId has a __brand property of "UserId"            │   │
+│  │  - ProductId has a __brand property of "ProductId"     │   │
+│  │  - They are NOT compatible!                             │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-3">
+        <h2>Part 3: Creating Branded Types</h2>
+        <h3>Method 1: Using &amp; (Intersection)</h3>
+        <pre><code class="language-typescript">type UserId = string &amp; { readonly __brand: "UserId" };
+type ProductId = string &amp; { readonly __brand: "ProductId" };</code></pre>
+
+        <h3>Method 2: Using a Generic Helper</h3>
+        <pre><code class="language-typescript">type Brand&lt;T, B&gt; = T &amp; { readonly __brand: B };
+
+type UserId = Brand&lt;string, "UserId"&gt;;
+type ProductId = Brand&lt;string, "ProductId"&gt;;
+type Email = Brand&lt;string, "Email"&gt;;</code></pre>
+
+        <h3>Method 3: Using unique symbol (Strongest)</h3>
+        <pre><code class="language-typescript">declare const brand: unique symbol;
+
+type Brand&lt;T, B&gt; = T &amp; { readonly [brand]: B };
+
+type UserId = Brand&lt;string, "UserId"&gt;;
+type ProductId = Brand&lt;string, "ProductId"&gt;;</code></pre>
+      </section>
+
+      <section id="part-4">
+        <h2>Part 4: Creating Branded Values</h2>
+        <h3>The Problem</h3>
+        <p>You can't just assign a regular string to a branded type:</p>
+        <pre><code class="language-typescript">type UserId = string &amp; { readonly __brand: "UserId" };
+
+// ❌ Error: Type 'string' is not assignable to type 'UserId'
+const id: UserId = "user-123";</code></pre>
+
+        <h3>Solution 1 : using assertion:</h3>
+        <p>UserId is more than just a string in TypeScript:</p>
+        <pre><code class="language-typescript">type UserId = string &amp; { __brand: "UserId" };</code></pre>
+        <p>
+          It means a value must be both a string and have the brand type { __brand: "UserId" }. The plain value 'user-123' is inferred as a string; it does not have that brand, so TypeScript rejects the assignment.
+        </p>
+        <pre><code class="language-typescript">let user1: UserId = 'user-123'; // Error: plain string has no UserId brand</code></pre>
+        <p>
+          Adding as UserId is a type assertion. It tells TypeScript, “Trust me; treat this value as a UserId”
+        </p>
+        <pre><code class="language-typescript">let user1: UserId = 'user-123' as UserId;</code></pre>
+
+        <h3>Solution 2: Factory Functions</h3>
+        <pre><code class="language-typescript">type UserId = string &amp; { readonly __brand: "UserId" };
+
+// ✅ Factory function to create a UserId
+function createUserId(id: string): UserId {
+    return id as UserId;
+}
+
+const userId = createUserId("user-123");
+// userId is UserId</code></pre>
+
+        <h3>With Validation</h3>
+        <pre><code class="language-typescript">type Email = string &amp; { readonly __brand: "Email" };
+
+function createEmail(email: string): Email {
+    if (!email.includes("@")) {
+        throw new Error("Invalid email");
+    }
+    return email as Email;
+}
+
+const email = createEmail("alice@email.com"); // ✅
+// const invalid = createEmail("not-an-email"); // ❌ Throws error</code></pre>
+      </section>
+
+      <section id="part-5">
+        <h2>Part 5: How Branded Types Prevent Bugs</h2>
+        <h3>Example: UserId vs ProductId</h3>
+        <pre><code class="language-typescript">type UserId = string &amp; { readonly __brand: "UserId" };
+type ProductId = string &amp; { readonly __brand: "ProductId" };
+
+function createUserId(id: string): UserId {
+    return id as UserId;
+}
+
+function createProductId(id: string): ProductId {
+    return id as ProductId;
+}
+
+function getUser(id: UserId): User {
+    // ...
+    return {} as User;
+}
+
+function getProduct(id: ProductId): Product {
+    // ...
+    return {} as Product;
+}
+
+const userId = createUserId("user-123");
+const productId = createProductId("prod-456");
+
+// ✅ These work
+getUser(userId);
+getProduct(productId);
+
+// ❌ These FAIL at compile time!
+getUser(productId);    // Error: ProductId is not assignable to UserId
+getProduct(userId);    // Error: UserId is not assignable to ProductId</code></pre>
+
+        <h3>Visual: The Benefit</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    WITHOUT BRANDING                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  type UserId = string;                                          │
+│  type ProductId = string;                                       │
+│                                                                  │
+│  getUser(productId);   // ✅ No error! Bug in production       │
+│  getProduct(userId);   // ✅ No error! Bug in production       │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    WITH BRANDING                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  type UserId = string &amp; { __brand: "UserId" };                 │
+│  type ProductId = string &amp; { __brand: "ProductId" };           │
+│                                                                  │
+│  getUser(productId);   // ❌ Compile error! Caught early       │
+│  getProduct(userId);   // ❌ Compile error! Caught early       │
+│                                                                  │
+│  The bug is caught BEFORE the code runs!                       │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-6">
+        <h2>Part 6: Real-World Use Cases</h2>
+        <h3>Use Case 1: Validated Strings</h3>
+        <pre><code class="language-typescript">type Email = string &amp; { readonly __brand: "Email" };
+type Phone = string &amp; { readonly __brand: "Phone" };
+type URL = string &amp; { readonly __brand: "URL" };
+
+function createEmail(email: string): Email | null {
+    return email.includes("@") ? (email as Email) : null;
+}
+
+function createPhone(phone: string): Phone | null {
+    return /^\d{3}-\d{3}-\d{4}$/.test(phone) ? (phone as Phone) : null;
+}
+
+function sendEmail(to: Email, body: string): void {
+    // ...
+}
+
+const email = createEmail("alice@email.com");
+const phone = createPhone("123-456-7890");
+
+if (email) {
+    sendEmail(email, "Hello!"); // ✅
+}
+// sendEmail(phone, "Hello!"); // ❌ Error</code></pre>
+
+        <h3>Use Case 2: Currency Safety</h3>
+        <pre><code class="language-typescript">type USD = number &amp; { readonly __brand: "USD" };
+type EUR = number &amp; { readonly __brand: "EUR" };
+type GBP = number &amp; { readonly __brand: "GBP" };
+
+function usd(amount: number): USD {
+    return amount as USD;
+}
+
+function eur(amount: number): EUR {
+    return amount as EUR;
+}
+
+function addUSD(a: USD, b: USD): USD {
+    return (a + b) as USD;
+}
+
+const price1 = usd(100);
+const price2 = usd(50);
+const price3 = eur(75);
+
+addUSD(price1, price2); // ✅
+// addUSD(price1, price3); // ❌ Error: Can't add USD to EUR</code></pre>
+
+        <h3>Use Case 3: Database IDs</h3>
+        <pre><code class="language-typescript">type UserId = number &amp; { readonly __brand: "UserId" };
+type PostId = number &amp; { readonly __brand: "PostId" };
+type CommentId = number &amp; { readonly __brand: "CommentId" };
+
+function fetchUser(id: UserId): Promise&lt;User&gt; {
+    // ...
+    return Promise.resolve({} as User);
+}
+
+function fetchPost(id: PostId): Promise&lt;Post&gt; {
+    // ...
+    return Promise.resolve({} as Post);
+}
+
+const userId = 1 as UserId;
+const postId = 2 as PostId;
+
+fetchUser(userId);   // ✅
+fetchPost(postId);   // ✅
+// fetchUser(postId); // ❌ Error</code></pre>
+      </section>
+
+      <section id="part-7">
+        <h2>Part 7: Branded Types with Generics</h2>
+        <h3>Generic Brand Helper</h3>
+        <pre><code class="language-typescript">type Brand&lt;T, B extends string&gt; = T &amp; { readonly __brand: B };
+
+type UserId = Brand&lt;string, "UserId"&gt;;
+type ProductId = Brand&lt;string, "ProductId"&gt;;
+type OrderId = Brand&lt;number, "OrderId"&gt;;
+type Price = Brand&lt;number, "Price"&gt;;
+type Discount = Brand&lt;number, "Discount"&gt;;</code></pre>
+
+        <h3>Factory Pattern</h3>
+        <pre><code class="language-typescript">type Brand&lt;T, B extends string&gt; = T &amp; { readonly __brand: B };
+
+function createBrand&lt;T, B extends string&gt;(value: T): Brand&lt;T, B&gt; {
+    return value as Brand&lt;T, B&gt;;
+}
+
+const userId = createBrand&lt;string, "UserId"&gt;("user-123");
+const productId = createBrand&lt;string, "ProductId"&gt;("prod-456");
+
+// ✅ Type-safe
+function getUser(id: Brand&lt;string, "UserId"&gt;): void {}
+getUser(userId); // ✅
+// getUser(productId); // ❌ Error</code></pre>
+      </section>
+
+      <section id="part-8">
+        <h2>Part 8: Unbranding</h2>
+        <h3>Extracting the Base Type</h3>
+        <pre><code class="language-typescript">type UserId = string &amp; { readonly __brand: "UserId" };
+
+// Extract the underlying type
+type Unbrand&lt;T&gt; = T extends Brand&lt;infer U, any&gt; ? U : T;
+
+type BaseType = Unbrand&lt;UserId&gt;; // string
+
+function getRawValue(id: UserId): string {
+    return id as string; // Unbrand by casting
+}</code></pre>
+
+        <h3>Validation Before Unbranding</h3>
+        <pre><code class="language-typescript">function isValidUserId(id: string): id is UserId {
+    return id.startsWith("user-");
+}
+
+const rawId = "user-123";
+if (isValidUserId(rawId)) {
+    // rawId is now UserId
+    getUser(rawId); // ✅
+}</code></pre>
+      </section>
+
+      <section id="part-9">
+        <h2>Part 9: Common Mistakes</h2>
+        <h3>Mistake 1: Using as Without Validation</h3>
+        <pre><code class="language-typescript">// ❌ Dangerous: No validation
+const userId = "anything" as UserId;
+
+// ✅ Better: Validate first
+function createUserId(id: string): UserId {
+    if (!id.startsWith("user-")) {
+        throw new Error("Invalid user ID");
+    }
+    return id as UserId;
+}</code></pre>
+
+        <h3>Mistake 2: Forgetting to Export Factory Functions</h3>
+        <pre><code class="language-typescript">// types.ts
+export type UserId = string &amp; { readonly __brand: "UserId" };
+export function createUserId(id: string): UserId {
+    return id as UserId;
+}
+
+// ✅ Always export the factory too</code></pre>
+
+        <h3>Mistake 3: Using interface Instead of type</h3>
+        <pre><code class="language-typescript">// ❌ Doesn't work as expected
+interface UserId extends String {}
+
+// ✅ Use type alias
+type UserId = string &amp; { readonly __brand: "UserId" };</code></pre>
+      </section>
+
+      <section id="summary-table">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Syntax</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Brand Type</td>
+              <td><code>T &amp; { __brand: "Name" }</code></td>
+              <td><code>string &amp; { __brand: "UserId" }</code></td>
+            </tr>
+            <tr>
+              <td>Generic Brand</td>
+              <td><code>type Brand&lt;T, B&gt; = T &amp; { __brand: B }</code></td>
+              <td><code>Brand&lt;string, "UserId"&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Create Value</td>
+              <td><code>value as Brand</code></td>
+              <td><code>"user-123" as UserId</code></td>
+            </tr>
+            <tr>
+              <td>Factory</td>
+              <td><code>function create(value): Brand</code></td>
+              <td><code>createUserId("user-123")</code></td>
+            </tr>
+            <tr>
+              <td>Validation</td>
+              <td><code>if (isValid(value)) return value as Brand</code></td>
+              <td><code>createEmail("a@b.com")</code></td>
+            </tr>
+            <tr>
+              <td>Unbrand</td>
+              <td><code>id as string</code></td>
+              <td><code>userId as string</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Branded Types</td>
+              <td>Primitives with a "brand" to make them distinct</td>
+            </tr>
+            <tr>
+              <td>Purpose</td>
+              <td>Prevent mixing up values of the same primitive type</td>
+            </tr>
+            <tr>
+              <td>Runtime</td>
+              <td>No overhead — just strings/numbers at runtime</td>
+            </tr>
+            <tr>
+              <td>Compile Time</td>
+              <td>TypeScript treats them as distinct types</td>
+            </tr>
+            <tr>
+              <td>Creation</td>
+              <td>Use factory functions with validation</td>
+            </tr>
+            <tr>
+              <td>Benefit</td>
+              <td>Catches bugs at compile time</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

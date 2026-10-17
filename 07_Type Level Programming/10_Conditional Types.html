@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conditional Types in TypeScript — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-are-conditional-types" class="nav-link">🎯 What Are Conditional Types?</a>
+        <a href="#basic-syntax" class="nav-link">Part 1: Basic Syntax</a>
+        <a href="#the-extends-keyword" class="nav-link">Part 2: The extends Keyword</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Generics &amp; Types</div>
+        <a href="#with-generics" class="nav-link">Part 3: With Generics</a>
+        <a href="#with-any" class="nav-link">Part 6: Conditional Types with any</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Inference &amp; Applications</div>
+        <a href="#infer-keyword" class="nav-link">Part 8: infer in Conditional Types</a>
+        <a href="#practical-use-cases" class="nav-link">Practical Use Cases</a>
+        <a href="#summary" class="nav-link">Summary Table</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Type Logic</span>
+        <h1>CONDITIONAL TYPES IN TYPESCRIPT — COMPLETE GUIDE</h1>
+      </section>
+
+      <!-- What Are Conditional Types? -->
+      <section id="what-are-conditional-types">
+        <h2>🎯 What Are Conditional Types?</h2>
+        
+        <h3>Definition:</h3>
+        <p>A conditional type is a type that chooses between two types based on a condition. It works like an if-else statement, but at the type level.</p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type Result = A extends B ? X : Y;
+// "If A is assignable to B Or A is a subset of B, then X, otherwise Y"</code></pre>
+        <p>Mean<br />If data-type of A is matching B then X, otherwise Y.</p>
+
+        <h3>The Mental Model</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    CONDITIONAL TYPES                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  VALUE LEVEL:              TYPE LEVEL:                          │
+│  ─────────────            ────────────                          │
+│                                                                  │
+│  if (condition) {          type Result = A extends B           │
+│      // do X                  ? X                              │
+│  } else {                     : Y;                             │
+│      // do Y              }                                     │
+│  }                                                              │
+│                                                                  │
+│  Branch at runtime.       Branch at compile time.              │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 1: Basic Syntax -->
+      <section id="basic-syntax">
+        <h2>Part 1: Basic Syntax</h2>
+        <pre><code class="language-typescript">type ConditionalType&lt;T&gt; = T extends SomeType ? TrueType : FalseType;</code></pre>
+
+        <h3>Syntax Breakdown</h3>
+        <pre><code class="language-typescript">type IsString&lt;T&gt; = T extends string ? true : false;
+//                    ↑        ↑        ↑       ↑
+//                    |        |        |       |
+//                    |        |        |       False branch
+//                    |        |        True branch
+//                    |        Condition
+//                    Type parameter</code></pre>
+
+        <h3>Simple Example</h3>
+        <pre><code class="language-typescript">type IsString&lt;T&gt; = T extends string ? true : false;
+
+type A = IsString&lt;"hello"&gt;; // true , becuase type of "hello" is string. after passing it's type string to T generic. it's match with condition like
+type IsString&lt;string&gt; = string extends string ? true : false;
+    
+type B = IsString&lt;42&gt;;      // false
+type C = IsString&lt;boolean&gt;; // false</code></pre>
+      </section>
+
+      <!-- Part 2: The extends Keyword -->
+      <section id="the-extends-keyword">
+        <h2>Part 2: The extends Keyword</h2>
+
+        <h3>What Does extends Mean?</h3>
+        <p>In a conditional type, A extends B means: "Is A assignable to B?"</p>
+
+        <h3>What "Assignable" Means</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    WHAT "ASSIGNABLE" MEANS                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  A extends B means:                                             │
+│  "Can a value of type A be used where B is expected?"          │
+│                                                                  │
+│  Examples:                                                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "hello" extends string  → YES (literal is a string)   │   │
+│  │  42 extends number       → YES (literal is a number)   │   │
+│  │  string extends number   → NO  (string is not number)  │   │
+│  │  "hello" extends "hello" → YES (same type)             │   │
+│  │  "hello" extends "world" → NO  (different literals)    │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>More Examples</h3>
+        <pre><code class="language-typescript">// Literal extends general type
+type A = "hello" extends string ? true : false; // true
+type B = 42 extends number ? true : false;      // true
+type C = true extends boolean ? true : false;   // true
+
+// General type does NOT extend literal
+type D = string extends "hello" ? true : false; // false
+type E = number extends 42 ? true : false;      // false
+
+// Object extends object
+type F = { name: string } extends object ? true : false; // true
+type G = { name: string } extends { name: string } ? true : false; // true
+type H = { name: string } extends { name: string; age: number } ? true : false; // false</code></pre>
+      </section>
+
+      <!-- Part 3: Conditional Types with Generics -->
+      <section id="with-generics">
+        <h2>Part 3: Conditional Types with Generics</h2>
+
+        <h3>Generic Conditional Types</h3>
+        <pre><code class="language-typescript">type IsArray&lt;T&gt; = T extends any[] ? true : false;
+
+type A = IsArray&lt;string[]&gt;;  // true
+type B = IsArray&lt;number[]&gt;;  // true
+type C = IsArray&lt;string&gt;;    // false
+type D = IsArray&lt;{ name: string }&gt;; // false</code></pre>
+
+        <h3>Extracting Types</h3>
+        <pre><code class="language-typescript">// Extract the element type of an array
+type ElementType&lt;T&gt; = T extends (infer U)[] ? U : never;
+
+type A = ElementType&lt;string[]&gt;;  // string
+type B = ElementType&lt;number[]&gt;;  // number
+type C = ElementType&lt;{ name: string }[]&gt;; // { name: string }</code></pre>
+
+        <h3>Return Type Extraction</h3>
+        <pre><code class="language-typescript">// Extract return type of a function
+type MyReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+
+function greet(name: string): string {
+    return `Hello ${name}`;
+}
+
+type GreetReturn = MyReturnType&lt;typeof greet&gt;; // string</code></pre>
+
+        <p>infer R tells TypeScript: “If T matches this function shape, figure out its return type and call that type R.”</p>
+        <pre><code class="language-typescript">type MyReturnType&lt;T&gt; =
+    T extends (...args: any[]) =&gt; infer R
+        ? R
+        : never;</code></pre>
+
+        <p>Read it in parts:</p>
+        <ul>
+          <li>T extends (...args: any[]) =&gt; ... checks whether T is a function type.</li>
+          <li>infer R asks TypeScript to infer the type in the function’s return position.</li>
+          <li>? R returns the inferred type if T matched.</li>
+          <li>: never is the fallback if T wasn’t a function.</li>
+        </ul>
+        <p>For typeof greet, TypeScript matches (name: string) =&gt; string, infers R as string, and therefore GreetReturn is string.</p>
+        <p>R is just a chosen name for the inferred type. It could be called something more descriptive:</p>
+        <pre><code class="language-typescript">type MyReturnType&lt;T&gt; =
+    T extends (...args: any[]) =&gt; infer Return
+        ? Return
+        : never;</code></pre>
+        <p>This is a type-level operation only; it doesn’t call the function at runtime.</p>
+      </section>
+
+      <!-- Part 6: Conditional Types with any -->
+      <section id="with-any">
+        <h2>Part 6: Conditional Types with any</h2>
+
+        <h3>The Special Behavior of any</h3>
+        <pre><code class="language-typescript">// 🔥 Conditional types with any return a UNION of both branches
+
+type Test&lt;T&gt; = T extends string ? "yes" : "no";
+
+type A = Test&lt;string&gt;; // "yes"
+type B = Test&lt;number&gt;; // "no"
+type C = Test&lt;any&gt;;    // "yes" | "no" (BOTH!)</code></pre>
+
+        <h3>Why any Behaves This Way</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    CONDITIONAL TYPES WITH any                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  any extends string ?                                             │
+│                                                                  │
+│  TypeScript can't decide if `any` is a string or not,          │
+│  so it returns BOTH branches as a union:                       │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Test&lt;any&gt; = "yes" | "no"                               │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  This is because `any` is both assignable to everything        │
+│  and not assignable to everything (by design).                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>unknown vs any</h3>
+        <pre><code class="language-typescript">type Test&lt;T&gt; = T extends string ? "yes" : "no";
+
+// unknown: Behaves like normal
+type A = Test&lt;unknown&gt;; // "no"
+
+// any: Returns both branches
+type B = Test&lt;any&gt;;     // "yes" | "no"
+
+type L = any extends string ? "YES" : "NO"
+type P = unknown extends string ? "YES" : "NO"
+type Q = never extends string ? "YES" : "NO" // never is vacuously true , there’s no value of never that could violate the requirement to be a string.</code></pre>
+      </section>
+
+      <!-- Part 8: infer in Conditional Types -->
+      <section id="infer-keyword">
+        <h2>Part 8: infer in Conditional Types</h2>
+
+        <h3>What is infer?</h3>
+        <p>infer lets you declare a type variable inside a conditional type and extract it from the matched type.</p>
+        <pre><code class="language-typescript">type SomeType&lt;T&gt; =
+    T extends SomePattern&lt;infer Found&gt;
+        ? Found
+        : Fallback;</code></pre>
+        <p>Read it as:</p>
+        <p>If T matches SomePattern&lt;...&gt;, infer the type in that position and call it Found. Then return Found. Otherwise, return Fallback.</p>
+        <p>Found is just a name chosen for the inferred type. It’s a type-level placeholder—not a JavaScript variable.</p>
+
+        <h3>Example: extracting a function’s return type</h3>
+        <pre><code class="language-typescript">type MyReturnType&lt;T&gt; =
+    T extends (...args: any[]) =&gt; infer R
+        ? R
+        : never;
+
+function greet(name: string): string {
+    return `Hello ${name}`;
+}
+
+type GreetReturn = MyReturnType&lt;typeof greet&gt;; // string</code></pre>
+        <p>TypeScript checks whether typeof greet fits this pattern:<br /><code>(...args: any[]) =&gt; infer R</code></p>
+        <p>Since greet has type (name: string) =&gt; string, TypeScript infers R as string. The true branch returns R, so GreetReturn is string.</p>
+        <p>You can use a more descriptive name:</p>
+        <pre><code class="language-typescript">type MyReturnType&lt;T&gt; =
+    T extends (...args: any[]) =&gt; infer Return
+        ? Return
+        : never;</code></pre>
+
+        <h3>Example: extracting function parameters</h3>
+        <p>Parameters are represented as a tuple, so you can infer that tuple</p>
+        <pre><code class="language-typescript">type MyParameters&lt;T&gt; =
+    T extends (...args: infer Args) =&gt; any
+        ? Args
+        : never;
+
+type GreetParameters = MyParameters&lt;typeof greet&gt;;
+// [name: string]</code></pre>
+        <p>Here, Args is inferred as [name: string].</p>
+        <p>You can extract both parameters and return type:</p>
+        <pre><code class="language-typescript">type FunctionParts&lt;T&gt; =
+    T extends (...args: infer Args) =&gt; infer Return
+        ? { args: Args; return: Return }
+        : never;
+
+type GreetParts = FunctionParts&lt;typeof greet&gt;;
+// { args: [name: string]; return: string }</code></pre>
+
+        <h3>Example: extracting an array’s element type</h3>
+        <pre><code class="language-typescript">type ElementType&lt;T&gt; =
+    T extends (infer Element)[]
+        ? Element
+        : never;
+
+type Names = ElementType&lt;string[]&gt;; // string
+type Scores = ElementType&lt;number[]&gt;; // number</code></pre>
+        <p>TypeScript matches string[] against (infer Element)[] and infers Element as string</p>
+
+        <h3>Example: extracting part of a string type</h3>
+        <pre><code class="language-typescript">type GetId&lt;T&gt; =
+    T extends `user-${infer Id}`
+        ? Id
+        : never;
+
+type Id = GetId&lt;"user-42"&gt;; // "42"</code></pre>
+        <p>Template literal types can also contain inference positions:<br />infer Id captures the part of the string matching that position.</p>
+
+        <h3>The fallback branch</h3>
+        <p>The : never in the examples defines what happens if the pattern doesn’t match:</p>
+        <pre><code class="language-typescript">type MyReturnType&lt;T&gt; =
+    T extends (...args: any[]) =&gt; infer R
+        ? R
+        : never;
+
+type NotAFunction = MyReturnType&lt;string&gt;; // never</code></pre>
+        <p>string does not match the function pattern, so the conditional uses the fallback.</p>
+
+        <h3>How this relates to never, any, and unknown</h3>
+        <p>With a concrete type, the conditional picks a branch based on whether it matches:</p>
+        <pre><code class="language-typescript">type Check&lt;T&gt; = T extends string ? "YES" : "NO";
+
+type A = Check&lt;"hello"&gt;; // "YES"
+type B = Check&lt;number&gt;;  // "NO"</code></pre>
+        <p>A useful way to remember infer is: match a type’s shape, capture a piece of it, and use that piece in the true branch.</p>
+
+        <h2>infer means “capture the type that fits here”</h2>
+        <p>In a conditional type, infer lets TypeScript discover part of a type while checking whether the whole type matches a pattern.</p>
+        <pre><code class="language-typescript">type MyReturnType&lt;T&gt; =
+    T extends (...args: any[]) =&gt; infer R
+        ? R
+        : never;</code></pre>
+        <p>Read this as:</p>
+        <p>If T is a function whose return type can be described by some type R, then return R. Otherwise, return never.</p>
+        <p>for example</p>
+        <pre><code class="language-typescript">function greet(name: string): string {
+    return `Hello ${name}`;
+}
+
+type Greeting = MyReturnType&lt;typeof greet&gt;; // string</code></pre>
+        <p>TypeScript matches typeof greet against the function pattern, sees that its return type is string, and binds R to string. R is just a name you choose; you could call it Return.</p>
+
+        <p><strong>NOTE</strong><br />infer is only valid inside the extends pattern, and the inferred name is available in the true branch (?).</p>
+      </section>
+
+      <!-- Practical Use Cases -->
+      <section id="practical-use-cases">
+        <h2>Practical Use Cases</h2>
+
+        <h3>Use Case 1: Type-Safe Validation</h3>
+        <pre><code class="language-typescript">type Validate&lt;T&gt; = T extends string ? string :
+                   T extends number ? number :
+                   T extends boolean ? boolean :
+                   never;
+
+function processValue&lt;T&gt;(value: T): Validate&lt;T&gt; {
+    return value as Validate&lt;T&gt;;
+}
+
+const a = processValue("hello"); // string
+const b = processValue(42);      // number</code></pre>
+
+        <h3>Extract API Response Type</h3>
+        <pre><code class="language-typescript">type ApiResponse&lt;T&gt; = T extends { data: infer D } ? D : never;
+
+type UserResponse = { data: { name: string; age: number } };
+type User = ApiResponse&lt;UserResponse&gt;;
+// User = { name: string; age: number }</code></pre>
+      </section>
+
+      <!-- Summary Table -->
+      <section id="summary">
+        <h2>Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Syntax</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic Conditional</td>
+              <td><code>T extends U ? X : Y</code></td>
+              <td><code>IsString&lt;T&gt;</code></td>
+            </tr>
+            <tr>
+              <td>With Generics</td>
+              <td><code>type F&lt;T&gt; = T extends U ? X : Y</code></td>
+              <td><code>ElementType&lt;T&gt;</code></td>
+            </tr>
+            <tr>
+              <td>With infer</td>
+              <td><code>T extends U&lt;infer V&gt; ? V : never</code></td>
+              <td><code>ReturnType&lt;T&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Distributive</td>
+              <td>Naked type parameter</td>
+              <td><code>Exclude&lt;T, U&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Prevent Distribution</td>
+              <td><code>[T] extends [U]</code></td>
+              <td><code>ToArrayNonDist&lt;T&gt;</code></td>
+            </tr>
+            <tr>
+              <td>With any</td>
+              <td>Returns both branches</td>
+              <td><code>Test&lt;any&gt; → "yes" | "no"</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

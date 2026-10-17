@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Fundamental Unit of Type-Level Programming</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Fundamentals</div>
+        <a href="#short-answer" class="nav-link">🎯 The Short Answer</a>
+        <a href="#conditional-type" class="nav-link">🔬 The Conditional Type</a>
+        <a href="#three-pillars" class="nav-link">🧱 The Three Pillars</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Implementations</div>
+        <a href="#building-blocks" class="nav-link">🧩 Building Blocks</a>
+        <a href="#core-insight" class="nav-link">🧠 The Core Insight</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Comparison &amp; Summary</div>
+        <a href="#comparison" class="nav-link">📊 Value Level vs Type Level</a>
+        <a href="#one-sentence-answer" class="nav-link"
+          >🎯 The One-Sentence Answer</a
+        >
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">Type-Level Foundations</span>
+        <h1>THE FUNDAMENTAL UNIT OF TYPE-LEVEL PROGRAMMING</h1>
+      </section>
+
+      <!-- The Short Answer -->
+      <section id="short-answer">
+        <h2>🎯 The Short Answer</h2>
+        <p>
+          The fundamental unit of type-level programming is the type itself —
+          specifically, the ability to define, transform, and constrain types
+          using generic type parameters.
+        </p>
+        <p>But that's too vague. Let's break it down precisely.</p>
+      </section>
+
+      <!-- The Real Fundamental Unit: The Conditional Type -->
+      <section id="conditional-type">
+        <h2>🔬 The Real Fundamental Unit: The Conditional Type</h2>
+        <p>
+          If you had to pick one construct that makes type-level programming
+          possible, it is:
+        </p>
+        <pre><code class="language-typescript">T extends U ? X : Y</code></pre>
+        <p>
+          This is the conditional type. It is the if-statement of the type
+          world.
+        </p>
+
+        <h3>Why This Is The Fundamental Unit</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>How It's Built</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>If/else</td>
+              <td><code>T extends U ? X : Y</code></td>
+            </tr>
+            <tr>
+              <td>Loops</td>
+              <td>Recursion using conditional types</td>
+            </tr>
+            <tr>
+              <td>Pattern matching</td>
+              <td><code>T extends { x: infer X } ? X : never</code></td>
+            </tr>
+            <tr>
+              <td>Booleans</td>
+              <td><code>true</code> / <code>false</code> literal types</td>
+            </tr>
+            <tr>
+              <td>Equality</td>
+              <td>
+                <code>A extends B ? (B extends A ? true : false) : false</code>
+              </td>
+            </tr>
+            <tr>
+              <td>Logic (AND/OR/NOT)</td>
+              <td>Built from conditional types</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          Everything in type-level programming is built on top of the
+          conditional type.
+        </p>
+      </section>
+
+      <!-- The Three Pillars -->
+      <section id="three-pillars">
+        <h2>🧱 The Three Pillars</h2>
+        <p>Type-level programming rests on three fundamental constructs:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    THREE PILLARS                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  1. GENERIC TYPE PARAMETERS  →  Variables                      │
+│     &lt;T&gt;                                                        │
+│                                                                  │
+│  2. CONDITIONAL TYPES  →  Control Flow                        │
+│     T extends U ? X : Y                                       │
+│                                                                  │
+│  3. MAPPED TYPES  →  Iteration                                │
+│     { [K in keyof T]: ... }                                   │
+│                                                                  │
+│  Everything else is built from these three.                    │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Building Blocks From The Fundamentals -->
+      <section id="building-blocks">
+        <h2>🧩 Building Blocks From The Fundamentals</h2>
+
+        <h3>1. Booleans (from Conditional Types)</h3>
+        <pre><code class="language-typescript">type True = true;
+type False = false;
+
+// NOT
+type Not&lt;B extends boolean&gt; = B extends true ? false : true;
+
+// AND
+type And&lt;A extends boolean, B extends boolean&gt; = 
+    A extends true ? (B extends true ? true : false) : false;
+
+// OR
+type Or&lt;A extends boolean, B extends boolean&gt; = 
+    A extends true ? true : (B extends true ? true : false);</code></pre>
+
+        <h3>2. Equality (from Conditional Types)</h3>
+        <pre><code class="language-typescript">type Equal&lt;A, B&gt; = 
+    A extends B 
+        ? (B extends A ? true : false) 
+        : false;
+
+type Test1 = Equal&lt;"hello", "hello"&gt;; // true
+type Test2 = Equal&lt;"hello", "world"&gt;; // false</code></pre>
+
+        <h3>3. Numbers (from Tuples)</h3>
+        <pre><code class="language-typescript">// Build a tuple of length N
+type BuildTuple&lt;N extends number, T extends any[] = []&gt; = 
+    T['length'] extends N 
+        ? T 
+        : BuildTuple&lt;N, [...T, any]&gt;;
+
+// Addition
+type Add&lt;A extends number, B extends number&gt; = 
+    [...BuildTuple&lt;A&gt;, ...BuildTuple&lt;B&gt;]['length'];
+
+type Sum = Add&lt;3, 4&gt;; // 7</code></pre>
+
+        <h3>4. Loops (from Recursion)</h3>
+        <pre><code class="language-typescript">// Map over a tuple
+type MapTuple&lt;T extends any[], F extends (x: any) =&gt; any&gt; = 
+    T extends [infer Head, ...infer Tail]
+        ? [F extends (x: Head) =&gt; infer R ? R : never, ...MapTuple&lt;Tail, F&gt;]
+        : [];
+
+type Double = &lt;T extends number&gt;(x: T) =&gt; `${T}`;
+type Result = MapTuple&lt;[1, 2, 3], Double&gt;; // ["1", "2", "3"]</code></pre>
+      </section>
+
+      <!-- The Core Insight -->
+      <section id="core-insight">
+        <h2>🧠 The Core Insight</h2>
+        <p>Type-level programming is programming with extends.</p>
+        <p>Everything you write at the type level is fundamentally:</p>
+        <ul>
+          <li>Declaring a type parameter (<code>&lt;T&gt;</code>)</li>
+          <li>Checking if it extends something (<code>T extends U</code>)</li>
+          <li>Producing a result based on that check (<code>? X : Y</code>)</li>
+          <li>Repeating via recursion</li>
+        </ul>
+      </section>
+
+      <!-- Comparison: Value Level vs Type Level -->
+      <section id="comparison">
+        <h2>📊 Comparison: Value Level vs Type Level</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Value Level</th>
+              <th>Type Level</th>
+              <th>Fundamental Unit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>let x = 5</code></td>
+              <td><code>type X = 5</code></td>
+              <td>Declaration</td>
+            </tr>
+            <tr>
+              <td><code>if (x) { }</code></td>
+              <td><code>T extends U ? X : Y</code></td>
+              <td>Conditional</td>
+            </tr>
+            <tr>
+              <td><code>for (const k in obj)</code></td>
+              <td><code>{ [K in keyof T]: ... }</code></td>
+              <td>Mapped type</td>
+            </tr>
+            <tr>
+              <td><code>function f() { }</code></td>
+              <td><code>type F&lt;T&gt; = ...</code></td>
+              <td>Generic</td>
+            </tr>
+            <tr>
+              <td><code>return x</code></td>
+              <td><code>: X</code></td>
+              <td>Return type</td>
+            </tr>
+            <tr>
+              <td><code>const { a } = obj</code></td>
+              <td><code>T extends { a: infer A } ? A : never</code></td>
+              <td>infer</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- The One-Sentence Answer -->
+      <section id="one-sentence-answer">
+        <h2>🎯 The One-Sentence Answer</h2>
+        <p>
+          The fundamental unit of type-level programming is the conditional type
+          <code>T extends U ? X : Y</code>, because it provides the branching,
+          pattern-matching, and recursion needed to compute anything at the type
+          level.
+        </p>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

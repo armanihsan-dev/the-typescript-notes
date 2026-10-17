@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What is Type-Level Programming?</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-is" class="nav-link">What is Type-Level Programming?</a>
+        <a href="#two-levels" class="nav-link">Two Levels of Programming</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Mechanisms &amp; Capabilities</div>
+        <a href="#mechanisms" class="nav-link">Enabling Mechanisms</a>
+        <a href="#what-can-you-achieve" class="nav-link"
+          >What Can You Achieve?</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Proofs &amp; Theory</div>
+        <a href="#turing-complete" class="nav-link">Turing Completeness</a>
+        <a href="#language-proof" class="nav-link">TypeScript as a Language</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Type System</span>
+        <h1>WHAT IS TYPE-LEVEL PROGRAMMING?</h1>
+      </section>
+
+      <!-- Section 1: Definition -->
+      <section id="what-is">
+        <h2>What is Type-Level Programming?</h2>
+        <p>
+          Type-level programming is a technique where you write logic that
+          executes entirely within the type system of a programming language,
+          rather than at runtime. In TypeScript, this means using types as your
+          "values" and type operators as your "functions" .
+        </p>
+        <p>
+          Think of it as a parallel universe inside your code editor: while
+          JavaScript handles values like numbers and strings at runtime, the
+          TypeScript compiler is performing computations on types at compile
+          time. These computations happen before your code ever runs and have
+          zero runtime cost
+        </p>
+      </section>
+
+      <!-- Section 2: Two Levels of Programming -->
+      <section id="two-levels">
+        <h2>two level of programming</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TWO LEVELS OF PROGRAMMING                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  VALUE LEVEL (Runtime):                                          │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  - Happens at RUNTIME                                     │   │
+│  │  - Uses: variables, functions, objects, arrays           │   │
+│  │  - Example: const x = 5; function add(a, b) { ... }     │   │
+│  │  - Output: Actual values (numbers, strings, objects)     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  TYPE LEVEL (Compile-Time):                                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  - Happens at COMPILE TIME                                │   │
+│  │  - Uses: type parameters, conditional types, mapped types│   │
+│  │  - Example: type T&lt;A&gt; = A extends string ? true : false; │   │
+│  │  - Output: Types (string, number, boolean, etc.)         │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  🔥 They are SEPARATE but work together!                        │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Section 3: Mechanisms -->
+      <section id="mechanisms">
+        <h2>Part 2: What Mechanisms Enable Type-Level Programming?</h2>
+        <p>
+          TypeScript provides several type-level constructs that make it Turing
+          complete.
+        </p>
+
+        <h3>The Core Mechanisms</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Mechanism</th>
+              <th>Purpose</th>
+              <th>Value-Level Equivalent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Generic Parameters</td>
+              <td>Variables for types</td>
+              <td><code>let x = 5</code></td>
+            </tr>
+            <tr>
+              <td>Conditional Types</td>
+              <td>If/else statements</td>
+              <td><code>if (condition) { ... } else { ... }</code></td>
+            </tr>
+            <tr>
+              <td>Mapped Types</td>
+              <td>Loops over properties</td>
+              <td><code>for (const key in obj) { ... }</code></td>
+            </tr>
+            <tr>
+              <td>infer Keyword</td>
+              <td>Pattern matching</td>
+              <td><code>const { name } = user</code></td>
+            </tr>
+            <tr>
+              <td>Recursive Types</td>
+              <td>Loops / recursion</td>
+              <td><code>function recurse() { ... }</code></td>
+            </tr>
+            <tr>
+              <td>Template Literal Types</td>
+              <td>String manipulation</td>
+              <td><code>"hello" + " " + "world"</code></td>
+            </tr>
+            <tr>
+              <td>Indexed Access</td>
+              <td>Array/object access</td>
+              <td><code>arr[0], obj["key"]</code></td>
+            </tr>
+            <tr>
+              <td>keyof</td>
+              <td>Get keys</td>
+              <td><code>Object.keys(obj)</code></td>
+            </tr>
+            <tr>
+              <td>Union Types</td>
+              <td>Sum types</td>
+              <td><code>value1 | value2</code></td>
+            </tr>
+            <tr>
+              <td>Intersection Types</td>
+              <td>Product types</td>
+              <td><code>A &amp; B</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Visual: Type-Level Constructs</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TYPE-LEVEL CONSTRUCTS                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  VALUE LEVEL                    TYPE LEVEL                      │
+│  ───────────                    ──────────                      │
+│                                                                  │
+│  let x = 5;                     type X = 5;                    │
+│                                                                  │
+│  if (x &gt; 0) { A } else { B }    type Y&lt;T&gt; = T extends number   │
+│                                    ? A : B;                    │
+│                                                                  │
+│  for (const k in obj) { ... }   type M&lt;T&gt; = {                  │
+│                                    [K in keyof T]: T[K]        │
+│                                  };                             │
+│                                                                  │
+│  const { a, b } = obj;          type P&lt;T&gt; = T extends           │
+│                                    { a: infer A, b: infer B }  │
+│                                    ? [A, B] : never;           │
+│                                                                  │
+│  function recurse() { ... }     type R&lt;T&gt; = T extends any      │
+│                                    ? R&lt;...&gt; : T;               │
+│                                                                  │
+│  "a" + "b"                      type S = `${"a"}${"b"}`;       │
+│                                                                  │
+│  obj["key"]                     type V = T["key"];             │
+│                                                                  │
+│  Object.keys(obj)               type K = keyof T;              │
+│                                                                  │
+│  x | y                          type U = A | B;                │
+│                                                                  │
+│  x &amp; y                          type I = A &amp; B;                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Section 4: What Can You Achieve -->
+      <section id="what-can-you-achieve">
+        <h2>What Can You Achieve with Type-Level Programming?</h2>
+        <p>
+          Type-level programming in TypeScript is primarily used for
+          compile-time validation and type transformations :
+        </p>
+        <ul>
+          <li>
+            <strong>Type-Safe APIs:</strong> Create APIs that are impossible to
+            misuse because invalid operations are rejected by the compiler.
+          </li>
+          <li>
+            <strong>Type Transformations:</strong> Automatically generate new
+            types from existing ones (e.g., converting a snake_case type to
+            camelCase).
+          </li>
+          <li>
+            <strong>Compile-Time Validation:</strong> Catch logical errors (like
+            invalid form inputs or SQL queries) before the code runs.
+          </li>
+          <li>
+            <strong>Zero Runtime Cost:</strong> All the heavy lifting is done
+            during compilation, leaving your shipped JavaScript lean
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 5: Turing Completeness -->
+      <section id="turing-complete">
+        <h2>Why TypeScript's Type System is Turing Complete</h2>
+
+        <h3>The Proof</h3>
+        <p>
+          TypeScript's type system has all the features needed for Turing
+          completeness:
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>TypeScript</th>
+              <th>Turing Machine Equivalent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Memory</td>
+              <td>Types can be arbitrarily large</td>
+              <td>Infinite tape</td>
+            </tr>
+            <tr>
+              <td>Conditionals</td>
+              <td>Conditional types (extends ? :)</td>
+              <td>State transitions</td>
+            </tr>
+            <tr>
+              <td>Loops</td>
+              <td>Recursive types</td>
+              <td>Repeated execution</td>
+            </tr>
+            <tr>
+              <td>Variables</td>
+              <td>Generic parameters (&lt;T&gt;)</td>
+              <td>State register</td>
+            </tr>
+            <tr>
+              <td>Pattern Matching</td>
+              <td>infer keyword</td>
+              <td>Reading from tape</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <pre><code class="language-typescript">// 🔥 This is a TYPE-LEVEL PROGRAM that computes addition!
+
+// Helper: Build a tuple of length N
+type BuildTuple&lt;N extends number, T extends any[] = []&gt; =
+    T['length'] extends N
+    ? T
+    : BuildTuple&lt;N, [...T, any]&gt;;
+
+// Type-level addition
+type Add&lt;A extends number, B extends number&gt; =
+    [...BuildTuple&lt;A&gt;, ...BuildTuple&lt;B&gt;]['length'];
+
+// Test it
+type Sum1 = Add&lt;3, 4&gt;;   // 7
+type Sum2 = Add&lt;10, 20&gt;; // 30
+type Sum3 = Add&lt;0, 5&gt;;   // 5</code></pre>
+      </section>
+
+      <!-- Section 6: Language Proof -->
+      <section id="language-proof">
+        <h2>TypeScript as a Programming Language (The Proof)</h2>
+
+        <h3>The Claim</h3>
+        <p>TypeScript's type system is a full programming language.</p>
+
+        <h3>The Evidence</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TYPESCRIPT AS A LANGUAGE                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  PROGRAMMING LANGUAGE FEATURES:                                 │
+│                                                                  │
+│  1. Variables:                                                  │
+│     ┌──────────────────────────────────────────────────────┐    │
+│     │ type X = 5; // Type-level variable                  │    │
+│     └──────────────────────────────────────────────────────┘    │
+│                                                                  │
+│  2. Conditionals:                                               │
+│     ┌──────────────────────────────────────────────────────┐    │
+│     │ type If&lt;C, T, F&gt; = C extends true ? T : F;          │    │
+│     └──────────────────────────────────────────────────────┘    │
+│                                                                  │
+│  3. Loops (Recursion):                                          │
+│     ┌──────────────────────────────────────────────────────┐    │
+│     │ type Loop&lt;N&gt; = N extends 0 ? never : Loop&lt;Sub&lt;N&gt;&gt;;  │    │
+│     └──────────────────────────────────────────────────────┘    │
+│                                                                  │
+│  4. Functions:                                                  │
+│     ┌──────────────────────────────────────────────────────┐    │
+│     │ type Add&lt;A, B&gt; = [...BuildTuple&lt;A&gt;, ...BuildTuple&lt;B&gt;]│    │
+│     │                 ['length'];                          │    │
+│     └──────────────────────────────────────────────────────┘    │
+│                                                                  │
+│  5. Pattern Matching:                                           │
+│     ┌──────────────────────────────────────────────────────┐    │
+│     │ type Match&lt;T&gt; = T extends { name: infer N } ? N : T;│    │
+│     └──────────────────────────────────────────────────────┘    │
+│                                                                  │
+│  6. Data Structures:                                            │
+│     ┌──────────────────────────────────────────────────────┐    │
+│     │ type List&lt;T&gt; = { head: T; tail: List&lt;T&gt; | null };   │    │
+│     └──────────────────────────────────────────────────────┘    │
+│                                                                  │
+│  7. Higher-Order Functions:                                     │
+│     ┌──────────────────────────────────────────────────────┐    │
+│     │ type Map&lt;F, T&gt; = F extends (x: infer X) =&gt; any     │    │
+│     │                ? (x: X) =&gt; any : never;             │    │
+│     └──────────────────────────────────────────────────────┘    │
+│                                                                  │
+│  ✅ TypeScript's type system has ALL of these!                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

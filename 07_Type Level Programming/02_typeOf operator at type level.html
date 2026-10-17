@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The typeof Operator at Type Level — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#two-typeofs" class="nav-link">🎯 Two Different typeofs</a>
+        <a href="#part-1" class="nav-link">Part 1: What is typeof at Type Level?</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Implementation</div>
+        <a href="#part-2" class="nav-link">Part 2: How It Works — Simple Examples</a>
+        <a href="#part-3" class="nav-link">Part 3: Why typeof is Useful</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Advanced &amp; Combinations</div>
+        <a href="#part-4" class="nav-link">Part 4: typeof Combined with Other Operators</a>
+        <a href="#part-5" class="nav-link">Part 5: typeof in Different Contexts</a>
+        <a href="#return-type" class="nav-link">The ReturnType&lt;Type&gt; Utility Type</a>
+        <a href="#comparison" class="nav-link">typeof vs ReturnType vs InstanceType</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Type Operators</span>
+        <h1>THE TYPEOF OPERATOR AT TYPE LEVEL — COMPLETE GUIDE</h1>
+      </section>
+
+      <!-- Two Different typeofs -->
+      <section id="two-typeofs">
+        <h2>🎯 Two Different typeofs</h2>
+        <p>This is the first thing to understand:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>typeof (JavaScript)</th>
+              <th>typeof (TypeScript Type Level)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Used at runtime</td>
+              <td>Used at compile-time</td>
+            </tr>
+            <tr>
+              <td>Returns a string</td>
+              <td>Returns a type</td>
+            </tr>
+            <tr>
+              <td>typeof 42 → "number"</td>
+              <td>typeof 42 → 42 (as a type)</td>
+            </tr>
+            <tr>
+              <td>Value-level operator</td>
+              <td>Type-level operator</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Visual Comparison</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TWO TYPES OF typeof                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  RUNTIME (JavaScript):                                          │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ const x = 42;                                            │   │
+│  │ console.log(typeof x); // "number" (a STRING)            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  COMPILE-TIME (TypeScript):                                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ const x = 42;                                            │   │
+│  │ type X = typeof x; // X = 42 (a TYPE)                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  In TypeScript, `typeof` in TYPE POSITION gives you a TYPE.   │
+│  In JavaScript, `typeof` gives you a STRING.                  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 1 -->
+      <section id="part-1">
+        <h2>Part 1: What is typeof at Type Level?</h2>
+
+        <h3>Definition</h3>
+        <p>typeof at the type level takes a value (a variable, function, object, class) and extracts its type as a TypeScript type.</p>
+
+        <h3>The Syntax</h3>
+        <pre><code class="language-typescript">type TypeName = typeof value;</code></pre>
+        <ul>
+          <li>value is a runtime value (variable, function, object)</li>
+          <li>TypeName becomes the type of that value</li>
+        </ul>
+
+        <h3>The Core Idea</h3>
+        <pre><code class="language-typescript">// You have a value
+const user = { name: "Alice", age: 25 };
+
+// You want its type
+type User = typeof user;
+// User = { name: string; age: number }
+
+// Now you can use it as a type
+const anotherUser: User = { name: "Bob", age: 30 };</code></pre>
+      </section>
+
+      <!-- Part 2 -->
+      <section id="part-2">
+        <h2>Part 2: How It Works — Simple Examples</h2>
+
+        <h3>Example 1: Primitive Value</h3>
+        <pre><code class="language-typescript">const num = 42;
+type NumType = typeof num;
+// NumType = 42 (literal type!)
+
+const str = "hello";
+type StrType = typeof str;
+// StrType = "hello"
+
+const bool = true;
+type BoolType = typeof bool;
+// BoolType = true</code></pre>
+
+        <h3>Example 2: Object Value</h3>
+        <pre><code class="language-typescript">const user = {
+    name: "Alice",
+    age: 25,
+    email: "alice@email.com"
+};
+
+type UserType = typeof user;
+// UserType = {
+//     name: string;
+//     age: number;
+//     email: string;
+// }</code></pre>
+
+        <h3>Example 3: Array Value</h3>
+        <pre><code class="language-typescript">const numbers = [1, 2, 3, 4, 5];
+type NumbersType = typeof numbers;
+// NumbersType = number[]</code></pre>
+
+        <h3>Example 4: Function Value</h3>
+        <pre><code class="language-typescript">function greet(name: string): string {
+    return `Hello ${name}`;
+}
+
+type GreetType = typeof greet;
+// GreetType = (name: string) =&gt; string</code></pre>
+
+        <h3>Example 5: Class Value</h3>
+        <pre><code class="language-typescript">class Person {
+    name: string;
+    constructor(name: string) {
+        this.name = name;
+    }
+    greet(): string {
+        return `Hello, I'm ${this.name}`;
+    }
+}
+
+type PersonType = typeof Person;
+// PersonType = typeof Person (the constructor function type)
+// This is the CLASS itself, not an instance!</code></pre>
+
+        <p>typeof Person refers to the class constructor, not an instance:</p>
+        <pre><code class="language-typescript">type PersonType = typeof Person;
+// typeof Person = new (name: string) =&gt; Person
+
+so this is incorrect
+let p1: PersonType = new Person("Arman");</code></pre>
+
+        <p>PersonType expects the constructor itself, which has a prototype property. new Person(...) returns an instance and does not have that constructor shape.</p>
+
+        <p>Use Person for an instance:</p>
+        <pre><code class="language-typescript">let p1: Person = new Person("Arman");
+
+type PersonInstance = InstanceType&lt;typeof Person&gt;;
+
+let p1: PersonInstance = new Person("Arman");</code></pre>
+
+        <p>Use typeof Person only when storing the class constructor:</p>
+        <pre><code class="language-typescript">const PersonConstructor: typeof Person = Person;
+const p1 = new PersonConstructor("Arman");</code></pre>
+
+        <p>REAL USE CASE OF</p>
+        <pre><code class="language-typescript">type PersonType = typeof Person;</code></pre>
+
+        <p>Its use case is when you want to store, pass, or accept the class itself:</p>
+        <pre><code class="language-typescript">function createPerson(PersonClass: typeof Person, name: string): Person {
+    return new PersonClass(name);
+}
+
+const person = createPerson(Person, "Arman");
+console.log(person.greet());</code></pre>
+
+        <p>It is also useful for constructor variables:</p>
+        <pre><code class="language-typescript">const PersonConstructor: PersonType = Person;
+
+const person = new PersonConstructor("Arman");</code></pre>
+
+        <p>the Difference is</p>
+        <pre><code class="language-typescript">type PersonInstance = Person;       // an object created by the class
+type PersonConstructor = typeof Person; // the class/constructor itself</code></pre>
+
+        <p>InShort</p>
+        <pre><code class="language-typescript">const instance: Person = new Person("Arman");
+const constructor: typeof Person = Person;</code></pre>
+      </section>
+
+      <!-- Part 3 -->
+      <section id="part-3">
+        <h2>Part 3: Why typeof is Useful</h2>
+
+        <h3>3.1 Avoid Duplicating Types</h3>
+        <pre><code class="language-typescript">// ❌ Without typeof: You duplicate the type
+const config = {
+    apiUrl: "https://api.com",
+    timeout: 5000,
+    retries: 3
+};
+
+interface Config {
+    apiUrl: string;
+    timeout: number;
+    retries: number;
+}
+
+// ✅ With typeof: Extract the type
+const config = {
+    apiUrl: "https://api.com",
+    timeout: 5000,
+    retries: 3
+};
+
+type Config = typeof config;
+// No duplication!</code></pre>
+
+        <h3>3.2 Type-Safe Constants</h3>
+        <pre><code class="language-typescript">// ✅ Define values first, then extract types
+const ROUTES = {
+    home: "/",
+    about: "/about",
+    contact: "/contact"
+} as const;
+
+type Route = typeof ROUTES[keyof typeof ROUTES];
+// Route = "/" | "/about" | "/contact"
+
+// Now you can use it for type safety
+function navigate(route: Route): void {
+    // ...
+}
+
+navigate("/");        // ✅ Works
+navigate("/about");   // ✅ Works
+navigate("/unknown"); // ❌ Error</code></pre>
+
+        <h3>3.3 Extract Types from Libraries</h3>
+        <pre><code class="language-typescript">// ✅ Use typeof to extract types from third-party libraries
+import express from "express";
+
+type Request = typeof express.request;
+type Response = typeof express.response;</code></pre>
+
+        <h3>3.4 Function Return Types</h3>
+        <pre><code class="language-typescript">// ✅ Extract the return type of a function
+function createUser(name: string, age: number) {
+    return {
+        id: Math.random().toString(36),
+        name,
+        age,
+        createdAt: new Date()
+    };
+}
+
+type User = ReturnType&lt;typeof createUser&gt;;
+// User = {
+//     id: string;
+//     name: string;
+//     age: number;
+//     createdAt: Date;
+// }</code></pre>
+      </section>
+
+      <!-- Part 4 -->
+      <section id="part-4">
+        <h2>Part 4: typeof Combined with Other Operators</h2>
+
+        <h3>4.1 typeof with keyof</h3>
+        <pre><code class="language-typescript">const user = {
+    name: "Alice",
+    age: 25,
+    email: "alice@email.com"
+};
+
+type UserKeys = keyof typeof user;
+// UserKeys = "name" | "age" | "email"
+
+// Usage:
+function getValue(key: UserKeys): any {
+    return user[key];
+}
+
+getValue("name");  // ✅ Works
+getValue("email"); // ✅ Works
+getValue("phone"); // ❌ Error</code></pre>
+
+        <h3>4.2 typeof with Indexed Access</h3>
+        <pre><code class="language-typescript">const config = {
+    apiUrl: "https://api.com",
+    timeout: 5000,
+    retries: 3
+};
+
+type ApiUrl = (typeof config)["apiUrl"];
+// ApiUrl = string
+
+type Timeout = (typeof config)["timeout"];
+// Timeout = number</code></pre>
+
+        <h3>4.3 typeof with keyof and Indexed Access</h3>
+        <pre><code class="language-typescript">const config = {
+    apiUrl: "https://api.com",
+    timeout: 5000,
+    retries: 3
+};
+
+type ConfigValue = (typeof config)[keyof typeof config];
+// ConfigValue = string | number</code></pre>
+
+        <h3>4.4 typeof with Arrays</h3>
+        <pre><code class="language-typescript">const colors = ["red", "green", "blue"] as const;
+
+type Color = typeof colors[number];
+// Color = "red" | "green" | "blue"
+
+// Without `as const`:
+const colors2 = ["red", "green", "blue"];
+type Color2 = typeof colors2[number];
+// Color2 = string</code></pre>
+      </section>
+
+      <!-- Part 5 -->
+      <section id="part-5">
+        <h2>Part 5: typeof in Different Contexts</h2>
+
+        <h3>5.1 In Type Aliases</h3>
+        <pre><code class="language-typescript">const user = { name: "Alice", age: 25 };
+
+type User = typeof user;
+// User = { name: string; age: number }</code></pre>
+
+        <h3>5.2 In Function Parameters</h3>
+        <pre><code class="language-typescript">const defaultConfig = {
+    timeout: 5000,
+    retries: 3
+};
+
+function setup(config: typeof defaultConfig): void {
+    // config must match the shape of defaultConfig
+}
+
+setup({ timeout: 10000, retries: 5 }); // ✅ Works
+setup({ timeout: 10000 }); // ❌ Error: missing retries</code></pre>
+      </section>
+
+      <!-- ReturnType Utility Type -->
+      <section id="return-type">
+        <h2>The ReturnType&lt;Type&gt; Utility Type</h2>
+        <p>If you need to extract or reuse the return type of an existing function type, TypeScript provides the built-in ReturnType Utility Type.Because ReturnType expects a type as its parameter, you must use it in combination with typeof if you are targeting a real JavaScript function.</p>
+        <pre><code class="language-typescript">function createUser() {
+  return { id: 1, name: "John Doe", active: true };
+}
+
+// Extract the type from the function above
+type User = ReturnType&lt;typeof createUser&gt;;</code></pre>
+      </section>
+
+      <!-- Comparison -->
+      <section id="comparison">
+        <h2>typeof vs ReturnType vs InstanceType</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Operator</th>
+              <th>What It Does</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>typeof value</td>
+              <td>Gets the type of a value</td>
+              <td>typeof user → { name: string }</td>
+            </tr>
+            <tr>
+              <td>ReturnType&lt;T&gt;</td>
+              <td>Gets the return type of a function</td>
+              <td>ReturnType&lt;typeof fn&gt; → return type</td>
+            </tr>
+            <tr>
+              <td>InstanceType&lt;T&gt;</td>
+              <td>Gets the instance type of a class</td>
+              <td>InstanceType&lt;typeof Person&gt; → Person</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

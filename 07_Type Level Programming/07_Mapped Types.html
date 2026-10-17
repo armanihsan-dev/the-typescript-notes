@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What Are Mapped Types?</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#definition" class="nav-link">What Are Mapped Types?</a>
+        <a href="#part-1" class="nav-link">Part 1: Basic Syntax</a>
+        <a href="#part-2" class="nav-link">Part 2: How It Works</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Transformations</div>
+        <a href="#part-3" class="nav-link">Part 3: Modifying Properties</a>
+        <a href="#part-4" class="nav-link">Part 4: Filtering Keys</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Built-ins &amp; Use Cases</div>
+        <a href="#part-6" class="nav-link">Part 6: Built-in Mapped Types</a>
+        <a href="#part-7" class="nav-link">Part 7: Practical Use Cases</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Type Transformations</span>
+        <h1>WHAT ARE MAPPED TYPES?</h1>
+      </section>
+
+      <!-- Definition -->
+      <section id="definition">
+        <h2>Definition:</h2>
+        <p>A mapped type is a type that transforms an existing type by iterating over its keys and producing a new type based on those keys. It's like a loop at the type level.</p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type NewType&lt;T&gt; = {
+    [K in keyof T]: /* transformed type */
+};</code></pre>
+        <ul>
+          <li>K = each key of T</li>
+          <li>keyof T = the union of all keys of T</li>
+          <li>The result is a new type with the same or modified keys</li>
+        </ul>
+
+        <h3>🧠 The Mental Model</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    MAPPED TYPES                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  VALUE LEVEL (Runtime):           TYPE LEVEL (Compile-Time):   │
+│  ─────────────────────           ────────────────────────       │
+│                                                                  │
+│  const result = {};              type Result&lt;T&gt; = {            │
+│  for (const key in obj) {           [K in keyof T]: T[K]      │
+│      result[key] = obj[key];      };                           │
+│  }                                                             │
+│                                                                  │
+│  Loop over keys.                 Map over keys.               │
+│  Build a new object.             Build a new type.             │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 1: Basic Syntax -->
+      <section id="part-1">
+        <h2>Part 1: Basic Syntax</h2>
+
+        <h3>Basic Syntax</h3>
+        <pre><code class="language-typescript">type T = {
+  [K in Keys]: ValueType;
+};</code></pre>
+        <ul>
+          <li>K → placeholder for each key</li>
+          <li>Keys → union of keys</li>
+          <li>ValueType → type of each generated property</li>
+        </ul>
+
+        <h3>Basic Example</h3>
+        <pre><code class="language-typescript">type Keys = "id" | "name";
+
+type User = {
+  [K in Keys]: string;
+};</code></pre>
+        <p>Result:</p>
+        <pre><code class="language-typescript">{
+  id: string;
+  name: string;
+}</code></pre>
+
+        <p>OR</p>
+
+        <h2>Part 1: Basic Syntax</h2>
+        <pre><code class="language-typescript">type MappedType&lt;T&gt; = {
+    [K in keyof T]: T[K];
+};</code></pre>
+
+        <h3>Syntax Breakdown</h3>
+        <pre><code class="language-typescript">type MappedType&lt;T&gt; = {
+    [K in keyof T]: T[K];
+//   ↑    ↑         ↑
+//   |    |         |
+//   |    |         Value type
+//   |    Iteration source
+//   Key variable
+};</code></pre>
+
+        <h3>Simple Example</h3>
+        <pre><code class="language-typescript">type User = {
+    name: string;
+    age: number;
+    email: string;
+};
+
+// Clone the type (identity mapped type)
+type Clone&lt;T&gt; = {
+    [K in keyof T]: T[K];
+};
+
+type ClonedUser = Clone&lt;User&gt;;
+// ClonedUser = { name: string; age: number; email: string }</code></pre>
+      </section>
+
+      <!-- Part 2: How It Works -->
+      <section id="part-2">
+        <h2>Part 2: How It Works</h2>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW MAPPED TYPES WORK                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: You have a type:                                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  type User = {                                          │   │
+│  │      name: string;                                      │   │
+│  │      age: number;                                       │   │
+│  │      email: string;                                     │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: keyof User gives the keys:                            │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "name" | "age" | "email"                               │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: [K in keyof T] iterates over each key:                │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  K = "name"  → produce property "name"                  │   │
+│  │  K = "age"   → produce property "age"                   │   │
+│  │  K = "email" → produce property "email"                 │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 4: Build the new type:                                   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  {                                                      │   │
+│  │      name: T["name"];                                   │   │
+│  │      age: T["age"];                                     │   │
+│  │      email: T["email"];                                 │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 3: Modifying Properties -->
+      <section id="part-3">
+        <h2>Part 3: Modifying Properties</h2>
+
+        <h3>1. Making Properties Optional (?)</h3>
+        <pre><code class="language-typescript">type MyPartial&lt;T&gt; = {
+    [K in keyof T]?: T[K];
+};
+
+type User = { name: string; age: number };
+
+type PartialUser = MyPartial&lt;User&gt;;
+// { name?: string; age?: number }</code></pre>
+
+        <h3>2. Making Properties Readonly (readonly)</h3>
+        <pre><code class="language-typescript">type MyReadonly&lt;T&gt; = {
+    readonly [K in keyof T]: T[K];
+};
+
+type User = { name: string; age: number };
+
+type ReadonlyUser = MyReadonly&lt;User&gt;;
+// { readonly name: string; readonly age: number }</code></pre>
+
+        <h3>3. Removing Modifiers (-?, -readonly)</h3>
+        <pre><code class="language-typescript">// Remove optional
+type MyRequired&lt;T&gt; = {
+    [K in keyof T]-?: T[K];
+};
+
+type PartialUser = { name?: string; age?: number };
+type RequiredUser = MyRequired&lt;PartialUser&gt;;
+// { name: string; age: number }
+
+// Remove readonly
+type Mutable&lt;T&gt; = {
+    -readonly [K in keyof T]: T[K];
+};
+
+type ReadonlyUser = { readonly name: string; readonly age: number };
+type MutableUser = Mutable&lt;ReadonlyUser&gt;;
+// { name: string; age: number }</code></pre>
+
+        <h3>Modifier Summary</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Modifier</th>
+              <th>Effect</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>?</code></td>
+              <td>Add optional</td>
+            </tr>
+            <tr>
+              <td><code>-?</code></td>
+              <td>Remove optional</td>
+            </tr>
+            <tr>
+              <td><code>readonly</code></td>
+              <td>Add readonly</td>
+            </tr>
+            <tr>
+              <td><code>-readonly</code></td>
+              <td>Remove readonly</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Part 4: Filtering Keys -->
+      <section id="part-4">
+        <h2>Part 4: Filtering Keys</h2>
+
+        <h3>Using Conditional Types in Mapped Types</h3>
+        <pre><code class="language-typescript">// Only include string keys
+type StringKeys&lt;T&gt; = {
+    [K in keyof T]: T[K] extends string ? K : never;
+}[keyof T];
+
+type User = {
+    name: string;
+    age: number;
+    email: string;
+};
+
+type UserStringKeys = StringKeys&lt;User&gt;;
+// "name" | "email"</code></pre>
+
+        <h3>Explanation :</h3>
+        <p>[K in keyof T] creates a mapped object type. It checks each property and assigns that property’s key if its value is a string, or never otherwise.</p>
+        <p>For User, the mapped type is effectively:</p>
+        <pre><code class="language-typescript">{
+  name: "name";
+  age: never;
+  email: "email";
+}</code></pre>
+        <p>That object still has all the original keys; never is just the value of the age property.</p>
+        <p>The trailing [keyof T] is an indexed access type. It says: “Take the values of this mapped type for every key in T.” So it produces:</p>
+        <pre><code class="language-typescript">"name" | never | "email"</code></pre>
+        <p>Since never contributes no possibilities to a union, that simplifies to:</p>
+        <pre><code class="language-typescript">"name" | "email"</code></pre>
+      </section>
+
+      <!-- Part 6: Built-in Mapped Types -->
+      <section id="part-6">
+        <h2>Part 6: Built-in Mapped Types</h2>
+
+        <h3>TypeScript's Built-in Mapped Types</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Built-in Type</th>
+              <th>What It Does</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Partial&lt;T&gt;</code></td>
+              <td>Makes all properties optional</td>
+            </tr>
+            <tr>
+              <td><code>Required&lt;T&gt;</code></td>
+              <td>Makes all properties required</td>
+            </tr>
+            <tr>
+              <td><code>Readonly&lt;T&gt;</code></td>
+              <td>Makes all properties readonly</td>
+            </tr>
+            <tr>
+              <td><code>Pick&lt;T, K&gt;</code></td>
+              <td>Picks specific keys</td>
+            </tr>
+            <tr>
+              <td><code>Record&lt;K, T&gt;</code></td>
+              <td>Creates object with keys K</td>
+            </tr>
+            <tr>
+              <td><code>Exclude&lt;T, U&gt;</code></td>
+              <td>Removes types from union</td>
+            </tr>
+            <tr>
+              <td><code>Extract&lt;T, U&gt;</code></td>
+              <td>Extracts types from union</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Part 7: Practical Use Cases -->
+      <section id="part-7">
+        <h2>Part 7: Practical Use Cases</h2>
+
+        <h3>Use Case 1: Type-Safe Form State</h3>
+        <pre><code class="language-typescript">type FormState&lt;T&gt; = {
+    [K in keyof T]: {
+        value: T[K];
+        error: string | null;
+        touched: boolean;
+    };
+};
+
+type LoginForm = {
+    email: string;
+    password: string;
+};
+
+type LoginFormState = FormState&lt;LoginForm&gt;;
+// {
+//     email: { value: string; error: string | null; touched: boolean };
+//     password: { value: string; error: string | null; touched: boolean };
+// }</code></pre>
+
+        <h3>Use Case 2: API Response Wrapping</h3>
+        <pre><code class="language-typescript">type ApiResponse&lt;T&gt; = {
+    [K in keyof T]: {
+        data: T[K];
+        status: number;
+        timestamp: string;
+    };
+};
+
+type UserResponse = ApiResponse&lt;{ user: { name: string; age: number } }&gt;;
+// {
+//     user: {
+//         data: { name: string; age: number };
+//         status: number;
+//         timestamp: string;
+//     };
+// }</code></pre>
+      </section>
+
+      <!-- Key Takeaways -->
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mapped Types</td>
+              <td>Transform existing types</td>
+            </tr>
+            <tr>
+              <td>Syntax</td>
+              <td><code>[K in keyof T]</code></td>
+            </tr>
+            <tr>
+              <td>Modifiers</td>
+              <td><code>?</code>, <code>readonly</code>, <code>-?</code>, <code>-readonly</code></td>
+            </tr>
+            <tr>
+              <td>Filtering</td>
+              <td>Use as with conditional types</td>
+            </tr>
+            <tr>
+              <td>Key remapping</td>
+              <td>Use as with template literals</td>
+            </tr>
+            <tr>
+              <td>Built-in</td>
+              <td>Partial, Required, Readonly, Pick</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

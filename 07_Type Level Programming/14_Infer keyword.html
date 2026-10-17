@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The infer Keyword in TypeScript — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#what-is-infer" class="nav-link">🎯 What is infer?</a>
+        <a href="#part-1" class="nav-link">Part 1: Basic Syntax</a>
+        <a href="#part-2" class="nav-link">Part 2: Common infer Patterns</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Techniques</div>
+        <a href="#part-3" class="nav-link">Part 3: Multiple infer</a>
+        <a href="#part-4" class="nav-link">Part 4: infer with Constraints</a>
+        <a href="#part-5" class="nav-link">Part 5: Recursive infer</a>
+        <a href="#part-6" class="nav-link">Part 6: Utility Types</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Advanced &amp; Mistakes</div>
+        <a href="#part-7" class="nav-link">Part 7: Advanced Patterns</a>
+        <a href="#part-8" class="nav-link">Part 8: infer with Mapped Types</a>
+        <a href="#part-9" class="nav-link">Part 9: Common Mistakes</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Reference</div>
+        <a href="#summary-table" class="nav-link">📝 Summary Table</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+        <a href="#practice-exercises" class="nav-link">🧪 Practice Exercises</a>
+      </div>
+
+      <!-- Author Links -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>The infer Keyword in TypeScript</h1>
+        <p>Complete Guide</p>
+      </section>
+
+      <section id="what-is-infer">
+        <h2>🎯 What is infer?</h2>
+        <h3>Definition:</h3>
+        <p>
+          infer is a keyword used inside conditional types to declare a type variable and extract a type from another type. It's like pattern matching at the type level.
+        </p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type Extract&lt;T&gt; = T extends SomePattern&lt;infer U&gt; ? U : never;
+//                                         ↑
+//                                    "Capture this type"</code></pre>
+
+        <h3>🧠 The Mental Model</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    infer MENTAL MODEL                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  VALUE LEVEL:              TYPE LEVEL:                          │
+│  ─────────────            ────────────                          │
+│                                                                  │
+│  const { name } = user;   type Name = T extends                 │
+│                               { name: infer N } ? N : never;    │
+│                                                                  │
+│  Destructuring             Type Destructuring                    │
+│  extracts a value.         extracts a type.                     │
+│                                                                  │
+│  "infer is destructuring for types"                            │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-1">
+        <h2>Part 1: Basic Syntax</h2>
+        <h3>The Pattern</h3>
+        <pre><code class="language-typescript">type SomeType&lt;T&gt; = T extends Pattern&lt;infer U&gt; ? U : never;</code></pre>
+
+        <h3>Syntax Breakdown</h3>
+        <pre><code class="language-typescript">type ElementType&lt;T&gt; = T extends (infer U)[] ? U : never;
+//                                   ↑    ↑      ↑
+//                                   |    |      |
+//                                   |    |      Use the captured type
+//                                   |    Capture the type
+//                                   Pattern to match</code></pre>
+
+        <h3>Simple Example</h3>
+        <pre><code class="language-typescript">// Extract the element type of an array
+type ElementType&lt;T&gt; = T extends (infer U)[] ? U : never;
+
+type A = ElementType&lt;string[]&gt;;  // string
+type B = ElementType&lt;number[]&gt;;  // number
+type C = ElementType&lt;boolean[]&gt;; // boolean</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW infer WORKS                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ElementType&lt;string[]&gt;                                          │
+│                                                                  │
+│  Step 1: Pattern match                                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  string[] extends (infer U)[] ?                         │   │
+│  │                                                         │   │
+│  │  Does string[] match the pattern (infer U)[]?           │   │
+│  │  YES → U = string                                       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Return the captured type                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  U = string                                             │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: string                                                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-2">
+        <h2>Part 2: Common infer Patterns</h2>
+        <h3>1. Extract Array Element Type</h3>
+        <pre><code class="language-typescript">type ElementType&lt;T&gt; = T extends (infer U)[] ? U : never;
+
+type A = ElementType&lt;string[]&gt;; // string
+type B = ElementType&lt;number[]&gt;; // number</code></pre>
+
+        <h3>2. Extract Function Return Type</h3>
+        <pre><code class="language-typescript">type ReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+
+type A = ReturnType&lt;() =&gt; string&gt;; // string
+type B = ReturnType&lt;(x: number) =&gt; boolean&gt;; // boolean</code></pre>
+
+        <h3>3. Extract Function Parameters</h3>
+        <pre><code class="language-typescript">type Parameters&lt;T&gt; = T extends (...args: infer P) =&gt; any ? P : never;
+
+type A = Parameters&lt;(name: string, age: number) =&gt; void&gt;; // [string, number]
+type B = Parameters&lt;() =&gt; void&gt;; // []</code></pre>
+
+        <h3>4. Extract Promise Resolved Type</h3>
+        <pre><code class="language-typescript">type Awaited&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : never;
+
+type A = Awaited&lt;Promise&lt;string&gt;&gt;; // string
+type B = Awaited&lt;Promise&lt;number&gt;&gt;; // number
+type C = Awaited&lt;Promise&lt;Promise&lt;boolean&gt;&gt;&gt;; // Promise&lt;boolean&gt; (one level)</code></pre>
+
+        <h3>5. Extract Object Property Type</h3>
+        <pre><code class="language-typescript">type PropertyType&lt;T&gt; = T extends { name: infer N } ? N : never;
+
+type A = PropertyType&lt;{ name: string; age: number }&gt;; // string
+type B = PropertyType&lt;{ name: number }&gt;; // number</code></pre>
+      </section>
+
+      <section id="part-3">
+        <h2>Part 3: Multiple infer in One Type</h2>
+        <h3>Extracting Multiple Types</h3>
+        <pre><code class="language-typescript">type ExtractPair&lt;T&gt; = T extends [infer First, infer Second] 
+    ? { first: First; second: Second } 
+    : never;
+
+type A = ExtractPair&lt;[string, number]&gt;;
+// { first: string; second: number }
+
+type B = ExtractPair&lt;[boolean, string]&gt;;
+// { first: boolean; second: string }</code></pre>
+
+        <h3>Extract from Function with Multiple Parameters</h3>
+        <pre><code class="language-typescript">type FirstAndLast&lt;T&gt; = T extends (first: infer F, ...args: any[], last: infer L) =&gt; any
+    ? { first: F; last: L }
+    : never;
+
+type A = FirstAndLast&lt;(a: string, b: number, c: boolean) =&gt; void&gt;;
+// { first: string; last: boolean }</code></pre>
+      </section>
+
+      <section id="part-4">
+        <h2>Part 4: infer with Constraints</h2>
+        <h3>Constraining the Inferred Type</h3>
+        <pre><code class="language-typescript">// Only infer if it extends a specific type
+type ExtractString&lt;T&gt; = T extends (infer U extends string)[] ? U : never;
+
+type A = ExtractString&lt;string[]&gt;; // string
+type B = ExtractString&lt;number[]&gt;; // never (number doesn't extend string)</code></pre>
+
+        <h3>Using infer in Multiple Positions</h3>
+        <pre><code class="language-typescript">type ExtractPromiseAndReturn&lt;T&gt; = T extends Promise&lt;infer U&gt;
+    ? U extends (...args: any[]) =&gt; infer R
+        ? { resolved: U; returnType: R }
+        : never
+    : never;
+
+type A = ExtractPromiseAndReturn&lt;Promise&lt;() =&gt; string&gt;&gt;;
+// { resolved: () =&gt; string; returnType: string }</code></pre>
+      </section>
+
+      <section id="part-5">
+        <h2>Part 5: Recursive infer</h2>
+        <h3>Deep Awaited (Nested Promises)</h3>
+        <pre><code class="language-typescript">type DeepAwaited&lt;T&gt; = T extends Promise&lt;infer U&gt;
+    ? DeepAwaited&lt;U&gt;
+    : T;
+
+type A = DeepAwaited&lt;Promise&lt;string&gt;&gt;; // string
+type B = DeepAwaited&lt;Promise&lt;Promise&lt;number&gt;&gt;&gt;; // number
+type C = DeepAwaited&lt;Promise&lt;Promise&lt;Promise&lt;boolean&gt;&gt;&gt;&gt;; // boolean</code></pre>
+
+        <h3>Flatten Array</h3>
+        <pre><code class="language-typescript">type Flatten&lt;T&gt; = T extends (infer U)[]
+    ? U extends any[]
+        ? Flatten&lt;U&gt;
+        : U
+    : T;
+
+type A = Flatten&lt;number[][]&gt;; // number
+type B = Flatten&lt;string[][][]&gt;; // string</code></pre>
+
+        <h3>Deep Readonly with infer</h3>
+        <pre><code class="language-typescript">type DeepReadonly&lt;T&gt; = {
+    readonly [K in keyof T]: T[K] extends object
+        ? T[K] extends Function
+            ? T[K]
+            : DeepReadonly&lt;T[K]&gt;
+        : T[K];
+};</code></pre>
+      </section>
+
+      <section id="part-6">
+        <h2>Part 6: infer in Real-World Utility Types</h2>
+        <h3>1. ReturnType&lt;T&gt;</h3>
+        <pre><code class="language-typescript">type ReturnType&lt;T extends (...args: any) =&gt; any&gt; = 
+    T extends (...args: any) =&gt; infer R ? R : any;</code></pre>
+
+        <h3>2. Parameters&lt;T&gt;</h3>
+        <pre><code class="language-typescript">type Parameters&lt;T extends (...args: any) =&gt; any&gt; = 
+    T extends (...args: infer P) =&gt; any ? P : never;</code></pre>
+
+        <h3>3. ConstructorParameters&lt;T&gt;</h3>
+        <pre><code class="language-typescript">type ConstructorParameters&lt;T extends abstract new (...args: any) =&gt; any&gt; = 
+    T extends abstract new (...args: infer P) =&gt; any ? P : never;</code></pre>
+
+        <h3>4. InstanceType&lt;T&gt;</h3>
+        <pre><code class="language-typescript">type InstanceType&lt;T extends abstract new (...args: any) =&gt; any&gt; = 
+    T extends abstract new (...args: any) =&gt; infer R ? R : any;</code></pre>
+
+        <h3>5. Awaited&lt;T&gt;</h3>
+        <pre><code class="language-typescript">type Awaited&lt;T&gt; = T extends null | undefined 
+    ? T 
+    : T extends object &amp; { then(onfulfilled: infer F, ...args: infer _): any }
+        ? F extends ((value: infer V, ...args: infer _) =&gt; any)
+            ? Awaited&lt;V&gt;
+            : never
+        : T;</code></pre>
+      </section>
+
+      <section id="part-7">
+        <h2>Part 7: Advanced infer Patterns</h2>
+        <h3>Extract Tuple Head and Tail</h3>
+        <pre><code class="language-typescript">type Head&lt;T extends any[]&gt; = T extends [infer H, ...any[]] ? H : never;
+type Tail&lt;T extends any[]&gt; = T extends [any, ...infer T] ? T : never;
+
+type A = Head&lt;[string, number, boolean]&gt;; // string
+type B = Tail&lt;[string, number, boolean]&gt;; // [number, boolean]</code></pre>
+
+        <h3>Extract Last Element</h3>
+        <pre><code class="language-typescript">type Last&lt;T extends any[]&gt; = T extends [...any[], infer L] ? L : never;
+
+type A = Last&lt;[string, number, boolean]&gt;; // boolean
+type B = Last&lt;[1, 2, 3]&gt;; // 3</code></pre>
+
+        <h3>Extract Object Keys by Value Type</h3>
+        <pre><code class="language-typescript">type KeysOfType&lt;T, V&gt; = {
+    [K in keyof T]: T[K] extends V ? K : never;
+}[keyof T];
+
+type User = { name: string; age: number; email: string };
+type StringKeys = KeysOfType&lt;User, string&gt;; // "name" | "email"
+type NumberKeys = KeysOfType&lt;User, number&gt;; // "age"</code></pre>
+
+        <h3>Extract Function Argument Type</h3>
+        <pre><code class="language-typescript">type FirstArgument&lt;T&gt; = T extends (first: infer F, ...args: any[]) =&gt; any 
+    ? F 
+    : never;
+
+type A = FirstArgument&lt;(name: string, age: number) =&gt; void&gt;; // string</code></pre>
+
+        <h3>Extract from Union of Functions</h3>
+        <pre><code class="language-typescript">type UnionReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+
+type Fn1 = () =&gt; string;
+type Fn2 = () =&gt; number;
+type Fn3 = () =&gt; boolean;
+
+type Result = UnionReturnType&lt;Fn1 | Fn2 | Fn3&gt;;
+// string | number | boolean (distributes)</code></pre>
+      </section>
+
+      <section id="part-8">
+        <h2>Part 8: infer with Mapped Types</h2>
+        <h3>Extract Property Types</h3>
+        <pre><code class="language-typescript">type PropertyTypes&lt;T&gt; = {
+    [K in keyof T]: T[K] extends infer U ? U : never;
+};
+
+type User = { name: string; age: number };
+type Types = PropertyTypes&lt;User&gt;;
+// { name: string; age: number }</code></pre>
+
+        <h3>Extract and Transform</h3>
+        <pre><code class="language-typescript">type Getters&lt;T&gt; = {
+    [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () =&gt; T[K];
+};
+
+type User = { name: string; age: number };
+type UserGetters = Getters&lt;User&gt;;
+// { getName: () =&gt; string; getAge: () =&gt; number }</code></pre>
+      </section>
+
+      <section id="part-9">
+        <h2>Part 9: Common Mistakes and Solutions</h2>
+        <h3>Mistake 1: Using infer Outside Conditional Types</h3>
+        <pre><code class="language-typescript">// ❌ Error: 'infer' declarations are only permitted in conditional types
+type Wrong&lt;T&gt; = infer U;
+
+// ✅ Fix: Use inside conditional type
+type Correct&lt;T&gt; = T extends infer U ? U : never;</code></pre>
+
+        <h3>Mistake 2: Inferring from Non-Matching Types</h3>
+        <pre><code class="language-typescript">// ❌ If T is not an array, U is never inferred
+type ElementType&lt;T&gt; = T extends (infer U)[] ? U : never;
+
+type A = ElementType&lt;string&gt;; // never (string is not an array)
+
+// ✅ Fix: Handle non-matching case
+type SafeElementType&lt;T&gt; = T extends (infer U)[] ? U : T;
+type B = SafeElementType&lt;string&gt;; // string</code></pre>
+
+        <h3>Mistake 3: Multiple infer with Same Name</h3>
+        <pre><code class="language-typescript">// ❌ Error: Duplicate identifier 'U'
+type Wrong&lt;T&gt; = T extends [infer U, infer U] ? U : never;
+
+// ✅ Fix: Use different names
+type Correct&lt;T&gt; = T extends [infer U, infer V] ? U | V : never;</code></pre>
+      </section>
+
+      <section id="summary-table">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Syntax</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Array element</td>
+              <td><code>T extends (infer U)[] ? U : never</code></td>
+              <td><code>ElementType&lt;string[]&gt; → string</code></td>
+            </tr>
+            <tr>
+              <td>Function return</td>
+              <td><code>T extends (...args: any[]) =&gt; infer R ? R : never</code></td>
+              <td><code>ReturnType&lt;() =&gt; string&gt; → string</code></td>
+            </tr>
+            <tr>
+              <td>Function params</td>
+              <td><code>T extends (...args: infer P) =&gt; any ? P : never</code></td>
+              <td><code>Parameters&lt;(a: string) =&gt; void&gt; → [string]</code></td>
+            </tr>
+            <tr>
+              <td>Promise resolved</td>
+              <td><code>T extends Promise&lt;infer U&gt; ? U : never</code></td>
+              <td><code>Awaited&lt;Promise&lt;string&gt;&gt; → string</code></td>
+            </tr>
+            <tr>
+              <td>Object property</td>
+              <td><code>T extends { name: infer N } ? N : never</code></td>
+              <td><code>PropertyType&lt;{ name: string }&gt; → string</code></td>
+            </tr>
+            <tr>
+              <td>Tuple elements</td>
+              <td><code>T extends [infer A, infer B] ? ... : never</code></td>
+              <td><code>ExtractPair&lt;[string, number]&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Recursive</td>
+              <td><code>T extends Promise&lt;infer U&gt; ? DeepAwaited&lt;U&gt; : T</code></td>
+              <td><code>DeepAwaited&lt;Promise&lt;Promise&lt;string&gt;&gt;&gt; → string</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>infer</td>
+              <td>Captures types in conditional types</td>
+            </tr>
+            <tr>
+              <td>Pattern matching</td>
+              <td>Like destructuring for types</td>
+            </tr>
+            <tr>
+              <td>Multiple infers</td>
+              <td>Can extract multiple types</td>
+            </tr>
+            <tr>
+              <td>Constraints</td>
+              <td>Can constrain inferred types</td>
+            </tr>
+            <tr>
+              <td>Recursive</td>
+              <td>Can use recursively for deep extraction</td>
+            </tr>
+            <tr>
+              <td>Built-in types</td>
+              <td>Used in ReturnType, Parameters, Awaited</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="practice-exercises">
+        <h2>🧪 Practice Exercises</h2>
+        <pre><code class="language-typescript">// 1. Extract array element type
+type ElementType&lt;T&gt; = T extends (infer U)[] ? U : never;
+
+// 2. Extract function return type
+type MyReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+
+// 3. Extract function parameters
+type MyParameters&lt;T&gt; = T extends (...args: infer P) =&gt; any ? P : never;
+
+// 4. Extract promise resolved type
+type MyAwaited&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : never;
+
+// 5. Extract object property type
+type PropertyType&lt;T&gt; = T extends { name: infer N } ? N : never;
+
+// 6. Extract tuple head
+type Head&lt;T extends any[]&gt; = T extends [infer H, ...any[]] ? H : never;
+
+// 7. Extract tuple tail
+type Tail&lt;T extends any[]&gt; = T extends [any, ...infer T] ? T : never;
+
+// 8. Deep awaited (recursive)
+type DeepAwaited&lt;T&gt; = T extends Promise&lt;infer U&gt; ? DeepAwaited&lt;U&gt; : T;
+
+// 9. Extract first argument of function
+type FirstArgument&lt;T&gt; = T extends (first: infer F, ...args: any[]) =&gt; any 
+    ? F 
+    : never;
+
+// 10. Extract keys by value type
+type KeysOfType&lt;T, V&gt; = {
+    [K in keyof T]: T[K] extends V ? K : never;
+}[keyof T];</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

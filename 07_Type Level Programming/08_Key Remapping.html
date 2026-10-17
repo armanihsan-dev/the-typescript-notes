@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Key Remapping in Mapped Types — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-is-key-remapping" class="nav-link">🎯 What is Key Remapping?</a>
+        <a href="#basic-syntax" class="nav-link">Part 1: Basic Syntax</a>
+        <a href="#how-it-works" class="nav-link">Part 2: How It Works</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Examples &amp; Filtering</div>
+        <a href="#simple-examples" class="nav-link">Part 3: Simple Examples</a>
+        <a href="#filtering-keys" class="nav-link">Part 4: Filtering Keys</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Patterns &amp; Use Cases</div>
+        <a href="#common-patterns" class="nav-link">Part 5: Common Patterns</a>
+        <a href="#use-cases" class="nav-link">Part 7: Real-World Use Cases</a>
+        <a href="#summary" class="nav-link">Summary Table &amp; Takeaways</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Mapped Types</span>
+        <h1>KEY REMAPPING IN MAPPED TYPES — COMPLETE GUIDE</h1>
+      </section>
+
+      <!-- What is Key Remapping? -->
+      <section id="what-is-key-remapping">
+        <h2>🎯 What is Key Remapping?</h2>
+        
+        <h3>Definition:</h3>
+        <p>Key remapping is a feature in mapped types that lets you rename, transform, or filter keys using the as clause. Instead of keeping the original property names, you can produce new key names based on the original keys.</p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type NewType&lt;T&gt; = {
+    [K in keyof T as NewKeyName]: T[K];
+};
+//                  ↑
+//                  |
+//           Key remapping with 'as'</code></pre>
+
+        <h3>🧠 The Mental Model</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    KEY REMAPPING                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  WITHOUT REMAPPING:              WITH REMAPPING:                │
+│  ──────────────────              ────────────────               │
+│                                                                  │
+│  type Clone&lt;T&gt; = {               type Getters&lt;T&gt; = {            │
+│      [K in keyof T]: T[K];          [K in keyof T               │
+│  };                                     as `get${K}`]: () =&gt; T[K]│
+│                                    };                           │
+│                                                                  │
+│  Keys stay the same.             Keys are transformed.         │
+│  name → name                     name → getName                │
+│  age  → age                      age  → getAge                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 1: Basic Syntax -->
+      <section id="basic-syntax">
+        <h2>Part 1: Basic Syntax</h2>
+        <pre><code class="language-typescript">type RemappedType&lt;T&gt; = {
+    [K in keyof T as NewKeyExpression]: T[K];
+};</code></pre>
+
+        <h3>Syntax Breakdown</h3>
+        <pre><code class="language-typescript">type Getters&lt;T&gt; = {
+    [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () =&gt; T[K];
+//   ↑           ↑                                 ↑
+//   |           |                                 |
+//   |           Key remapping clause              Value type
+//   Original key
+};</code></pre>
+      </section>
+
+      <!-- Part 2: How It Works -->
+      <section id="part-2">
+        <h2>Part 2: How It Works</h2>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW KEY REMAPPING WORKS                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: You have a type:                                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  type User = {                                          │   │
+│  │      name: string;                                      │   │
+│  │      age: number;                                       │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Iterate over keys with [K in keyof T]:                │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  K = "name"                                             │   │
+│  │  K = "age"                                              │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: Transform each key with `as`:                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "name" → "getName"                                     │   │
+│  │  "age"  → "getAge"                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 4: Build new type with transformed keys:                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  {                                                      │   │
+│  │      getName: () =&gt; string;                             │   │
+│  │      getAge: () =&gt; number;                              │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 3: Simple Examples -->
+      <section id="simple-examples">
+        <h2>Part 3: Simple Examples</h2>
+
+        <h3>Example 1: Adding Prefix</h3>
+        <pre><code class="language-typescript">type WithPrefix&lt;T&gt; = {
+    [K in keyof T as `prefix_${string &amp; K}`]: T[K];
+};
+
+type User = { name: string; age: number };
+type PrefixedUser = WithPrefix&lt;User&gt;;
+// { prefix_name: string; prefix_age: number }</code></pre>
+
+        <p>why string here : `prefix_${string &amp; K}`</p>
+        <p>a template-literal `` type like `get${K}` still requires K to be a string, number, bigint, boolean, null, or undefined. But keyof T can include symbol, and symbols can’t be interpolated into template-literal types.</p>
+        <p>string &amp; K is a type intersection: it keeps only the part of K that is also a string.<br />In a mapped type, K comes from keyof T. TypeScript treats that as potentially including symbol, and template literals can’t interpolate symbols. The intersection narrows the key type to strings, making it valid in `get${...}`:</p>
+
+        <pre><code class="language-typescript">type ProWithPrefix&lt;T&gt; = {
+    [K in keyof T as `get${string &amp; K}`]: () =&gt; T[K]
+}</code></pre>
+
+        <p>For a key K:</p>
+        <ul>
+          <li>If K is "name", then string &amp; "name" is "name", so the remapped key is "getname".</li>
+          <li>If K is symbol, then string &amp; symbol is never, so that key is excluded from the mapped result.</li>
+        </ul>
+
+        <h3>Example 2: Adding Suffix</h3>
+        <pre><code class="language-typescript">type WithSuffix&lt;T&gt; = {
+    [K in keyof T as `${string &amp; K}_changed`]: T[K];
+};
+
+type User = { name: string; age: number };
+type SuffixedUser = WithSuffix&lt;User&gt;;
+// { name_changed: string; age_changed: number }</code></pre>
+
+        <h3>Example 3: Capitalizing Keys</h3>
+        <pre><code class="language-typescript">type Capitalized&lt;T&gt; = {
+    [K in keyof T as Capitalize&lt;string &amp; K&gt;]: T[K];
+};
+
+type User = { name: string; age: number };
+type CapitalizedUser = Capitalized&lt;User&gt;;
+// { Name: string; Age: number }</code></pre>
+      </section>
+
+      <!-- Part 4: Filtering Keys -->
+      <section id="filtering-keys">
+        <h2>Part 4: Filtering Keys</h2>
+
+        <h3>Using never to Remove Keys</h3>
+        <pre><code class="language-typescript">type OnlyStrings&lt;T&gt; = {
+    [K in keyof T as T[K] extends string ? K : never]: T[K];
+};
+
+type User = {
+    name: string;
+    age: number;
+    email: string;
+    isActive: boolean;
+};
+
+type UserStrings = OnlyStrings&lt;User&gt;;
+// { name: string; email: string }
+// (age and isActive are removed)</code></pre>
+
+        <h3>How Filtering Works</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    FILTERING WITH never                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  [K in keyof T as T[K] extends string ? K : never]             │
+│                                                                  │
+│  K = "name"     → string extends string? → "name" (keep)       │
+│  K = "age"      → number extends string? → never (remove)      │
+│  K = "email"    → string extends string? → "email" (keep)      │
+│  K = "isActive" → boolean extends string? → never (remove)     │
+│                                                                  │
+│  Result: { name: string; email: string }                       │
+│                                                                  │
+│  When a key maps to `never`, it's REMOVED from the type.       │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 5: Common Patterns -->
+      <section id="common-patterns">
+        <h2>Part 5: Common Patterns</h2>
+
+        <h3>Pattern 1: Getters</h3>
+        <pre><code class="language-typescript">type Getters&lt;T&gt; = {
+    [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () =&gt; T[K];
+};
+
+type User = { name: string; age: number };
+type UserGetters = Getters&lt;User&gt;;
+// {
+//     getName: () =&gt; string;
+//     getAge: () =&gt; number;
+// }</code></pre>
+
+        <h3>Pattern 2: Setters</h3>
+        <pre><code class="language-typescript">type Setters&lt;T&gt; = {
+    [K in keyof T as `set${Capitalize&lt;string &amp; K&gt;}`]: (value: T[K]) =&gt; void;
+};
+
+type User = { name: string; age: number };
+type UserSetters = Setters&lt;User&gt;;
+// {
+//     setName: (value: string) =&gt; void;
+//     setAge: (value: number) =&gt; void;
+// }</code></pre>
+      </section>
+
+      <!-- Part 7: Real-World Use Cases -->
+      <section id="use-cases">
+        <h2>Part 7: Real-World Use Cases</h2>
+
+        <h3>Use Case 1: API Response Transformation</h3>
+        <pre><code class="language-typescript">type ApiResponseToData&lt;T&gt; = {
+    [K in keyof T as `data_${string &amp; K}`]: T[K];
+};
+
+type ApiResponse = {
+    user: { name: string };
+    posts: { title: string }[];
+};
+
+type Transformed = ApiResponseToData&lt;ApiResponse&gt;;
+// {
+//     data_user: { name: string };
+//     data_posts: { title: string }[];
+// }</code></pre>
+
+        <h3>Use Case 2: Database Column Mapping</h3>
+        <pre><code class="language-typescript">type SnakeCase&lt;S extends string&gt; = S extends `${infer T}${infer U}`
+    ? U extends Uncapitalize&lt;U&gt;
+    ? `${Lowercase&lt;T&gt;}${CamelToSnakeCase&lt;U&gt;}`
+    : `${Lowercase&lt;T&gt;}_${CamelToSnakeCase&lt;Uncapitalize&lt;U&gt;&gt;}`
+    : S;    
+
+type ToSnakeCase&lt;T&gt; = {
+    [K in keyof T as K extends string 
+        ? SnakeCase&lt;K&gt; 
+        : K
+    ]: T[K];
+};
+
+type User = { firstName: string; lastName: string };
+type DbUser = ToSnakeCase&lt;User&gt;;
+// { first_name: string; last_name: string }</code></pre>
+      </section>
+
+      <!-- Summary -->
+      <section id="summary">
+        <h2>Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Syntax</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Add prefix</td>
+              <td><code>as `prefix_${K}`</code></td>
+              <td>prefix_name</td>
+            </tr>
+            <tr>
+              <td>Add suffix</td>
+              <td><code>as `${K}_suffix`</code></td>
+              <td>name_suffix</td>
+            </tr>
+            <tr>
+              <td>Capitalize</td>
+              <td><code>as Capitalize&lt;K&gt;</code></td>
+              <td>Name</td>
+            </tr>
+            <tr>
+              <td>Getters</td>
+              <td><code>as `get${Capitalize&lt;K&gt;}`</code></td>
+              <td>getName</td>
+            </tr>
+            <tr>
+              <td>Setters</td>
+              <td><code>as `set${Capitalize&lt;K&gt;}`</code></td>
+              <td>setName</td>
+            </tr>
+            <tr>
+              <td>Filter (keep)</td>
+              <td><code>as T[K] extends U ? K : never</code></td>
+              <td>Only matching keys</td>
+            </tr>
+            <tr>
+              <td>Filter (remove)</td>
+              <td><code>as K extends `_${string}` ? never : K</code></td>
+              <td>Removes matched keys</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Key Remapping</td>
+              <td>Transform keys in mapped types</td>
+            </tr>
+            <tr>
+              <td>Syntax</td>
+              <td><code>[K in keyof T as NewKey]</code></td>
+            </tr>
+            <tr>
+              <td>Filtering</td>
+              <td>Use never to remove keys</td>
+            </tr>
+            <tr>
+              <td>Renaming</td>
+              <td>Use template literals to transform</td>
+            </tr>
+            <tr>
+              <td>as clause</td>
+              <td>Must produce a valid key type</td>
+            </tr>
+            <tr>
+              <td>Use cases</td>
+              <td>Getters, setters, handlers, API transforms</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

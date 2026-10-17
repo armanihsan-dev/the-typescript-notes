@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Type-Level Arithmetic Operations in TypeScript</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#what-is-type-level-arithmetic" class="nav-link">🎯 What is Type-Level Arithmetic?</a>
+        <a href="#part-1" class="nav-link">Part 1: The Foundation — Tuples as Numbers</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Basic Operations</div>
+        <a href="#part-2" class="nav-link">Part 2: Addition</a>
+        <a href="#part-3" class="nav-link">Part 3: Subtraction</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Advanced Operations</div>
+        <a href="#part-4" class="nav-link">Part 4: Multiplication</a>
+        <a href="#part-5" class="nav-link">Part 5: Division</a>
+      </div>
+
+      <!-- Author Links -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Type-Level Arithmetic Operations in TypeScript</h1>
+      </section>
+
+      <section id="what-is-type-level-arithmetic">
+        <h2>🎯 What is Type-Level Arithmetic?</h2>
+        <h3>Definition:</h3>
+        <p>
+          Type-level arithmetic is performing mathematical operations (addition, subtraction, multiplication, etc.) using only TypeScript's type system — no runtime code, no values, just types.
+        </p>
+        <p>
+          This is possible because TypeScript's type system is Turing complete.
+        </p>
+
+        <h3>🧠 The Core Idea</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TYPE-LEVEL ARITHMETIC                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  VALUE LEVEL (Runtime):         TYPE LEVEL (Compile-Time):     │
+│  ─────────────────────         ────────────────────────         │
+│                                                                  │
+│  const sum = 3 + 4;             type Sum = Add&lt;3, 4&gt;;          │
+│  // sum = 7                     // Sum = 7                     │
+│                                                                  │
+│  You compute at runtime.        You compute at compile time.   │
+│                                                                  │
+│  🔑 KEY INSIGHT:                                                │
+│  We use TUPLE LENGTHS to represent numbers!                    │
+│  [any, any, any]['length'] = 3                                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-1">
+        <h2>Part 1: The Foundation — Tuples as Numbers</h2>
+        <h3>The Secret</h3>
+        <p>TypeScript can't do math directly on number types. But it can count tuple lengths.</p>
+
+        <pre><code class="language-typescript">type Zero = [];
+type One = [any];
+type Two = [any, any];
+type Three = [any, any, any];
+
+// Get the number from a tuple
+type Length&lt;T extends any[]&gt; = T['length'];
+
+type A = Length&lt;Three&gt;; // 3</code></pre>
+
+        <h3>Explanation</h3>
+        <p>
+          <code>T['length']</code> is TypeScript’s indexed access type. It means: “Look up the type of the length property on type T.”
+        </p>
+        <p>Here, T is constrained to be an array or tuple:</p>
+        <pre><code class="language-typescript">type Length&lt;T extends any[]&gt; = T['length'];</code></pre>
+        <p>When T is Three, TypeScript substitutes it in:</p>
+        <pre><code class="language-typescript">type Three = [any, any, any];
+
+type A = Length&lt;Three&gt;;
+// equivalent to:
+type A = Three['length'];</code></pre>
+        <p>
+          A tuple has a fixed number of elements, so its length property has the literal type 3. Therefore, A is 3.
+        </p>
+        <p>Compare that to a regular array, whose length can change:</p>
+        <pre><code class="language-typescript">type ArrayLength = string[]['length']; // number</code></pre>
+        <p>
+          So <code>T['length']</code> doesn’t count elements at runtime; it asks TypeScript for the type of that property.
+        </p>
+
+        <h3>Building Tuples of Any Length (Recursion)</h3>
+        <pre><code class="language-typescript">type BuildTuple&lt;N extends number, T extends any[] = []&gt; = 
+    T['length'] extends N 
+        ? T 
+        : BuildTuple&lt;N, [...T, any]&gt;;
+
+type A = BuildTuple&lt;0&gt;; // []
+type B = BuildTuple&lt;1&gt;; // [any]
+type C = BuildTuple&lt;3&gt;; // [any, any, any]
+type D = BuildTuple&lt;5&gt;; // [any, any, any, any, any]</code></pre>
+
+        <h3>Visual</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TUPLES AS NUMBERS                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Number 3 is represented as: [any, any, any]                   │
+│                                                                  │
+│  [any, any, any]['length'] = 3                                 │
+│                                                                  │
+│  Why? Because TypeScript CAN count tuple elements.             │
+│  But TypeScript CANNOT do 3 + 4 directly.                      │
+│                                                                  │
+│  So we convert:                                                 │
+│  3 → [any, any, any]                                           │
+│  4 → [any, any, any, any]                                      │
+│  Combine → [any, any, any, any, any, any, any]                 │
+│  Count → 7                                                      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-2">
+        <h2>Part 2: Addition</h2>
+        <h3>How It Works</h3>
+        <p>Addition combines two tuples and counts the result.</p>
+
+        <pre><code class="language-typescript">type Add&lt;A extends number, B extends number&gt; = 
+    [...BuildTuple&lt;A&gt;, ...BuildTuple&lt;B&gt;]['length'];</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    ADDITION STEPS                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Add&lt;3, 4&gt;                                                      │
+│                                                                  │
+│  Step 1: BuildTuple&lt;3&gt; = [any, any, any]                       │
+│  Step 2: BuildTuple&lt;4&gt; = [any, any, any, any]                  │
+│  Step 3: Combine = [any, any, any, any, any, any, any]         │
+│  Step 4: Count length = 7                                      │
+│                                                                  │
+│  Result: 7                                                      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-typescript">type A = Add&lt;0, 0&gt;;   // 0
+type B = Add&lt;1, 2&gt;;   // 3
+type C = Add&lt;5, 5&gt;;   // 10
+type D = Add&lt;10, 20&gt;; // 30</code></pre>
+      </section>
+
+      <section id="part-3">
+        <h2>Part 3: Subtraction</h2>
+        <h3>How It Works</h3>
+        <p>Subtraction removes elements from a tuple.</p>
+
+        <pre><code class="language-typescript">type Subtract&lt;A extends number, B extends number&gt; = 
+    BuildTuple&lt;A&gt; extends [...BuildTuple&lt;B&gt;, ...infer Rest]
+        ? Rest['length']
+        : never;</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    SUBTRACTION STEPS                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Subtract&lt;5, 2&gt;                                                 │
+│                                                                  │
+│  Step 1: BuildTuple&lt;5&gt; = [any, any, any, any, any]             │
+│  Step 2: BuildTuple&lt;2&gt; = [any, any]                            │
+│  Step 3: Match: [any, any, ...Rest]                            │
+│          Rest = [any, any, any]                                │
+│  Step 4: Count Rest = 3                                        │
+│                                                                  │
+│  Result: 3                                                      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-typescript">type A = Subtract&lt;5, 2&gt;;  // 3
+type B = Subtract&lt;10, 3&gt;; // 7
+type C = Subtract&lt;3, 3&gt;;  // 0
+type D = Subtract&lt;2, 5&gt;;  // never (can't subtract bigger from smaller)</code></pre>
+      </section>
+
+      <section id="part-4">
+        <h2>Part 4: Multiplication</h2>
+        <h3>How It Works</h3>
+        <p>Multiplication is repeated addition.</p>
+
+        <pre><code class="language-typescript">type Multiply&lt;A extends number, B extends number, Acc extends any[] = []&gt; = 
+    B extends 0 
+        ? Acc['length']
+        : Multiply&lt;A, Subtract&lt;B, 1&gt;, [...Acc, ...BuildTuple&lt;A&gt;]&gt;;</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    MULTIPLICATION STEPS                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Multiply&lt;3, 4&gt;                                                 │
+│  = 3 + 3 + 3 + 3 = 12                                          │
+│                                                                  │
+│  Step 1: Acc = [], B = 4 → add [any, any, any]                 │
+│  Step 2: Acc = [3 items], B = 3 → add [any, any, any]          │
+│  Step 3: Acc = [6 items], B = 2 → add [any, any, any]          │
+│  Step 4: Acc = [9 items], B = 1 → add [any, any, any]          │
+│  Step 5: Acc = [12 items], B = 0 → BASE CASE                   │
+│  Step 6: Count = 12                                            │
+│                                                                  │
+│  Result: 12                                                     │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-typescript">type A = Multiply&lt;2, 3&gt;; // 6
+type B = Multiply&lt;4, 5&gt;; // 20
+type C = Multiply&lt;0, 5&gt;; // 0</code></pre>
+      </section>
+
+      <section id="part-5">
+        <h2>Part 5: Division</h2>
+        <h3>How It Works</h3>
+        <p>Division counts how many times B fits into A.</p>
+
+        <pre><code class="language-typescript">type Divide&lt;A extends number, B extends number, Acc extends any[] = []&gt; = 
+    B extends 0 
+        ? never  // Can't divide by zero
+        : A extends 0 
+            ? Acc['length']
+            : A extends [...BuildTuple&lt;B&gt;, ...infer Rest]
+                ? Divide&lt;Rest['length'], B, [...Acc, any]&gt;
+                : Acc['length'];</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-typescript">type A = Divide&lt;10, 2&gt;; // 5
+type B = Divide&lt;15, 3&gt;; // 5
+type C = Divide&lt;7, 2&gt;;  // 3 (integer division)
+type D = Divide&lt;5, 0&gt;;  // never</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

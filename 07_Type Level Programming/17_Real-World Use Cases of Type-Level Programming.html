@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real-World Use Cases of Type-Level Programming</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Routing &amp; APIs</div>
+        <a href="#intro" class="nav-link">Introduction</a>
+        <a href="#use-case-1" class="nav-link">1. 🛣️ Route Parameters</a>
+        <a href="#use-case-2" class="nav-link">2. 📦 API Response Handling</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Forms &amp; Events</div>
+        <a href="#use-case-3" class="nav-link">3. 🧾 Update Input Types</a>
+        <a href="#use-case-4" class="nav-link"
+          >4. 📝 Form Error &amp; Touched</a
+        >
+        <a href="#use-case-5" class="nav-link">5. 📢 Event System</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Safety &amp; Configs</div>
+        <a href="#use-case-6" class="nav-link">6. 🔐 Safer IDs (Branded)</a>
+        <a href="#use-case-7" class="nav-link">7. ⚙️ Types from Configs</a>
+        <a href="#use-case-8" class="nav-link">8. 👮 Permission System</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. UI &amp; Clients</div>
+        <a href="#use-case-9" class="nav-link">9. 🧩 Component Props</a>
+        <a href="#use-case-10" class="nav-link">10. 🔗 Type-Safe API Client</a>
+      </div>
+
+      <!-- Author Links -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Real-World Use Cases of Type-Level Programming</h1>
+      </section>
+
+      <section id="intro">
+        <p>
+          Type-level programming is useful when we want TypeScript to calculate
+          types automatically from existing types, strings, objects, tuples, or
+          patterns.
+        </p>
+        <p>In simple words:</p>
+        <p>
+          We write logic at the type level so TypeScript can catch mistakes
+          before runtime.
+        </p>
+      </section>
+
+      <section id="use-case-1">
+        <h2>1. 🛣️ Extracting Route Parameters</h2>
+        <p>This is useful in routing systems.</p>
+        <p>Example route:</p>
+        <pre><code class="language-typescript">"/users/:userId/posts/:postId";</code></pre>
+        <p>From this string, we want TypeScript to extract:</p>
+        <pre><code class="language-typescript">"userId" | "postId";</code></pre>
+        <p>Code:</p>
+        <pre><code class="language-typescript">type RouteParams&lt;T extends string&gt; =
+  T extends `${string}:${infer Param}/${infer Rest}`
+    ? Param | RouteParams&lt;Rest&gt;
+    : T extends `${string}:${infer Param}`
+      ? Param
+      : never;
+
+type Params = RouteParams&lt;"/users/:userId/posts/:postId"&gt;;
+// "userId" | "postId"</code></pre>
+        <p>Now we can create a params object type:</p>
+        <pre><code class="language-typescript">type ParamsObject&lt;T extends string&gt; = {
+  [K in RouteParams&lt;T&gt;]: string;
+};
+
+type UserPostParams = ParamsObject&lt;"/users/:userId/posts/:postId"&gt;;</code></pre>
+        <p>Output:</p>
+        <pre><code class="language-typescript">type UserPostParams = {
+  userId: string;
+  postId: string;
+};</code></pre>
+        <p>Real-world use:</p>
+        <pre><code class="language-typescript">function handleRoute(params: UserPostParams) {
+  params.userId;
+  params.postId;
+}</code></pre>
+        <p>This helps in:</p>
+        <ul>
+          <li>Express-style routing</li>
+          <li>frontend routing</li>
+          <li>API route handlers</li>
+          <li>file-based routing systems</li>
+        </ul>
+      </section>
+
+      <section id="use-case-2">
+        <h2>2. 📦 Type-Safe API Response Handling</h2>
+        <p>
+          In real projects, APIs usually return either success data or an error.
+        </p>
+        <p>
+          Instead of manually writing response types again and again, we can
+          create a reusable type.
+        </p>
+        <pre><code class="language-typescript">type ApiResponse&lt;T&gt; =
+  | {
+      success: true;
+      data: T;
+    }
+  | {
+      success: false;
+      error: string;
+    };</code></pre>
+        <p>Example:</p>
+        <pre><code class="language-typescript">type User = {
+  id: string;
+  name: string;
+};
+
+type UserResponse = ApiResponse&lt;User&gt;;
+
+function handleResponse(response: UserResponse) {
+  if (response.success) {
+    response.data.name;
+  } else {
+    response.error;
+  }
+}</code></pre>
+        <p>Why this is useful:</p>
+        <ul>
+          <li>If success is true, data is available.</li>
+          <li>If success is false, error is available.</li>
+          <li>TypeScript prevents us from using the wrong property.</li>
+        </ul>
+        <p>Real-world use:</p>
+        <ul>
+          <li>login API</li>
+          <li>payment API</li>
+          <li>course purchase API</li>
+          <li>file upload API</li>
+          <li>dashboard data API</li>
+        </ul>
+      </section>
+
+      <section id="use-case-3">
+        <h2>3. 🧾 Creating Update Input Types from Models</h2>
+        <p>Suppose we have a database model:</p>
+        <pre><code class="language-typescript">type User = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  createdAt: Date;
+};</code></pre>
+        <p>For an update API, we may want users to update only:</p>
+        <ul>
+          <li>name</li>
+          <li>email</li>
+        </ul>
+        <p>
+          We can create our own type-level helper instead of using built-in
+          utility types.
+        </p>
+        <pre><code class="language-typescript">type UserUpdateInput = {
+  [K in keyof User as K extends "name" | "email" ? K : never]?: User[K];
+};</code></pre>
+        <p>Output:</p>
+        <pre><code class="language-typescript">type UserUpdateInput = {
+  name?: string;
+  email?: string;
+};
+
+function updateUser(data: UserUpdateInput) {}</code></pre>
+        <p>This is allowed:</p>
+        <pre><code class="language-typescript">updateUser({
+  name: "Anurag",
+});</code></pre>
+        <p>This is not allowed:</p>
+        <pre><code class="language-typescript">updateUser({
+  password: "new-password",
+});</code></pre>
+        <p>Real-world use:</p>
+        <ul>
+          <li>PATCH APIs</li>
+          <li>admin dashboards</li>
+          <li>profile update forms</li>
+          <li>database update operations</li>
+          <li>course update forms</li>
+        </ul>
+      </section>
+
+      <section id="use-case-4">
+        <h2>4. 📝 Form Error and Touched Types</h2>
+        <p>In forms, we usually have:</p>
+        <ul>
+          <li>values</li>
+          <li>errors</li>
+          <li>touched fields</li>
+        </ul>
+        <p>Suppose this is our form value type:</p>
+        <pre><code class="language-typescript">type SignupForm = {
+  name: string;
+  email: string;
+  password: string;
+};</code></pre>
+        <p>We can create error types from it:</p>
+        <pre><code class="language-typescript">type FormErrors&lt;T&gt; = {
+  [K in keyof T]?: string;
+};
+
+type SignupFormErrors = FormErrors&lt;SignupForm&gt;;</code></pre>
+        <p>Output:</p>
+        <pre><code class="language-typescript">type SignupFormErrors = {
+  name?: string;
+  email?: string;
+  password?: string;
+};</code></pre>
+        <p>We can also create touched fields:</p>
+        <pre><code class="language-typescript">type FormTouched&lt;T&gt; = {
+  [K in keyof T]?: boolean;
+};
+
+type SignupFormTouched = FormTouched&lt;SignupForm&gt;;</code></pre>
+        <p>Output:</p>
+        <pre><code class="language-typescript">type SignupFormTouched = {
+  name?: boolean;
+  email?: boolean;
+  password?: boolean;
+};</code></pre>
+        <p>Real-world use:</p>
+        <ul>
+          <li>React forms</li>
+          <li>checkout forms</li>
+          <li>login forms</li>
+          <li>course creation forms</li>
+          <li>admin panel forms</li>
+        </ul>
+      </section>
+
+      <section id="use-case-5">
+        <h2>5. 📢 Type-Safe Event System</h2>
+        <p>Suppose we have events in an app:</p>
+        <pre><code class="language-typescript">type AppEvents = {
+  login: {
+    userId: string;
+  };
+  logout: {
+    userId: string;
+  };
+  coursePurchased: {
+    courseId: string;
+    amount: number;
+  };
+};</code></pre>
+        <p>Now we can create a type-safe emit function:</p>
+        <pre><code class="language-typescript">function emit&lt;EventName extends keyof AppEvents&gt;(
+  eventName: EventName,
+  payload: AppEvents[EventName],
+) {}</code></pre>
+        <p>Correct usage:</p>
+        <pre><code class="language-typescript">emit("login", {
+  userId: "u_123",
+});</code></pre>
+        <p>Correct usage:</p>
+        <pre><code class="language-typescript">emit("coursePurchased", {
+  courseId: "c_123",
+  amount: 999,
+});</code></pre>
+        <p>Wrong usage:</p>
+        <pre><code class="language-typescript">emit("coursePurchased", {
+  userId: "u_123",
+});</code></pre>
+        <p>TypeScript will catch the mistake.</p>
+        <p>Real-world use:</p>
+        <ul>
+          <li>analytics events</li>
+          <li>WebSocket events</li>
+          <li>notification systems</li>
+          <li>Node.js event emitters</li>
+          <li>frontend tracking events</li>
+        </ul>
+      </section>
+
+      <section id="use-case-6">
+        <h2>6. 🔐 Safer IDs with Branded Types</h2>
+        <p>In normal TypeScript, many IDs are just strings:</p>
+        <pre><code class="language-typescript">type UserId = string;
+type CourseId = string;</code></pre>
+        <p>So this mistake is possible:</p>
+        <pre><code class="language-typescript">function getUser(id: UserId) {}
+
+const courseId: CourseId = "course_123";
+
+getUser(courseId); // allowed because both are string</code></pre>
+        <p>
+          With branded types, we can make different string types behave
+          differently.
+        </p>
+        <pre><code class="language-typescript">type Brand&lt;T, Name&gt; = T &amp; {
+  readonly __brand: Name;
+};</code></pre>
+        <p>Now create safer IDs:</p>
+        <pre><code class="language-typescript">type UserId = Brand&lt;string, "UserId"&gt;;
+type CourseId = Brand&lt;string, "CourseId"&gt;;
+
+function getUser(id: UserId) {}
+
+const courseId = "course_123" as CourseId;
+
+getUser(courseId); // Error</code></pre>
+        <p>This prevents accidental mixing of IDs.</p>
+        <p>Real-world use:</p>
+        <ul>
+          <li>user IDs</li>
+          <li>course IDs</li>
+          <li>order IDs</li>
+          <li>payment IDs</li>
+          <li>database object IDs</li>
+          <li>transaction IDs</li>
+        </ul>
+      </section>
+
+      <section id="use-case-7">
+        <h2>7. ⚙️ Deriving Types from Config Objects</h2>
+        <p>Suppose we have a route config:</p>
+        <pre><code class="language-typescript">const routes = {
+  home: "/",
+  login: "/login",
+  dashboard: "/dashboard",
+} as const;</code></pre>
+        <p>We can derive route names:</p>
+        <pre><code class="language-typescript">type RouteName = keyof typeof routes;</code></pre>
+        <p>Output:</p>
+        <pre><code class="language-typescript">type RouteName = "home" | "login" | "dashboard";</code></pre>
+        <p>We can derive route paths:</p>
+        <pre><code class="language-typescript">type RoutePath = (typeof routes)[RouteName];</code></pre>
+        <p>Output:</p>
+        <pre><code class="language-typescript">type RoutePath = "/" | "/login" | "/dashboard";</code></pre>
+        <p>Now we can use it safely:</p>
+        <pre><code class="language-typescript">function navigate(path: RoutePath) {}
+
+navigate("/login"); // allowed
+navigate("/wrong-url"); // Error</code></pre>
+        <p>Real-world use:</p>
+        <ul>
+          <li>route configs</li>
+          <li>feature flags</li>
+          <li>theme configs</li>
+          <li>permission configs</li>
+          <li>payment status configs</li>
+          <li>course category configs</li>
+        </ul>
+      </section>
+
+      <section id="use-case-8">
+        <h2>8. 👮 Permission System Types</h2>
+        <p>Suppose we have roles and permissions:</p>
+        <pre><code class="language-typescript">type Permissions = {
+  admin: "create" | "read" | "update" | "delete";
+  teacher: "create" | "read" | "update";
+  student: "read";
+};</code></pre>
+        <p>We can extract allowed actions for a role:</p>
+        <pre><code class="language-typescript">type ActionsFor&lt;Role extends keyof Permissions&gt; = Permissions[Role];
+
+type AdminActions = ActionsFor&lt;"admin"&gt;;
+// "create" | "read" | "update" | "delete"
+
+type StudentActions = ActionsFor&lt;"student"&gt;;
+// "read"</code></pre>
+        <p>Now we can build type-safe permission checks:</p>
+        <pre><code class="language-typescript">function canPerform&lt;Role extends keyof Permissions&gt;(
+  role: Role,
+  action: Permissions[Role],
+) {}</code></pre>
+        <p>Correct:</p>
+        <pre><code class="language-typescript">canPerform("admin", "delete");
+canPerform("student", "read");</code></pre>
+        <p>Wrong:</p>
+        <pre><code class="language-typescript">canPerform("student", "delete");</code></pre>
+        <p>TypeScript catches it.</p>
+        <p>Real-world use:</p>
+        <ul>
+          <li>admin panels</li>
+          <li>course platforms</li>
+          <li>SaaS dashboards</li>
+          <li>role-based access control</li>
+          <li>team management systems</li>
+        </ul>
+      </section>
+
+      <section id="use-case-9">
+        <h2>9. 🧩 Creating Component Props from Variants</h2>
+        <p>Suppose we have button variants:</p>
+        <pre><code class="language-typescript">type ButtonVariants = {
+  primary: {
+    background: "blue";
+    textColor: "white";
+  };
+  danger: {
+    background: "red";
+    textColor: "white";
+  };
+  ghost: {
+    background: "transparent";
+    textColor: "black";
+  };
+};</code></pre>
+        <p>We can create type-safe button props:</p>
+        <pre><code class="language-typescript">type ButtonProps&lt;Variant extends keyof ButtonVariants&gt; = {
+  variant: Variant;
+  styles: ButtonVariants[Variant];
+};
+
+const primaryButton: ButtonProps&lt;"primary"&gt; = {
+  variant: "primary",
+  styles: {
+    background: "blue",
+    textColor: "white",
+  },
+};</code></pre>
+        <p>Wrong:</p>
+        <pre><code class="language-typescript">const dangerButton: ButtonProps&lt;"danger"&gt; = {
+  variant: "danger",
+  styles: {
+    background: "blue",
+    textColor: "white",
+  },
+};</code></pre>
+        <p>TypeScript catches the mismatch.</p>
+        <p>Real-world use:</p>
+        <ul>
+          <li>design systems</li>
+          <li>React component libraries</li>
+          <li>theme variants</li>
+          <li>button variants</li>
+          <li>card variants</li>
+          <li>badge variants</li>
+        </ul>
+      </section>
+
+      <section id="use-case-10">
+        <h2>10. 🔗 Type-Safe API Client</h2>
+        <p>Suppose we define API endpoints like this:</p>
+        <pre><code class="language-typescript">type ApiRoutes = {
+  "/users": {
+    method: "GET";
+    response: {
+      id: string;
+      name: string;
+    }[];
+  };
+  "/courses": {
+    method: "GET";
+    response: {
+      id: string;
+      title: string;
+    }[];
+  };
+};</code></pre>
+        <p>Now create a type-safe API function:</p>
+        <pre><code class="language-typescript">function request&lt;Path extends keyof ApiRoutes&gt;(
+  path: Path,
+): ApiRoutes[Path]["response"] {
+  throw new Error("Not implemented");
+}
+
+const users = request("/users");</code></pre>
+        <p>Now TypeScript knows:</p>
+        <pre><code class="language-typescript">users[0].name;</code></pre>
+        <p>For courses:</p>
+        <pre><code class="language-typescript">const courses = request("/courses");</code></pre>
+        <p>TypeScript knows:</p>
+        <pre><code class="language-typescript">courses[0].title;</code></pre>
+        <p>Wrong path:</p>
+        <pre><code class="language-typescript">request("/wrong");</code></pre>
+        <p>TypeScript catches it.</p>
+        <p>Real-world use:</p>
+        <ul>
+          <li>frontend API clients</li>
+          <li>backend SDKs</li>
+          <li>internal tools</li>
+          <li>admin dashboards</li>
+          <li>course platform APIs</li>
+        </ul>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

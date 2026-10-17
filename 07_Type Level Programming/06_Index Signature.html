@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index Signatures in TypeScript — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-are-index-signatures" class="nav-link">🎯 What Are Index Signatures?</a>
+        <a href="#basic-syntax" class="nav-link">Part 1: Basic Syntax</a>
+        <a href="#how-it-works" class="nav-link">Part 2: How It Works</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Rules &amp; Properties</div>
+        <a href="#key-type-rules" class="nav-link">Part 3: Key Type Rules</a>
+        <a href="#regular-properties" class="nav-link">Part 4: Index + Regular Properties</a>
+        <a href="#readonly-index" class="nav-link">Part 5: Readonly Index Signatures</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Utilities &amp; Applications</div>
+        <a href="#record-utility" class="nav-link">Part 6: Index Signatures with Record</a>
+        <a href="#use-cases" class="nav-link">Part 7: Practical Use Cases</a>
+        <a href="#common-mistakes" class="nav-link">Part 9: Common Mistakes</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Summary</div>
+        <a href="#summary" class="nav-link">📝 Summary Table &amp; Takeaways</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Type System</span>
+        <h1>INDEX SIGNATURES IN TYPESCRIPT — COMPLETE GUIDE</h1>
+      </section>
+
+      <!-- What Are Index Signatures? -->
+      <section id="what-are-index-signatures">
+        <h2>🎯 What Are Index Signatures?</h2>
+        
+        <h3>Definition:</h3>
+        <p>An index signature is a way to define a type for an object that can have any number of properties with dynamic keys, but all values must follow the same type.</p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type Dictionary = {
+    [key: string]: string;
+};
+// Any string key, value must be string</code></pre>
+
+        <h3>🧠 The Mental Model</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    INDEX SIGNATURE                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  REGULAR OBJECT TYPE:              INDEX SIGNATURE:             │
+│  ───────────────────               ─────────────────            │
+│                                                                  │
+│  type User = {                     type Dictionary = {          │
+│      name: string;                     [key: string]: string;   │
+│      age: number;                  };                           │
+│  };                                                             │
+│                                                                  │
+│  FIXED keys (name, age).           DYNAMIC keys (any string).  │
+│  You know them in advance.         You don't know them.        │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 1: Basic Syntax -->
+      <section id="basic-syntax">
+        <h2>Part 1: Basic Syntax</h2>
+
+        <h3>String Index Signature</h3>
+        <pre><code class="language-typescript">type Dictionary = {
+    [key: string]: string;
+};
+
+const translations: Dictionary = {
+    hello: "hola",
+    goodbye: "adiós",
+    thankYou: "gracias"
+};</code></pre>
+
+        <h3>Number Index Signature</h3>
+        <pre><code class="language-typescript">type NumberDictionary = {
+    [index: number]: string;
+};
+
+const fruits: NumberDictionary = {
+    0: "apple",
+    1: "banana",
+    2: "orange"
+};</code></pre>
+      </section>
+
+      <!-- Part 2: How It Works -->
+      <section id="how-it-works">
+        <h2>Part 2: How It Works</h2>
+
+        <h3>The Syntax Breakdown</h3>
+        <pre><code class="language-typescript">type Dictionary = {
+    [key: string]: string;
+//   ↑      ↑        ↑
+//   |      |        |
+//   |      |        Value type
+//   |      Key type
+//   Parameter name (can be anything)
+};</code></pre>
+
+        <h3>What It Means</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW IT WORKS                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  [key: string]: string                                          │
+│                                                                  │
+│  Means:                                                         │
+│  • ANY string key is allowed                                    │
+│  • The value for ANY key must be a string                      │
+│  • You can add as many properties as you want                  │
+│  • You can't add a property with a different value type        │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  ✅ Allowed:                                             │   │
+│  │  { hello: "hola", goodbye: "adiós" }                    │   │
+│  │                                                         │   │
+│  │  ❌ Not allowed:                                         │   │
+│  │  { hello: "hola", count: 42 }                           │   │
+│  │  // count is number, but all values must be string     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 3: Key Type Rules -->
+      <section id="key-type-rules">
+        <h2>Part 3: Key Type Rules</h2>
+
+        <h3>String vs Number vs Symbol</h3>
+        <pre><code class="language-typescript">// ✅ String keys
+type StringKeys = {
+    [key: string]: number;
+};
+
+// ✅ Number keys
+type NumberKeys = {
+    [index: number]: string;
+};
+
+// ✅ Symbol keys
+type SymbolKeys = {
+    [key: symbol]: boolean;
+};</code></pre>
+
+        <h3>JavaScript Behavior (Important!)</h3>
+        <pre><code class="language-typescript">// 🔥 In JavaScript, number keys are converted to strings!
+const obj = {
+    0: "apple",
+    1: "banana"
+};
+console.log(Object.keys(obj)); // ["0", "1"] (strings!)
+
+// 🔥 TypeScript allows both string and number index signatures
+type Mixed = {
+    [key: string]: string;
+    [index: number]: string;
+};</code></pre>
+      </section>
+
+      <!-- Part 4: Index Signature + Regular Properties -->
+      <section id="regular-properties">
+        <h2>Part 4: Index Signature + Regular Properties</h2>
+
+        <h3>The Rule</h3>
+        <pre><code class="language-typescript">type User = {
+    name: string;              // Fixed property
+    age: number;               // Fixed property
+    [key: string]: string | number;  // Index signature
+};
+
+// ✅ Works: All properties match the index type
+const user: User = {
+    name: "Alice",
+    age: 25,
+    email: "alice@email.com"  // ✅ string matches
+};
+
+// ❌ Fails: A property doesn't match
+type User2 = {
+    name: string;
+    age: number;
+    [key: string]: string;    // Only strings allowed
+};
+// ❌ Error: 'age' of type 'number' is not assignable to 'string'</code></pre>
+
+        <h3>Visual</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    INDEX + REGULAR PROPERTIES                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Rule: ALL regular properties MUST match the index signature.  │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  type User = {                                          │   │
+│  │      name: string;        // string ✅                  │   │
+│  │      age: number;         // number ✅                  │   │
+│  │      [key: string]: string | number;  // allows both    │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  type User2 = {                                         │   │
+│  │      name: string;        // string ✅                  │   │
+│  │      age: number;         // number ❌ (not string!)    │   │
+│  │      [key: string]: string;  // only string allowed     │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 5: Readonly Index Signatures -->
+      <section id="readonly-index">
+        <h2>Part 5: Readonly Index Signatures</h2>
+        <pre><code class="language-typescript">type ReadonlyDictionary = {
+    readonly [key: string]: string;
+};
+
+const dict: ReadonlyDictionary = {
+    hello: "hola"
+};
+
+dict.hello = "bonjour"; // ❌ Error: readonly
+dict.newKey = "value";  // ❌ Error: readonly</code></pre>
+      </section>
+
+      <!-- Part 6: Index Signatures with Record -->
+      <section id="record-utility">
+        <h2>Part 6: Index Signatures with Record</h2>
+
+        <h3>Record&lt;K, V&gt; Uses Index Signatures</h3>
+        <pre><code class="language-typescript">// These are equivalent:
+type Dictionary1 = {
+    [key: string]: string;
+};
+
+type Dictionary2 = Record&lt;string, string&gt;;
+
+// Both allow:
+const d1: Dictionary1 = { hello: "hola" };
+const d2: Dictionary2 = { hello: "hola" };</code></pre>
+
+        <h3>Record with Union Keys</h3>
+        <pre><code class="language-typescript">type Status = "pending" | "approved" | "rejected";
+
+type StatusMessages = Record&lt;Status, string&gt;;
+// Equivalent to:
+// {
+//     pending: string;
+//     approved: string;
+//     rejected: string;
+// }
+
+const messages: StatusMessages = {
+    pending: "Waiting...",
+    approved: "Done!",
+    rejected: "Failed"
+};</code></pre>
+      </section>
+
+      <!-- Part 7: Practical Use Cases -->
+      <section id="use-cases">
+        <h2>Part 7: Practical Use Cases</h2>
+
+        <h3>Use Case 1: Translation Dictionary</h3>
+        <pre><code class="language-typescript">type Translation = {
+    [key: string]: string;
+};
+
+const englishToSpanish: Translation = {
+    hello: "hola",
+    goodbye: "adiós",
+    thankYou: "gracias"
+};
+
+// Type-safe access
+const word: string = englishToSpanish["hello"];</code></pre>
+
+        <h3>Use Case 2: Cache Storage</h3>
+        <pre><code class="language-typescript">type Cache = {
+    [key: string]: {
+        value: unknown;
+        expiresAt: number;
+    };
+};
+
+const cache: Cache = {
+    "user:1": { value: { name: "Alice" }, expiresAt: Date.now() + 3600000 },
+    "user:2": { value: { name: "Bob" }, expiresAt: Date.now() + 3600000 }
+};</code></pre>
+
+        <h3>Use Case 4: Dynamic Form Data</h3>
+        <pre><code class="language-typescript">type FormData = {
+    [fieldName: string]: string | number | boolean;
+};
+
+const formData: FormData = {
+    username: "alice",
+    age: 25,
+    isActive: true
+};</code></pre>
+      </section>
+
+      <!-- Part 9: Common Mistakes -->
+      <section id="common-mistakes">
+        <h2>Part 9: Common Mistakes</h2>
+
+        <h3>Mistake 1: Index Value Type Too Narrow</h3>
+        <pre><code class="language-typescript">// ❌ Error: age doesn't match string
+type User = {
+    name: string;
+    age: number;
+    [key: string]: string;
+};
+
+// ✅ Fix: Widen the index type
+type User2 = {
+    name: string;
+    age: number;
+    [key: string]: string | number;
+};</code></pre>
+
+        <h3>Mistake 2: Using Index Signature When You Need Specific Keys</h3>
+        <pre><code class="language-typescript">// ❌ Bad: Loses type safety
+type Config = {
+    [key: string]: string;
+};
+
+// ✅ Better: Use specific keys
+type Config2 = {
+    apiUrl: string;
+    timeout: string;
+};</code></pre>
+
+        <h3>Mistake 3: Forgetting undefined in Lookups</h3>
+        <pre><code class="language-typescript">type Dict = { [key: string]: string };
+
+const dict: Dict = { hello: "hola" };
+
+const value = dict["nonexistent"]; // string
+// But at runtime, it's undefined!
+
+// ✅ Fix: Add undefined to index type
+type SafeDict = { [key: string]: string | undefined };
+
+const safeDict: SafeDict = { hello: "hola" };
+const safeValue = safeDict["nonexistent"]; // string | undefined</code></pre>
+      </section>
+
+      <!-- Summary -->
+      <section id="summary">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Syntax</th>
+              <th>Meaning</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>[key: string]: T</code></td>
+              <td>Any string key, value type T</td>
+              <td><code>{ [key: string]: string }</code></td>
+            </tr>
+            <tr>
+              <td><code>[index: number]: T</code></td>
+              <td>Any number key, value type T</td>
+              <td><code>{ [index: number]: string }</code></td>
+            </tr>
+            <tr>
+              <td><code>[key: symbol]: T</code></td>
+              <td>Any symbol key, value type T</td>
+              <td><code>{ [key: symbol]: boolean }</code></td>
+            </tr>
+            <tr>
+              <td><code>readonly [key: string]: T</code></td>
+              <td>Readonly index signature</td>
+              <td>Cannot modify</td>
+            </tr>
+            <tr>
+              <td><code>Record&lt;K, V&gt;</code></td>
+              <td>Shorthand for index signature</td>
+              <td><code>Record&lt;string, number&gt;</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Index Signature</td>
+              <td>Defines dynamic keys with one value type</td>
+            </tr>
+            <tr>
+              <td>Syntax</td>
+              <td><code>[key: string]: ValueType</code></td>
+            </tr>
+            <tr>
+              <td>All values same type</td>
+              <td>Index signature enforces this</td>
+            </tr>
+            <tr>
+              <td>Regular properties must match</td>
+              <td>Fixed properties must match index type</td>
+            </tr>
+            <tr>
+              <td><code>Record&lt;K, V&gt;</code></td>
+              <td>Built-in utility for index signatures</td>
+            </tr>
+            <tr>
+              <td>Use cases</td>
+              <td>Dictionaries, caches, dynamic data</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

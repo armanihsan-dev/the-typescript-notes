@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Property Modifiers in Mapped Types — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-are-modifiers" class="nav-link"
+          >🎯 What Are Property Modifiers?</a
+        >
+        <a href="#the-two-modifiers" class="nav-link"
+          >Part 1: The Two Modifiers</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Adding &amp; Removing</div>
+        <a href="#adding-optional" class="nav-link"
+          >Part 2: Adding Optional (?)</a
+        >
+        <a href="#removing-optional" class="nav-link"
+          >Part 3: Removing Optional (-?)</a
+        >
+        <a href="#adding-readonly" class="nav-link">Part 4: Adding Readonly</a>
+        <a href="#removing-readonly" class="nav-link"
+          >Part 5: Removing Readonly (-readonly)</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Mechanics &amp; Built-ins</div>
+        <a href="#combining-modifiers" class="nav-link"
+          >Part 6: Combining Modifiers</a
+        >
+        <a href="#deep-dive" class="nav-link">Part 7: Deep Dive</a>
+        <a href="#built-in-types" class="nav-link"
+          >Part 8: Built-in Utility Types</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Advanced &amp; Summary</div>
+        <a href="#use-cases" class="nav-link">Part 9: Practical Use Cases</a>
+        <a href="#deep-modifiers" class="nav-link">Part 10: Deep Modifiers</a>
+        <a href="#combinations-table" class="nav-link"
+          >Part 11: Combinations Table</a
+        >
+        <a href="#summary" class="nav-link">📝 Summary &amp; Takeaways</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Mapped Types</span>
+        <h1>PROPERTY MODIFIERS IN MAPPED TYPES — COMPLETE GUIDE</h1>
+      </section>
+
+      <!-- What Are Property Modifiers? -->
+      <section id="what-are-modifiers">
+        <h2>🎯 What Are Property Modifiers?</h2>
+
+        <h3>Definition:</h3>
+        <p>
+          Property modifiers in mapped types are special symbols (?, readonly)
+          that let you add, remove, or change the optional (?) and readonly
+          (readonly) status of properties when transforming a type.
+        </p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type NewType&lt;T&gt; = {
+    [K in keyof T]?: T[K];         // Add optional
+    readonly [K in keyof T]: T[K]; // Add readonly
+    [K in keyof T]-?: T[K];        // Remove optional
+    -readonly [K in keyof T]: T[K]; // Remove readonly
+};</code></pre>
+
+        <h3>🧠 The Mental Model</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    PROPERTY MODIFIERS                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  You can ADD or REMOVE two modifiers:                          │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  MODIFIER    ADD          REMOVE                         │   │
+│  │  ────────    ───          ──────                         │   │
+│  │  Optional    ?            -?                            │   │
+│  │  Readonly    readonly     -readonly                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Think of it like a switch:                                    │
+│  • `?` = turn ON optional                                     │
+│  • `-?` = turn OFF optional                                   │
+│  • `readonly` = turn ON readonly                              │
+│  • `-readonly` = turn OFF readonly                            │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 1: The Two Modifiers -->
+      <section id="the-two-modifiers">
+        <h2>Part 1: The Two Modifiers</h2>
+
+        <h3>1. Optional Modifier (?)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Modifier</th>
+              <th>Effect</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>?</code></td>
+              <td>Makes properties optional</td>
+            </tr>
+            <tr>
+              <td><code>-?</code></td>
+              <td>Makes properties required</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>2. Readonly Modifier (readonly)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Modifier</th>
+              <th>Effect</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>readonly</code></td>
+              <td>Makes properties readonly</td>
+            </tr>
+            <tr>
+              <td><code>-readonly</code></td>
+              <td>Makes properties mutable</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Part 2: Adding Optional (?) -->
+      <section id="adding-optional">
+        <h2>Part 2: Adding Optional (?)</h2>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type MakeOptional&lt;T&gt; = {
+    [K in keyof T]?: T[K];
+};</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">type User = {
+    name: string;
+    age: number;
+    email: string;
+};
+
+type PartialUser = MakeOptional&lt;User&gt;;
+// {
+//     name?: string;
+//     age?: number;
+//     email?: string;
+// }</code></pre>
+
+        <h3>Visual</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    ADDING OPTIONAL (?)                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  BEFORE:                          AFTER:                        │
+│  ┌───────────────────────┐       ┌───────────────────────┐     │
+│  │  name: string         │       │  name?: string        │     │
+│  │  age: number          │  →    │  age?: number         │     │
+│  │  email: string        │       │  email?: string       │     │
+│  └───────────────────────┘       └───────────────────────┘     │
+│                                                                  │
+│  All properties become optional.                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 3: Removing Optional (-?) -->
+      <section id="removing-optional">
+        <h2>Part 3: Removing Optional (-?)</h2>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type MakeRequired&lt;T&gt; = {
+    [K in keyof T]-?: T[K];
+};</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">type PartialUser = {
+    name?: string;
+    age?: number;
+    email?: string;
+};
+
+type RequiredUser = MakeRequired&lt;PartialUser&gt;;
+// {
+//     name: string;
+//     age: number;
+//     email: string;
+// }</code></pre>
+
+        <h3>Visual</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    REMOVING OPTIONAL (-?)                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  BEFORE:                          AFTER:                        │
+│  ┌───────────────────────┐       ┌───────────────────────┐     │
+│  │  name?: string        │       │  name: string         │     │
+│  │  age?: number         │  →    │  age: number          │     │
+│  │  email?: string       │       │  email: string        │     │
+│  └───────────────────────┘       └───────────────────────┘     │
+│                                                                  │
+│  All properties become required.                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 4: Adding Readonly -->
+      <section id="adding-readonly">
+        <h2>Part 4: Adding Readonly</h2>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type MakeReadonly&lt;T&gt; = {
+    readonly [K in keyof T]: T[K];
+};</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">type User = {
+    name: string;
+    age: number;
+};
+
+type ReadonlyUser = MakeReadonly&lt;User&gt;;
+// {
+//     readonly name: string;
+//     readonly age: number;
+// }</code></pre>
+
+        <h3>Visual</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    ADDING READONLY                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  BEFORE:                          AFTER:                        │
+│  ┌───────────────────────┐       ┌───────────────────────┐     │
+│  │  name: string         │       │  readonly name: string│     │
+│  │  age: number          │  →    │  readonly age: number │     │
+│  └───────────────────────┘       └───────────────────────┘     │
+│                                                                  │
+│  All properties become readonly.                               │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 5: Removing Readonly (-readonly) -->
+      <section id="removing-readonly">
+        <h2>Part 5: Removing Readonly (-readonly)</h2>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type MakeMutable&lt;T&gt; = {
+    -readonly [K in keyof T]: T[K];
+};</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">type ReadonlyUser = {
+    readonly name: string;
+    readonly age: number;
+};
+
+type MutableUser = MakeMutable&lt;ReadonlyUser&gt;;
+// {
+//     name: string;
+//     age: number;
+// }</code></pre>
+
+        <h3>Visual</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    REMOVING READONLY (-readonly)                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  BEFORE:                          AFTER:                        │
+│  ┌───────────────────────┐       ┌───────────────────────┐     │
+│  │  readonly name: string│       │  name: string         │     │
+│  │  readonly age: number │  →    │  age: number          │     │
+│  └───────────────────────┘       └───────────────────────┘     │
+│                                                                  │
+│  All properties become mutable.                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 6: Combining Modifiers -->
+      <section id="combining-modifiers">
+        <h2>Part 6: Combining Modifiers</h2>
+
+        <h3>Optional + Readonly</h3>
+        <pre><code class="language-typescript">type PartialReadonly&lt;T&gt; = {
+    readonly [K in keyof T]?: T[K];
+};
+
+type User = { name: string; age: number };
+type Result = PartialReadonly&lt;User&gt;;
+// {
+//     readonly name?: string;
+//     readonly age?: number;
+// }</code></pre>
+
+        <h3>Required + Mutable</h3>
+        <pre><code class="language-typescript">type RequiredMutable&lt;T&gt; = {
+    -readonly [K in keyof T]-?: T[K];
+};
+
+type PartialReadonlyUser = {
+    readonly name?: string;
+    readonly age?: number;
+};
+
+type Result = RequiredMutable&lt;PartialReadonlyUser&gt;;
+// {
+//     name: string;
+//     age: number;
+// }</code></pre>
+      </section>
+
+      <!-- Part 7: How Modifiers Work — Deep Dive -->
+      <section id="deep-dive">
+        <h2>Part 7: How Modifiers Work — Deep Dive</h2>
+
+        <h3>The + and - Prefix</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    MODIFIER PREFIXES                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ?           =  +?  (add optional)      ← default, no prefix   │
+│  -?          =      (remove optional)                          │
+│  readonly    =  +readonly (add readonly) ← default, no prefix  │
+│  -readonly   =      (remove readonly)                          │
+│                                                                  │
+│  The `+` is implied when you just write `?` or `readonly`.     │
+│  The `-` is explicit to REMOVE the modifier.                   │
+│                                                                  │
+│  You can write `+?` and `+readonly` explicitly, but it's       │
+│  the same as `?` and `readonly`.                              │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 8: Built-in Utility Types Using Modifiers -->
+      <section id="built-in-types">
+        <h2>Part 8: Built-in Utility Types Using Modifiers</h2>
+
+        <h3>Partial&lt;T&gt; — Adds ?</h3>
+        <pre><code class="language-typescript">type Partial&lt;T&gt; = {
+    [K in keyof T]?: T[K];
+};</code></pre>
+
+        <h3>Required&lt;T&gt; — Removes ?</h3>
+        <pre><code class="language-typescript">type Required&lt;T&gt; = {
+    [K in keyof T]-?: T[K];
+};</code></pre>
+
+        <h3>Readonly&lt;T&gt; — Adds readonly</h3>
+        <pre><code class="language-typescript">type Readonly&lt;T&gt; = {
+    readonly [K in keyof T]: T[K];
+};</code></pre>
+
+        <h3>Mutable&lt;T&gt; — Removes readonly (not built-in)</h3>
+        <pre><code class="language-typescript">type Mutable&lt;T&gt; = {
+    -readonly [K in keyof T]: T[K];
+};</code></pre>
+      </section>
+
+      <!-- Part 9: Practical Use Cases -->
+      <section id="use-cases">
+        <h2>Part 9: Practical Use Cases</h2>
+
+        <h3>Use Case 1: Form State (Optional Fields)</h3>
+        <pre><code class="language-typescript">type FormState&lt;T&gt; = {
+    [K in keyof T]?: T[K];
+};
+
+type LoginForm = {
+    email: string;
+    password: string;
+    rememberMe: boolean;
+};
+
+type LoginFormState = FormState&lt;LoginForm&gt;;
+// {
+//     email?: string;
+//     password?: string;
+//     rememberMe?: boolean;
+// }</code></pre>
+
+        <h3>Use Case 2: Immutable Configuration</h3>
+        <pre><code class="language-typescript">type ImmutableConfig&lt;T&gt; = {
+    readonly [K in keyof T]: T[K];
+};
+
+type AppConfig = {
+    apiUrl: string;
+    timeout: number;
+    retries: number;
+};
+
+type ReadonlyConfig = ImmutableConfig&lt;AppConfig&gt;;
+// {
+//     readonly apiUrl: string;
+//     readonly timeout: number;
+//     readonly retries: number;
+// }</code></pre>
+
+        <h3>Use Case 3: Update Payloads (Partial)</h3>
+        <pre><code class="language-typescript">type UpdatePayload&lt;T&gt; = {
+    [K in keyof T]?: T[K];
+};
+
+type User = { name: string; age: number; email: string };
+
+function updateUser(id: number, updates: UpdatePayload&lt;User&gt;): void {
+    // ...
+}
+
+updateUser(1, { name: "Bob" }); // ✅
+updateUser(1, { age: 30, email: "bob@email.com" }); // ✅
+updateUser(1, {}); // ✅</code></pre>
+
+        <h3>Use Case 4: Making API Responses Readonly</h3>
+        <pre><code class="language-typescript">type ApiResponse&lt;T&gt; = {
+    readonly [K in keyof T]: T[K];
+};
+
+type UserResponse = ApiResponse&lt;{ id: number; name: string }&gt;;
+// {
+//     readonly id: number;
+//     readonly name: string;
+// }
+
+const response: UserResponse = { id: 1, name: "Alice" };
+// response.id = 2; // ❌ Error: readonly</code></pre>
+
+        <h3>Use Case 5: Combining with Key Remapping</h3>
+        <pre><code class="language-typescript">type OptionalGetters&lt;T&gt; = {
+    [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]?: () =&gt; T[K];
+};
+
+type User = { name: string; age: number };
+type UserGetters = OptionalGetters&lt;User&gt;;
+// {
+//     getName?: () =&gt; string;
+//     getAge?: () =&gt; number;
+// }</code></pre>
+      </section>
+
+      <!-- Part 10: Deep Modifiers -->
+      <section id="deep-modifiers">
+        <h2>Part 10: Deep Modifiers</h2>
+
+        <h3>Deep Partial</h3>
+        <pre><code class="language-typescript">type DeepPartial&lt;T&gt; = {
+    [K in keyof T]?: T[K] extends object 
+        ? DeepPartial&lt;T[K]&gt; 
+        : T[K];
+};
+
+type User = {
+    name: string;
+    address: {
+        street: string;
+        city: string;
+    };
+};
+
+type PartialUser = DeepPartial&lt;User&gt;;
+// {
+//     name?: string;
+//     address?: {
+//         street?: string;
+//         city?: string;
+//     };
+// }</code></pre>
+
+        <h3>Deep Readonly</h3>
+        <pre><code class="language-typescript">type DeepReadonly&lt;T&gt; = {
+    readonly [K in keyof T]: T[K] extends object 
+        ? DeepReadonly&lt;T[K]&gt; 
+        : T[K];
+};
+
+type User = {
+    name: string;
+    address: {
+        street: string;
+        city: string;
+    };
+};
+
+type ReadonlyUser = DeepReadonly&lt;User&gt;;
+// {
+//     readonly name: string;
+//     readonly address: {
+//         readonly street: string;
+//         readonly city: string;
+//     };
+// }</code></pre>
+
+        <h3>Deep Required</h3>
+        <pre><code class="language-typescript">type DeepRequired&lt;T&gt; = {
+    [K in keyof T]-?: T[K] extends object 
+        ? DeepRequired&lt;T[K]&gt; 
+        : T[K];
+};</code></pre>
+
+        <h3>Deep Mutable</h3>
+        <pre><code class="language-typescript">type DeepMutable&lt;T&gt; = {
+    -readonly [K in keyof T]: T[K] extends object 
+        ? DeepMutable&lt;T[K]&gt; 
+        : T[K];
+};</code></pre>
+      </section>
+
+      <!-- Part 11: Modifier Combinations Table -->
+      <section id="combinations-table">
+        <h2>Part 11: Modifier Combinations Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Combination</th>
+              <th>Syntax</th>
+              <th>Effect</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Optional only</td>
+              <td><code>[K in keyof T]?: T[K]</code></td>
+              <td>Add ?</td>
+            </tr>
+            <tr>
+              <td>Required only</td>
+              <td><code>[K in keyof T]-?: T[K]</code></td>
+              <td>Remove ?</td>
+            </tr>
+            <tr>
+              <td>Readonly only</td>
+              <td><code>readonly [K in keyof T]: T[K]</code></td>
+              <td>Add readonly</td>
+            </tr>
+            <tr>
+              <td>Mutable only</td>
+              <td><code>-readonly [K in keyof T]: T[K]</code></td>
+              <td>Remove readonly</td>
+            </tr>
+            <tr>
+              <td>Optional + Readonly</td>
+              <td><code>readonly [K in keyof T]?: T[K]</code></td>
+              <td>Add both</td>
+            </tr>
+            <tr>
+              <td>Required + Mutable</td>
+              <td><code>-readonly [K in keyof T]-?: T[K]</code></td>
+              <td>Remove both</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Summary -->
+      <section id="summary">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Modifier</th>
+              <th>Purpose</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>?</code></td>
+              <td>Add optional</td>
+              <td><code>[K in keyof T]?: T[K]</code></td>
+            </tr>
+            <tr>
+              <td><code>-?</code></td>
+              <td>Remove optional</td>
+              <td><code>[K in keyof T]-?: T[K]</code></td>
+            </tr>
+            <tr>
+              <td><code>readonly</code></td>
+              <td>Add readonly</td>
+              <td><code>readonly [K in keyof T]: T[K]</code></td>
+            </tr>
+            <tr>
+              <td><code>-readonly</code></td>
+              <td>Remove readonly</td>
+              <td><code>-readonly [K in keyof T]: T[K]</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Property Modifiers</td>
+              <td>Add/remove ? and readonly</td>
+            </tr>
+            <tr>
+              <td>Add Optional</td>
+              <td><code>?</code></td>
+            </tr>
+            <tr>
+              <td>Remove Optional</td>
+              <td><code>-?</code></td>
+            </tr>
+            <tr>
+              <td>Add Readonly</td>
+              <td><code>readonly</code></td>
+            </tr>
+            <tr>
+              <td>Remove Readonly</td>
+              <td><code>-readonly</code></td>
+            </tr>
+            <tr>
+              <td>Built-in Types</td>
+              <td>Partial, Required, Readonly</td>
+            </tr>
+            <tr>
+              <td>Deep Modifiers</td>
+              <td>Apply recursively for nested objects</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

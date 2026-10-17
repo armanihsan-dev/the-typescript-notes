@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Possible Outcomes of a Conditional Type — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#overview" class="nav-link">🎯 Possible Outcomes</a>
+        <a href="#core-syntax" class="nav-link">🎯 The Core Syntax</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Outcomes 1 to 3</div>
+        <a href="#outcome-1" class="nav-link">✅ Outcome 1: True Branch</a>
+        <a href="#outcome-2" class="nav-link">❌ Outcome 2: False Branch</a>
+        <a href="#outcome-3" class="nav-link">🔀 Outcome 3: Both Branches</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Outcomes 4 and 5</div>
+        <a href="#outcome-4" class="nav-link">⏳ Outcome 4: Deferred State</a>
+        <a href="#outcome-5" class="nav-link"
+          >🧬 Outcome 5: Distributive Property</a
+        >
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Conditional Types</span>
+        <h1>POSSIBLE OUTCOMES OF A CONDITIONAL TYPE — COMPLETE GUIDE</h1>
+      </section>
+
+      <!-- Overview -->
+      <section id="overview">
+        <h2>🎯 What is Meant by "Possible Outcomes"?</h2>
+
+        <h3>Definition:</h3>
+        <p>
+          A possible outcome of a conditional type is any type that can be
+          produced by that conditional type — either the true branch (X), the
+          false branch (Y), or a combination of both.
+        </p>
+        <p>
+          Think of it like a function: a conditional type takes an input type
+          and returns an output type. The possible outcomes are all the
+          different output types it can return.
+        </p>
+        <p>The possible outcomes : 5</p>
+
+        <h3>The 5 Possible Outcomes of Conditional Types — Explained</h3>
+        <p>
+          This file explains something crucial: a conditional type doesn't
+          always resolve immediately. It has 5 possible outcomes depending on
+          how TypeScript evaluates it.
+        </p>
+        <p>Let me explain each one clearly.</p>
+      </section>
+
+      <!-- Core Syntax -->
+      <section id="core-syntax">
+        <h2>🎯 The Core Syntax</h2>
+        <pre><code class="language-typescript">T extends U ? TrueType : FalseType</code></pre>
+        <p>
+          This says: "If T is assignable to U, then TrueType, otherwise
+          FalseType."
+        </p>
+        <p>But TypeScript doesn't always pick one side. Here's why.</p>
+      </section>
+
+      <!-- Outcome 1 -->
+      <section id="outcome-1">
+        <h2>✅ Outcome 1: True Branch Is Returned</h2>
+        <p><strong>When:</strong> The condition is clearly true.</p>
+        <pre><code class="language-typescript">type A = "Hi" extends string ? "Yes" : "No";
+// A = "Yes"</code></pre>
+
+        <h3>Why:</h3>
+        <ul>
+          <li>"Hi" is a string literal</li>
+          <li>"Hi" is assignable to string → condition is TRUE</li>
+          <li>TypeScript picks the true branch → "Yes"</li>
+        </ul>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TRUE BRANCH                                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  "Hi" extends string ?                                          │
+│                                                                  │
+│  Is "Hi" assignable to string?  → YES                          │
+│                                                                  │
+│  Result: "Yes"                                                  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Outcome 2 -->
+      <section id="outcome-2">
+        <h2>❌ Outcome 2: False Branch Is Returned</h2>
+        <p><strong>When:</strong> The condition is clearly false.</p>
+        <pre><code class="language-typescript">type B = 100 extends string ? "Yes" : "No";
+// B = "No"</code></pre>
+
+        <h3>Why:</h3>
+        <ul>
+          <li>100 is a number literal</li>
+          <li>100 is NOT assignable to string → condition is FALSE</li>
+          <li>TypeScript picks the false branch → "No"</li>
+        </ul>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    FALSE BRANCH                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  100 extends string ?                                           │
+│                                                                  │
+│  Is 100 assignable to string?  → NO                            │
+│                                                                  │
+│  Result: "No"                                                   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Outcome 3 -->
+      <section id="outcome-3">
+        <h2>🔀 Outcome 3: Both Branches Returned as a Union</h2>
+        <p>
+          <strong>When:</strong> TypeScript can't decide because the input is
+          any.
+        </p>
+        <pre><code class="language-typescript">type C = any extends string ? "Yes" : "No";
+// C = "Yes" | "No"</code></pre>
+
+        <h3>Why:</h3>
+        <ul>
+          <li>any is a special type — it can behave like anything</li>
+          <li>It could be a string → "Yes" is possible</li>
+          <li>It could be a non-string → "No" is possible</li>
+          <li>TypeScript returns BOTH branches as a union</li>
+        </ul>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    BOTH BRANCHES (any)                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  any extends string ?                                           │
+│                                                                  │
+│  Is any assignable to string?                                   │
+│  → YES (any can be a string)                                    │
+│  → NO  (any can be a non-string)                                │
+│                                                                  │
+│  TypeScript can't decide → returns BOTH                         │
+│                                                                  │
+│  Result: "Yes" | "No"                                           │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+        <p>
+          <strong>Important:</strong> This ONLY happens with any. Other types
+          don't do this.
+        </p>
+      </section>
+
+      <!-- Outcome 4 -->
+      <section id="outcome-4">
+        <h2>⏳ Outcome 4: Deferred State</h2>
+        <p>
+          <strong>When:</strong> The condition depends on a generic type
+          parameter that isn't known yet.
+        </p>
+        <pre><code class="language-typescript">type IsString&lt;T&gt; = T extends string ? "Yes" : "No";</code></pre>
+
+        <h3>Why:</h3>
+        <ul>
+          <li>T is a generic type parameter</li>
+          <li>TypeScript doesn't know what T is yet</li>
+          <li>So it defers the decision until T is provided</li>
+        </ul>
+
+        <pre><code class="language-typescript">type A = IsString&lt;string&gt;;  // Now T = string → "Yes"
+type B = IsString&lt;number&gt;;  // Now T = number → "No"</code></pre>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    DEFERRED STATE                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  type IsString&lt;T&gt; = T extends string ? "Yes" : "No";           │
+│                                                                  │
+│  At this point:                                                 │
+│  → T is unknown                                                 │
+│  → TypeScript can't decide                                      │
+│  → Defers the decision                                          │
+│                                                                  │
+│  When T is provided:                                            │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  IsString&lt;string&gt; → T = string → "Yes"                  │   │
+│  │  IsString&lt;number&gt; → T = number → "No"                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Deferred State Inside a Function</h3>
+        <pre><code class="language-typescript">function createHandler&lt;T&gt;() {
+    type ParamType = T extends string ? string : number;
+
+    return function (value: ParamType) {
+        console.log(value);
+    };
+}</code></pre>
+
+        <p><strong>What's happening:</strong></p>
+        <ul>
+          <li>T is unknown when createHandler is declared</li>
+          <li>
+            The conditional type T extends string ? string : number is deferred
+          </li>
+          <li>When you call createHandler&lt;string&gt;(), T becomes string</li>
+          <li>Then ParamType becomes string</li>
+        </ul>
+
+        <pre><code class="language-typescript">// When T = string:
+const stringHandler = createHandler&lt;string&gt;();
+stringHandler("hello"); // ✅ allowed
+stringHandler(123);     // ❌ error
+
+// When T = boolean:
+const numberHandler = createHandler&lt;boolean&gt;();
+numberHandler(123);     // ✅ allowed
+numberHandler("hello"); // ❌ error</code></pre>
+        <p>
+          <strong>Key insight:</strong> The deferred state resolves when the
+          generic is provided.
+        </p>
+      </section>
+
+      <!-- Outcome 5 -->
+      <section id="outcome-5">
+        <h2>🧬 Outcome 5: Result Decided by Distributive Property</h2>
+        <p>
+          <strong>When:</strong> The input is a union, and the conditional type
+          distributes over each member.
+        </p>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

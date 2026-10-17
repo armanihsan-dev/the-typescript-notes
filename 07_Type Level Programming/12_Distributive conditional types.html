@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Distributive Conditional Types — Fully Explained</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#core-concept" class="nav-link">🎯 The Core Concept</a>
+        <a href="#part-1" class="nav-link">Part 1: Naked Type Parameter</a>
+        <a href="#part-2" class="nav-link">Part 2: Distribution in Action</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Mechanics &amp; Use Cases</div>
+        <a href="#part-3" class="nav-link">Part 3: Why This Exists</a>
+        <a href="#part-4" class="nav-link">Part 4: Use Cases</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Controlling Distribution</div>
+        <a href="#part-5" class="nav-link">Part 5: Disable Distribution</a>
+        <a href="#part-6" class="nav-link">Part 6: The Core Rule</a>
+        <a href="#part-7" class="nav-link">Part 7: Final Mental Model</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Summary</div>
+        <a href="#summary" class="nav-link">📝 Summary &amp; Takeaways</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Conditional Types</span>
+        <h1>DISTRIBUTIVE CONDITIONAL TYPES — FULLY EXPLAINED</h1>
+      </section>
+
+      <!-- The Core Concept -->
+      <section id="core-concept">
+        <h2>🎯 The Core Concept</h2>
+        <p>Distributive conditional types = when a conditional type is applied to a union, TypeScript splits the union and runs the conditional on each member separately, then combines the results back into a union.</p>
+
+        <pre><code class="language-typescript">type Check&lt;T&gt; = T extends string ? "Yes" : "No";
+
+Check&lt;string | number&gt;
+// becomes: Check&lt;string&gt; | Check&lt;number&gt;
+//       = "Yes" | "No"</code></pre>
+      </section>
+
+      <!-- Part 1: Naked Type Parameter -->
+      <section id="part-1">
+        <h2>Part 1: The Key Requirement — "Naked Type Parameter"</h2>
+        
+        <h3>What is a "Naked Type Parameter"?</h3>
+        <p>A type parameter is naked when it appears directly on the left side of extends in a conditional type.</p>
+
+        <pre><code class="language-typescript">// ✅ Naked — T is directly on the left of extends
+type Check&lt;T&gt; = T extends string ? "Yes" : "No";
+
+// ❌ Not naked — T is wrapped in a tuple
+type Check&lt;T&gt; = [T] extends [string] ? "Yes" : "No";</code></pre>
+        <p>Only naked type parameters trigger distribution.</p>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    NAKED TYPE PARAMETER                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  NAKED:                                                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  T extends string ? ... : ...                            │   │
+│  │  ↑                                                       │   │
+│  │  T is directly on the left of extends                    │   │
+│  │  → DISTRIBUTES                                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  NOT NAKED:                                                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  [T] extends [string] ? ... : ...                        │   │
+│  │  ↑                                                       │   │
+│  │  T is wrapped in a tuple                                 │   │
+│  │  → DOES NOT DISTRIBUTE                                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 2: Distribution in Action -->
+      <section id="part-2">
+        <h2>Part 2: Distribution in Action</h2>
+
+        <h3>Example 1: Single Type (No Distribution Visible)</h3>
+        <pre><code class="language-typescript">type Check&lt;T&gt; = T extends string ? "Yes" : "No";
+
+type A = Check&lt;string&gt;;
+// string extends string ? "Yes" : "No"
+// = "Yes"</code></pre>
+        <p>Only one type, so nothing to distribute.</p>
+
+        <h3>Example 2: Union Type (Distribution Happens)</h3>
+        <pre><code class="language-typescript">type Check&lt;T&gt; = T extends string ? "Yes" : "No";
+
+type B = Check&lt;string | number&gt;;</code></pre>
+
+        <p>Step by step:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    DISTRIBUTION STEPS                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Split the union                                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Check&lt;string | number&gt;                                 │   │
+│  │  → Check&lt;string&gt; | Check&lt;number&gt;                        │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Evaluate each separately                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Check&lt;string&gt; → string extends string ? "Yes" : "No"   │   │
+│  │                → "Yes"                                  │   │
+│  │                                                         │   │
+│  │  Check&lt;number&gt; → number extends string ? "Yes" : "No"   │   │
+│  │                → "No"                                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: Combine results                                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "Yes" | "No"                                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: type B = "Yes" | "No"                                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>The Transformation</h3>
+        <pre><code class="language-typescript">Check&lt;string | number&gt;
+// ↓
+Check&lt;string&gt; | Check&lt;number&gt;
+// ↓
+"Yes" | "No"</code></pre>
+      </section>
+
+      <!-- Part 3: Why Does This Behavior Exist? -->
+      <section id="part-3">
+        <h2>Part 3: Why Does This Behavior Exist?</h2>
+        <p>Because unions represent multiple possibilities.</p>
+
+        <pre><code class="language-typescript">string | number
+// means: "value can be string OR value can be number"</code></pre>
+        <p>TypeScript says: "Let me check each possibility separately."</p>
+
+        <p>This is very useful because it lets us:</p>
+        <ul>
+          <li>Filter union members</li>
+          <li>Remove union members</li>
+          <li>Transform every union member</li>
+        </ul>
+      </section>
+
+      <!-- Part 4: Use Cases -->
+      <section id="part-4">
+        <h2>Part 4: Use Cases</h2>
+
+        <h3>Use Case 1: Filtering a Union (Keep Only Strings)</h3>
+        <pre><code class="language-typescript">type OnlyStrings&lt;T&gt; = T extends string ? T : never;
+
+type Result = OnlyStrings&lt;string | number | boolean&gt;;</code></pre>
+
+        <p>Distribution:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    FILTERING WITH DISTRIBUTION                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Split                                                │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  OnlyStrings&lt;string&gt; |                                  │   │
+│  │  OnlyStrings&lt;number&gt; |                                  │   │
+│  │  OnlyStrings&lt;boolean&gt;                                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Evaluate each                                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  string extends string ? string : never  → string       │   │
+│  │  number extends string ? number : never  → never        │   │
+│  │  boolean extends string ? boolean : never → never       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: Combine                                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  string | never | never                                 │   │
+│  │  = string (never disappears in unions)                  │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: string                                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+        <p>This is how TypeScript filters union types!</p>
+
+        <h3>Use Case 2: Removing a Type (Remove Strings)</h3>
+        <pre><code class="language-typescript">type RemoveString&lt;T&gt; = T extends string ? never : T;
+
+type Result = RemoveString&lt;string | number | boolean&gt;;</code></pre>
+
+        <p>Distribution:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    REMOVING WITH DISTRIBUTION                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Split                                                │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  RemoveString&lt;string&gt; |                                 │   │
+│  │  RemoveString&lt;number&gt; |                                 │   │
+│  │  RemoveString&lt;boolean&gt;                                  │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Evaluate each                                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  string extends string ? never : string   → never       │   │
+│  │  number extends string ? never : number   → number      │   │
+│  │  boolean extends string ? never : boolean → boolean     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: Combine                                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  never | number | boolean                               │   │
+│  │  = number | boolean                                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: number | boolean                                      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+        <p>This is the idea behind the built-in Exclude&lt;T, U&gt; utility type!</p>
+
+        <h3>Use Case 3: Transforming Every Union Member</h3>
+        <pre><code class="language-typescript">type Wrap&lt;T&gt; = T extends any ? { value: T } : never;
+
+type Result = Wrap&lt;string | number&gt;;</code></pre>
+
+        <p>Distribution:</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TRANSFORMING EACH MEMBER                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Split                                                │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Wrap&lt;string&gt; | Wrap&lt;number&gt;                            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Evaluate each                                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  string extends any ? { value: string } : never         │   │
+│  │  → { value: string }                                    │   │
+│  │                                                         │   │
+│  │  number extends any ? { value: number } : never         │   │
+│  │  → { value: number }                                    │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: Combine                                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { value: string } | { value: number }                  │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: { value: string } | { value: number }                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 5: How to Disable Distribution -->
+      <section id="part-5">
+        <h2>Part 5: How to Disable Distribution</h2>
+
+        <h3>The Tuple Trick</h3>
+        <pre><code class="language-typescript">// ❌ Distributive (T is naked)
+type Check&lt;T&gt; = T extends string ? "Yes" : "No";
+
+// ✅ Non-distributive (T is wrapped)
+type Check&lt;T&gt; = [T] extends [string] ? "Yes" : "No";</code></pre>
+
+        <p>Why this works:</p>
+        <ul>
+          <li>[T] is a tuple containing T</li>
+          <li>[string] is a tuple containing string</li>
+          <li>TypeScript checks the whole tuple at once, not each member</li>
+        </ul>
+
+        <h3>Comparison</h3>
+        <pre><code class="language-typescript">// Distributive version
+type Check1&lt;T&gt; = T extends string ? "Yes" : "No";
+type A = Check1&lt;string | number&gt;; // "Yes" | "No"
+
+// Non-distributive version
+type Check2&lt;T&gt; = [T] extends [string] ? "Yes" : "No";
+type B = Check2&lt;string | number&gt;; // "No"</code></pre>
+
+        <h3>Why B is "No"</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    NON-DISTRIBUTIVE                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Check2&lt;string | number&gt;                                        │
+│                                                                  │
+│  [string | number] extends [string] ?                           │
+│                                                                  │
+│  Is [string | number] assignable to [string]?                   │
+│  → NO (string | number is not the same as string)              │
+│                                                                  │
+│  Result: "No"                                                   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 6: The Core Rule -->
+      <section id="part-6">
+        <h2>Part 6: The Core Rule</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    THE CORE RULE                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  DISTRIBUTES:                                                   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  type Check&lt;T&gt; = T extends string ? "Yes" : "No";       │   │
+│  │  // T is NAKED on the left of extends                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  DOES NOT DISTRIBUTE:                                           │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  type Check&lt;T&gt; = [T] extends [string] ? "Yes" : "No";   │   │
+│  │  // T is WRAPPED in a tuple                             │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 7: Final Mental Model -->
+      <section id="part-7">
+        <h2>Part 7: Final Mental Model</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    DISTRIBUTIVE MENTAL MODEL                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  For each member of the union:                                 │
+│      run the conditional type separately                       │
+│                                                                  │
+│  Then combine all results back into a union.                   │
+│                                                                  │
+│  So this:                                                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Check&lt;string | number | boolean&gt;                       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Becomes:                                                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Check&lt;string&gt; | Check&lt;number&gt; | Check&lt;boolean&gt;          │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  This is why distributive conditional types are so powerful.   │
+│  They allow TypeScript to work on union members one by one.    │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Summary & Key Takeaways -->
+      <section id="summary">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Distribution</td>
+              <td>Conditional type applies to each union member</td>
+            </tr>
+            <tr>
+              <td>Requirement</td>
+              <td>Naked type parameter on left of extends</td>
+            </tr>
+            <tr>
+              <td>Naked</td>
+              <td><code>T extends string</code> (T is direct)</td>
+            </tr>
+            <tr>
+              <td>Not Naked</td>
+              <td><code>[T] extends [string]</code> (T is wrapped)</td>
+            </tr>
+            <tr>
+              <td>Result</td>
+              <td>Union of all individual results</td>
+            </tr>
+            <tr>
+              <td>Use cases</td>
+              <td>Filter, remove, transform union members</td>
+            </tr>
+            <tr>
+              <td>Disable</td>
+              <td>Wrap in tuple <code>[T]</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Distributive</td>
+              <td>Splits union, checks each member</td>
+            </tr>
+            <tr>
+              <td>Naked T</td>
+              <td>Required for distribution</td>
+            </tr>
+            <tr>
+              <td>never disappears</td>
+              <td>In unions, never is absorbed</td>
+            </tr>
+            <tr>
+              <td>Exclude</td>
+              <td>Built with distributive types</td>
+            </tr>
+            <tr>
+              <td>Extract</td>
+              <td>Built with distributive types</td>
+            </tr>
+            <tr>
+              <td>Disable</td>
+              <td>Use <code>[T] extends [U]</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

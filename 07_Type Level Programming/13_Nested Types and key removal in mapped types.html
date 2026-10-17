@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Nested Conditionals and Key Removal in Mapped Types — Complete Guide
+    </title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#what-you-will-learn" class="nav-link">🎯 What You'll Learn</a>
+        <a href="#part-1" class="nav-link"
+          >Part 1: What Are Nested Conditionals?</a
+        >
+        <a href="#part-2" class="nav-link">Part 2: Basic Nested Conditional</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Key Removal</div>
+        <a href="#part-3" class="nav-link"
+          >Part 3: Key Removal in Mapped Types</a
+        >
+        <a href="#part-4" class="nav-link">Part 4: How Key Removal Works</a>
+        <a href="#part-5" class="nav-link"
+          >Part 5: Simple Key Removal Examples</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Combined Techniques</div>
+        <a href="#part-6" class="nav-link"
+          >Part 6: Nested Conditionals in Key Removal</a
+        >
+        <a href="#part-7" class="nav-link">Part 7: Real-World Examples</a>
+        <a href="#part-8" class="nav-link"
+          >Part 8: Combining Nested Conditionals with Key Removal</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Summary &amp; Practice</div>
+        <a href="#part-9" class="nav-link">Part 9: Summary Table</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+        <a href="#practice-exercises" class="nav-link">🧪 Practice Exercises</a>
+      </div>
+
+      <!-- Author Links -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Nested Conditionals and Key Removal in Mapped Types</h1>
+        <p>Complete Guide</p>
+      </section>
+
+      <section id="what-you-will-learn">
+        <h2>🎯 What You'll Learn</h2>
+        <ul>
+          <li>
+            Nested Conditionals — conditional types inside other conditional
+            types
+          </li>
+          <li>Key Removal in Mapped Types — using never to remove keys</li>
+          <li>How they work together</li>
+          <li>Real-world examples</li>
+        </ul>
+      </section>
+
+      <section id="part-1">
+        <h2>Part 1: What Are Nested Conditionals?</h2>
+        <h3>Definition:</h3>
+        <p>
+          Nested conditionals are conditional types inside other conditional
+          types. They let you check multiple conditions in sequence, like a
+          chain of if-else statements.
+        </p>
+
+        <h3>The Pattern</h3>
+        <pre><code class="language-typescript">type Result&lt;T&gt; = 
+    T extends Type1 ? Result1 :
+    T extends Type2 ? Result2 :
+    T extends Type3 ? Result3 :
+    DefaultResult;</code></pre>
+
+        <p>This is equivalent to:</p>
+        <pre><code class="language-text">if (T is Type1) return Result1
+else if (T is Type2) return Result2
+else if (T is Type3) return Result3
+else return DefaultResult</code></pre>
+      </section>
+
+      <section id="part-2">
+        <h2>Part 2: Basic Nested Conditional</h2>
+        <h3>Simple Example</h3>
+        <pre><code class="language-typescript">type TypeName&lt;T&gt; = 
+    T extends string ? "string" :
+    T extends number ? "number" :
+    T extends boolean ? "boolean" :
+    "other";</code></pre>
+
+        <h3>How It Evaluates</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    NESTED CONDITIONAL FLOW                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  TypeName&lt;string&gt;                                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  1. string extends string? → YES → "string"             │   │
+│  │  (stops here)                                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  TypeName&lt;number&gt;                                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  1. number extends string? → NO                         │   │
+│  │  2. number extends number? → YES → "number"             │   │
+│  │  (stops here)                                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  TypeName&lt;object&gt;                                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  1. object extends string? → NO                         │   │
+│  │  2. object extends number? → NO                         │   │
+│  │  3. object extends boolean? → NO                        │   │
+│  │  4. Default → "other"                                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Testing</h3>
+        <pre><code class="language-typescript">type A = TypeName&lt;string&gt;;  // "string"
+type B = TypeName&lt;number&gt;;  // "number"
+type C = TypeName&lt;boolean&gt;; // "boolean"
+type D = TypeName&lt;object&gt;;  // "other"</code></pre>
+      </section>
+
+      <section id="part-3">
+        <h2>Part 3: Key Removal in Mapped Types</h2>
+        <h3>What Is Key Removal?</h3>
+        <h3>Definition:</h3>
+        <p>
+          Key removal is the technique of using never in the as clause of a
+          mapped type to filter out specific keys from the resulting type.
+        </p>
+
+        <h3>The Pattern</h3>
+        <pre><code class="language-typescript">type RemoveKeys&lt;T&gt; = {
+    [K in keyof T as Condition ? never : K]: T[K];
+};</code></pre>
+        <p>When a key maps to never, it is removed from the type.</p>
+      </section>
+
+      <section id="part-4">
+        <h2>Part 4: How Key Removal Works</h2>
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    KEY REMOVAL PROCESS                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Iterate over keys                                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  [K in keyof T]                                         │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Check condition for each key                          │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  K extends SomeCondition ? never : K                    │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: If condition is true, key becomes never               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  never → key is REMOVED from the type                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 4: If condition is false, key stays                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  K → key is KEPT                                        │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-5">
+        <h2>Part 5: Simple Key Removal Examples</h2>
+        <h3>Example 1: Remove Keys Starting with Underscore</h3>
+        <pre><code class="language-typescript">type RemovePrivate&lt;T&gt; = {
+    [K in keyof T as K extends `_${string}` ? never : K]: T[K];
+};
+
+type Data = {
+    _internal: string;
+    _private: number;
+    name: string;
+    age: number;
+};
+
+type PublicData = RemovePrivate&lt;Data&gt;;
+// {
+//     name: string;
+//     age: number;
+// }</code></pre>
+
+        <h3>Example 2: Remove Function Properties</h3>
+        <pre><code class="language-typescript">type RemoveFunctions&lt;T&gt; = {
+    [K in keyof T as T[K] extends Function ? never : K]: T[K];
+};
+
+type User = {
+    name: string;
+    age: number;
+    greet: () =&gt; void;
+    walk: () =&gt; void;
+};
+
+type UserData = RemoveFunctions&lt;User&gt;;
+// {
+//     name: string;
+//     age: number;
+// }</code></pre>
+
+        <h3>Example 3: Remove Optional Properties</h3>
+        <pre><code class="language-typescript">type RemoveOptional&lt;T&gt; = {
+    [K in keyof T as {} extends Pick&lt;T, K&gt; ? never : K]: T[K];
+};
+
+type User = {
+    name: string;
+    age?: number;
+    email: string;
+    phone?: string;
+};
+
+type RequiredUser = RemoveOptional&lt;User&gt;;
+// {
+//     name: string;
+//     email: string;
+// }</code></pre>
+      </section>
+
+      <section id="part-6">
+        <h2>Part 6: Nested Conditionals in Key Removal</h2>
+        <h3>The Pattern</h3>
+        <pre><code class="language-typescript">type SmartRemove&lt;T&gt; = {
+    [K in keyof T as 
+        K extends `_${string}` ? never :
+        T[K] extends Function ? never :
+        T[K] extends null | undefined ? never :
+        K
+    ]: T[K];
+};</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    NESTED KEY REMOVAL                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  For each key K:                                                │
+│                                                                  │
+│  1. Does K start with "_"?                                     │
+│     YES → never (remove)                                       │
+│     NO → go to 2                                               │
+│                                                                  │
+│  2. Does T[K] extend Function?                                 │
+│     YES → never (remove)                                       │
+│     NO → go to 3                                               │
+│                                                                  │
+│  3. Does T[K] extend null | undefined?                         │
+│     YES → never (remove)                                       │
+│     NO → keep K                                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">type Data = {
+    _internal: string;
+    name: string;
+    age: number;
+    callback: () =&gt; void;
+    optional: string | null;
+    active: boolean;
+};
+
+type CleanData = SmartRemove&lt;Data&gt;;
+// {
+//     name: string;
+//     age: number;
+//     active: boolean;
+// }</code></pre>
+      </section>
+
+      <section id="part-7">
+        <h2>Part 7: Real-World Examples</h2>
+        <h3>Example 1: Removing Sensitive Data</h3>
+        <pre><code class="language-typescript">type RemoveSensitive&lt;T&gt; = {
+    [K in keyof T as 
+        K extends "password" | "token" | "secret" | "apiKey" ? never :
+        K
+    ]: T[K];
+};
+
+type User = {
+    id: number;
+    name: string;
+    password: string;
+    token: string;
+    email: string;
+};
+
+type SafeUser = RemoveSensitive&lt;User&gt;;
+// {
+//     id: number;
+//     name: string;
+//     email: string;
+// }</code></pre>
+
+        <h3>Example 2: Filter by Value Type</h3>
+        <pre><code class="language-typescript">type FilterByType&lt;T, AllowedType&gt; = {
+    [K in keyof T as T[K] extends AllowedType ? K : never]: T[K];
+};
+
+type User = {
+    name: string;
+    age: number;
+    email: string;
+    isActive: boolean;
+};
+
+type OnlyStrings = FilterByType&lt;User, string&gt;;
+// {
+//     name: string;
+//     email: string;
+// }
+
+type OnlyNumbers = FilterByType&lt;User, number&gt;;
+// {
+//     age: number;
+// }</code></pre>
+
+        <h3>Example 3: Clean Data for API Response</h3>
+        <pre><code class="language-typescript">type CleanForApi&lt;T&gt; = {
+    [K in keyof T as 
+        K extends `_${string}` ? never :
+        T[K] extends Function ? never :
+        T[K] extends undefined ? never :
+        K
+    ]: T[K];
+};
+
+type InternalData = {
+    _id: string;
+    name: string;
+    email: string;
+    _createdAt: Date;
+    validate: () =&gt; boolean;
+    age?: number;
+};
+
+type ApiData = CleanForApi&lt;InternalData&gt;;
+// {
+//     name: string;
+//     email: string;
+//     age?: number;
+// }</code></pre>
+
+        <h3>Example 4: Remove Nullable Properties</h3>
+        <pre><code class="language-typescript">type RemoveNullable&lt;T&gt; = {
+    [K in keyof T as null extends T[K] ? never : K]: T[K];
+};
+
+type User = {
+    name: string;
+    age: number | null;
+    email: string;
+    phone: string | null;
+};
+
+type NonNullableUser = RemoveNullable&lt;User&gt;;
+// {
+//     name: string;
+//     email: string;
+// }</code></pre>
+      </section>
+
+      <section id="part-8">
+        <h2>Part 8: Combining Nested Conditionals with Key Removal</h2>
+        <h3>Pattern: Advanced Filtering</h3>
+        <pre><code class="language-typescript">type SmartFilter&lt;T&gt; = {
+    [K in keyof T as 
+        K extends `_${string}` ? never :
+        T[K] extends string ? K :
+        T[K] extends number ? K :
+        T[K] extends boolean ? K :
+        never
+    ]: T[K];
+};
+
+type Data = {
+    _internal: string;
+    name: string;
+    age: number;
+    isActive: boolean;
+    createdAt: Date;
+    callback: () =&gt; void;
+};
+
+type SimpleData = SmartFilter&lt;Data&gt;;
+// {
+//     name: string;
+//     age: number;
+//     isActive: boolean;
+// }</code></pre>
+
+        <h3>Pattern: Remove by Multiple Conditions</h3>
+        <pre><code class="language-typescript">type RemoveUnwanted&lt;T&gt; = {
+    [K in keyof T as 
+        K extends `_${string}` ? never :
+        K extends "password" | "token" ? never :
+        T[K] extends Function ? never :
+        T[K] extends null | undefined ? never :
+        K
+    ]: T[K];
+};</code></pre>
+      </section>
+
+      <section id="part-9">
+        <h2>Part 9: Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Syntax</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nested Conditional</td>
+              <td><code>T extends A ? X : T extends B ? Y : Z</code></td>
+              <td><code>TypeName&lt;T&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Key Removal</td>
+              <td><code>[K in keyof T as Condition ? never : K]</code></td>
+              <td><code>RemovePrivate&lt;T&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Remove by Type</td>
+              <td><code>[K in keyof T as T[K] extends U ? never : K]</code></td>
+              <td><code>RemoveFunctions&lt;T&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Remove by Name</td>
+              <td>
+                <code
+                  >[K in keyof T as K extends `_${string}` ? never : K]</code
+                >
+              </td>
+              <td><code>RemovePrivate&lt;T&gt;</code></td>
+            </tr>
+            <tr>
+              <td>Multiple Conditions</td>
+              <td>Chain conditions in <code>as</code></td>
+              <td><code>SmartRemove&lt;T&gt;</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nested Conditionals</td>
+              <td>Chain of if-else at type level</td>
+            </tr>
+            <tr>
+              <td>Key Removal</td>
+              <td>Use never in as clause</td>
+            </tr>
+            <tr>
+              <td>Multiple Conditions</td>
+              <td>Can chain conditions in as</td>
+            </tr>
+            <tr>
+              <td>never removes keys</td>
+              <td>When key maps to never, it's removed</td>
+            </tr>
+            <tr>
+              <td>Use cases</td>
+              <td>Filtering, removing sensitive data, cleaning types</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="practice-exercises">
+        <h2>🧪 Practice Exercises</h2>
+        <pre><code class="language-typescript">// 1. Write a type that gets the type name
+type TypeName&lt;T&gt; = 
+    T extends string ? "string" :
+    T extends number ? "number" :
+    T extends boolean ? "boolean" :
+    "other";
+
+// 2. Remove keys starting with underscore
+type RemovePrivate&lt;T&gt; = {
+    [K in keyof T as K extends `_${string}` ? never : K]: T[K];
+};
+
+// 3. Remove function properties
+type RemoveFunctions&lt;T&gt; = {
+    [K in keyof T as T[K] extends Function ? never : K]: T[K];
+};
+
+// 4. Keep only string properties
+type OnlyStrings&lt;T&gt; = {
+    [K in keyof T as T[K] extends string ? K : never]: T[K];
+};
+
+// 5. Remove sensitive data
+type RemoveSensitive&lt;T&gt; = {
+    [K in keyof T as 
+        K extends "password" | "token" | "secret" ? never : K
+    ]: T[K];
+};
+
+// 6. Nested condition for complex filtering
+type SmartFilter&lt;T&gt; = {
+    [K in keyof T as 
+        K extends `_${string}` ? never :
+        T[K] extends string ? K :
+        T[K] extends number ? K :
+        never
+    ]: T[K];
+};
+
+// 7. Remove nullable properties
+type RemoveNullable&lt;T&gt; = {
+    [K in keyof T as null extends T[K] ? never : K]: T[K];
+};</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

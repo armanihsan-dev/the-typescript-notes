@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roadmap: Mastering Type-Level Programming in TypeScript</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#complete-journey" class="nav-link">📍 The Complete Journey</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Phases</div>
+        <a href="#phase-1" class="nav-link">📚 Phase 1: Foundations</a>
+        <a href="#phase-2" class="nav-link">📚 Phase 2: Core Mechanisms</a>
+        <a href="#phase-3" class="nav-link"
+          >📚 Phase 3: Inference &amp; Pattern Matching</a
+        >
+        <a href="#phase-4" class="nav-link">📚 Phase 4: Advanced Constructs</a>
+        <a href="#phase-5" class="nav-link"
+          >📚 Phase 5: Real-World Applications</a
+        >
+        <a href="#phase-6" class="nav-link">📚 Phase 6: Mastery</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Execution &amp; Resources</div>
+        <a href="#summary-breakdown" class="nav-link">📊 Weekly Breakdown</a>
+        <a href="#daily-practice" class="nav-link">🎯 Daily Practice Plan</a>
+        <a href="#milestones" class="nav-link">🏆 Milestones</a>
+        <a href="#recommended-resources" class="nav-link"
+          >📚 Recommended Resources</a
+        >
+        <a href="#key-takeaway" class="nav-link">🔥 Key Takeaway</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Roadmap</span>
+        <h1>ROADMAP: MASTERING TYPE-LEVEL PROGRAMMING IN TYPESCRIPT</h1>
+      </section>
+
+      <!-- The Complete Journey -->
+      <section id="complete-journey">
+        <h2>📍 The Complete Journey</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TYPE-LEVEL PROGRAMMING ROADMAP               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Phase 1: Foundations (Weeks 1-2)                              │
+│  ├── Generic Parameters                                        │
+│  ├── Conditional Types                                         │
+│  ├── Union &amp; Intersection                                      │
+│  └── Basic Inference                                           │
+│                                                                  │
+│  Phase 2: Core Mechanisms (Weeks 3-4)                          │
+│  ├── Mapped Types                                              │
+│  ├── keyof &amp; typeof                                            │
+│  ├── Indexed Access Types                                      │
+│  └── Template Literal Types                                    │
+│                                                                  │
+│  Phase 3: Inference &amp; Pattern Matching (Weeks 5-6)             │
+│  ├── infer Keyword                                             │
+│  ├── Recursive Conditional Types                               │
+│  ├── Distributive Conditional Types                            │
+│  └── Type Guards at Type Level                                 │
+│                                                                  │
+│  Phase 4: Advanced Constructs (Weeks 7-8)                      │
+│  ├── Variadic Tuple Types                                      │
+│  ├── Template Literal Manipulation                             │
+│  ├── Type-Level Arithmetic                                     │
+│  └── Type-Level Data Structures                                │
+│                                                                  │
+│  Phase 5: Real-World Applications (Weeks 9-10)                 │
+│  ├── Building Utility Types                                    │
+│  ├── Type-Safe APIs                                            │
+│  ├── Type-Level Validation                                     │
+│  └── Domain-Specific Languages                                 │
+│                                                                  │
+│  Phase 6: Mastery (Weeks 11-12)                                │
+│  ├── Type-Level Algorithms                                     │
+│  ├── Compiler Performance                                      │
+│  ├── Debugging Type Errors                                     │
+│  └── Publishing Type Libraries                                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Phase 1 -->
+      <section id="phase-1">
+        <h2>📚 Phase 1: Foundations (Weeks 1-2)</h2>
+
+        <h3>Goals</h3>
+        <ul>
+          <li>Understand the fundamental building blocks</li>
+          <li>Write simple conditional types</li>
+          <li>Work with unions and intersections</li>
+        </ul>
+
+        <h3>Topics</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>What to Learn</th>
+              <th>Practice</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Generic Parameters</td>
+              <td>
+                <code>&lt;T&gt;</code>, <code>&lt;T, U&gt;</code>, defaults,
+                constraints
+              </td>
+              <td>Write identity, pair, wrap</td>
+            </tr>
+            <tr>
+              <td>Conditional Types</td>
+              <td><code>T extends U ? X : Y</code></td>
+              <td>Write IsString, IsNumber</td>
+            </tr>
+            <tr>
+              <td>Union Types</td>
+              <td><code>A | B</code>, distribution</td>
+              <td>Write ToArray</td>
+            </tr>
+            <tr>
+              <td>Intersection Types</td>
+              <td><code>A &amp; B</code>, merging</td>
+              <td>Write Merge</td>
+            </tr>
+            <tr>
+              <td>Type Aliases</td>
+              <td>type, interface</td>
+              <td>Create reusable types</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Key Exercises</h3>
+        <pre><code class="language-typescript">// 1. Write a type that checks if a type is a string
+type IsString&lt;T&gt; = T extends string ? true : false;
+
+// 2. Write a type that returns the first element of a tuple
+type First&lt;T extends any[]&gt; = T extends [infer Head, ...any[]] ? Head : never;
+
+// 3. Write a type that makes all properties optional
+type MyPartial&lt;T&gt; = { [K in keyof T]?: T[K] };
+
+// 4. Write a type that extracts string keys from an object
+type StringKeys&lt;T&gt; = {
+    [K in keyof T]: T[K] extends string ? K : never
+}[keyof T];</code></pre>
+
+        <h3>Resources</h3>
+        <ul>
+          <li>TypeScript Handbook: Conditional Types</li>
+          <li>TypeScript Handbook: Generics</li>
+          <li>TypeScript Handbook: Utility Types</li>
+        </ul>
+      </section>
+
+      <!-- Phase 2 -->
+      <section id="phase-2">
+        <h2>📚 Phase 2: Core Mechanisms (Weeks 3-4)</h2>
+
+        <h3>Goals</h3>
+        <ul>
+          <li>Master mapped types</li>
+          <li>Use keyof, typeof, indexed access</li>
+          <li>Create template literal types</li>
+        </ul>
+
+        <h3>Topics</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>What to Learn</th>
+              <th>Practice</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mapped Types</td>
+              <td><code>{ [K in keyof T]: ... }</code></td>
+              <td>Write Readonly, Required</td>
+            </tr>
+            <tr>
+              <td>keyof</td>
+              <td>Getting keys of a type</td>
+              <td>Write KeysOf</td>
+            </tr>
+            <tr>
+              <td>typeof</td>
+              <td>Getting type from value</td>
+              <td>Write TypeOf</td>
+            </tr>
+            <tr>
+              <td>Indexed Access</td>
+              <td><code>T["key"]</code>, <code>T[number]</code></td>
+              <td>Write ValueOf</td>
+            </tr>
+            <tr>
+              <td>Template Literals</td>
+              <td><code>`${T}`</code>, <code>${string}</code></td>
+              <td>Write EventName, Route</td>
+            </tr>
+            <tr>
+              <td>Modifiers</td>
+              <td>+?, -?, +readonly, -readonly</td>
+              <td>Write Mutable</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Key Exercises</h3>
+        <pre><code class="language-typescript">// 1. Write a type that removes readonly modifiers
+type Mutable&lt;T&gt; = { -readonly [K in keyof T]: T[K] };
+
+// 2. Write a type that gets all values of an object
+type ValueOf&lt;T&gt; = T[keyof T];
+
+// 3. Write a type that adds "on" prefix to event names
+type EventName&lt;T extends string&gt; = `on${Capitalize&lt;T&gt;}`;
+
+// 4. Write a type that removes optional modifiers
+type Required&lt;T&gt; = { [K in keyof T]-?: T[K] };</code></pre>
+
+        <h3>Resources</h3>
+        <ul>
+          <li>TypeScript Handbook: Mapped Types</li>
+          <li>TypeScript Handbook: Template Literal Types</li>
+          <li>TypeScript Handbook: Indexed Access Types</li>
+        </ul>
+      </section>
+
+      <!-- Phase 3 -->
+      <section id="phase-3">
+        <h2>📚 Phase 3: Inference &amp; Pattern Matching (Weeks 5-6)</h2>
+
+        <h3>Goals</h3>
+        <ul>
+          <li>Master the infer keyword</li>
+          <li>Write recursive conditional types</li>
+          <li>Understand distribution</li>
+        </ul>
+
+        <h3>Topics</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>What to Learn</th>
+              <th>Practice</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>infer</td>
+              <td>Pattern matching in types</td>
+              <td>Write ReturnType, Parameters</td>
+            </tr>
+            <tr>
+              <td>Recursion</td>
+              <td>Recursive types</td>
+              <td>Write Flatten, DeepReadonly</td>
+            </tr>
+            <tr>
+              <td>Distribution</td>
+              <td>How unions distribute</td>
+              <td>Write Exclude, Extract</td>
+            </tr>
+            <tr>
+              <td>Type Guards</td>
+              <td><code>T extends U</code> as guard</td>
+              <td>Write IsArray, IsFunction</td>
+            </tr>
+            <tr>
+              <td>Naked Type Parameters</td>
+              <td>When distribution happens</td>
+              <td>Understand <code>[T] extends [U]</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Key Exercises</h3>
+        <pre><code class="language-typescript">// 1. Write a type that gets the return type of a function
+type MyReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+
+// 2. Write a type that flattens an array
+type Flatten&lt;T&gt; = T extends (infer U)[] ? U : T;
+
+// 3. Write a type that deep-reads all properties
+type DeepReadonly&lt;T&gt; = {
+    readonly [K in keyof T]: T[K] extends object 
+        ? DeepReadonly&lt;T[K]&gt; 
+        : T[K];
+};
+
+// 4. Write a type that removes null and undefined
+type NonNullable&lt;T&gt; = T extends null | undefined ? never : T;</code></pre>
+
+        <h3>Resources</h3>
+        <ul>
+          <li>TypeScript Handbook: Infer</li>
+          <li>TypeScript Handbook: Distributive Conditional Types</li>
+          <li>TypeScript 2.8 Release Notes: Conditional Types</li>
+        </ul>
+      </section>
+
+      <!-- Phase 4 -->
+      <section id="phase-4">
+        <h2>📚 Phase 4: Advanced Constructs (Weeks 7-8)</h2>
+
+        <h3>Goals</h3>
+        <ul>
+          <li>Master variadic tuple types</li>
+          <li>Build type-level arithmetic</li>
+          <li>Create type-level data structures</li>
+        </ul>
+
+        <h3>Topics</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>What to Learn</th>
+              <th>Practice</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Variadic Tuples</td>
+              <td><code>[...T, ...U]</code></td>
+              <td>Write Concat, Push</td>
+            </tr>
+            <tr>
+              <td>Tuple Manipulation</td>
+              <td><code>[infer H, ...infer T]</code></td>
+              <td>Write Head, Tail</td>
+            </tr>
+            <tr>
+              <td>Type Arithmetic</td>
+              <td>Build numbers from tuples</td>
+              <td>Write Add, Subtract</td>
+            </tr>
+            <tr>
+              <td>Type-Level Strings</td>
+              <td>Parse strings at type level</td>
+              <td>Write Split, Join</td>
+            </tr>
+            <tr>
+              <td>Type-Level Objects</td>
+              <td>Object manipulation</td>
+              <td>Write Merge, DeepMerge</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Key Exercises</h3>
+        <pre><code class="language-typescript">// 1. Write a type that concatenates two tuples
+type Concat&lt;T extends any[], U extends any[]&gt; = [...T, ...U];
+
+// 2. Write a type that gets the last element of a tuple
+type Last&lt;T extends any[]&gt; = T extends [...any[], infer L] ? L : never;
+
+// 3. Write a type that splits a string by a delimiter
+type Split&lt;S extends string, D extends string&gt; = 
+    S extends `${infer Head}${D}${infer Tail}`
+        ? [Head, ...Split&lt;Tail, D&gt;]
+        : [S];
+
+// 4. Write a type that joins an array of strings
+type Join&lt;T extends string[], D extends string&gt; = 
+    T extends [infer Head, ...infer Tail]
+        ? Head extends string
+            ? Tail extends string[]
+                ? `${Head}${D}${Join&lt;Tail, D&gt;}`
+                : Head
+            : never
+        : "";</code></pre>
+
+        <h3>Resources</h3>
+        <ul>
+          <li>TypeScript 4.0 Release Notes: Variadic Tuple Types</li>
+          <li>TypeScript 4.1 Release Notes: Template Literal Types</li>
+          <li>Type-Level TypeScript (Online Course)</li>
+        </ul>
+      </section>
+
+      <!-- Phase 5 -->
+      <section id="phase-5">
+        <h2>📚 Phase 5: Real-World Applications (Weeks 9-10)</h2>
+
+        <h3>Goals</h3>
+        <ul>
+          <li>Build practical utility types</li>
+          <li>Create type-safe APIs</li>
+          <li>Implement type-level validation</li>
+        </ul>
+
+        <h3>Topics</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>What to Learn</th>
+              <th>Practice</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Utility Types</td>
+              <td>How built-in utilities work</td>
+              <td>Re-implement Partial, Pick</td>
+            </tr>
+            <tr>
+              <td>Type-Safe APIs</td>
+              <td>Validating API responses</td>
+              <td>Build ApiClient</td>
+            </tr>
+            <tr>
+              <td>Route Params</td>
+              <td>Extracting URL params</td>
+              <td>Build RouteParser</td>
+            </tr>
+            <tr>
+              <td>Validation</td>
+              <td>Type-level validation</td>
+              <td>Build Email, URL</td>
+            </tr>
+            <tr>
+              <td>State Machines</td>
+              <td>Valid state transitions</td>
+              <td>Build StateMachine</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Key Projects</h3>
+        <pre><code class="language-typescript">// 1. Type-Safe Route Parser
+type ExtractParams&lt;T extends string&gt; = 
+    T extends `${string}:${infer Param}/${infer Rest}`
+        ? Param | ExtractParams&lt;`/${Rest}`&gt;
+        : T extends `${string}:${infer Param}`
+            ? Param
+            : never;
+
+// 2. Type-Safe API Client
+interface ApiSchema {
+    "/users": { GET: User[]; POST: User };
+    "/users/:id": { GET: User; DELETE: void };
+}
+
+// 3. Type-Level Email Validator
+type Email = `${string}@${string}.${string}`;
+
+// 4. Type-Level State Machine
+type State = "idle" | "loading" | "success" | "error";
+type Transitions = {
+    idle: "loading";
+    loading: "success" | "error";
+    success: "idle";
+    error: "idle";
+};</code></pre>
+
+        <h3>Resources</h3>
+        <ul>
+          <li>TypeScript Handbook: Utility Types</li>
+          <li>Type-Challenges (GitHub)</li>
+          <li>Real-world TypeScript projects</li>
+        </ul>
+      </section>
+
+      <!-- Phase 6 -->
+      <section id="phase-6">
+        <h2>📚 Phase 6: Mastery (Weeks 11-12)</h2>
+
+        <h3>Goals</h3>
+        <ul>
+          <li>Write type-level algorithms</li>
+          <li>Optimize type performance</li>
+          <li>Debug complex type errors</li>
+        </ul>
+
+        <h3>Topics</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>What to Learn</th>
+              <th>Practice</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Type Algorithms</td>
+              <td>Sorting, searching at type level</td>
+              <td>Write Sort, Find</td>
+            </tr>
+            <tr>
+              <td>Performance</td>
+              <td>Avoiding deep recursion</td>
+              <td>Optimize with tail recursion</td>
+            </tr>
+            <tr>
+              <td>Debugging</td>
+              <td>Finding type errors</td>
+              <td>Use // @ts-expect-error</td>
+            </tr>
+            <tr>
+              <td>Publishing</td>
+              <td>Creating type libraries</td>
+              <td>Publish to npm</td>
+            </tr>
+            <tr>
+              <td>Compiler Internals</td>
+              <td>How TypeScript checks types</td>
+              <td>Read TypeScript source</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Key Exercises</h3>
+        <pre><code class="language-typescript">// 1. Type-Level Sort
+type Sort&lt;T extends number[]&gt; = 
+    T extends [infer A extends number, infer B extends number, ...infer Rest]
+        ? A extends B
+            ? [A, ...Sort&lt;[B, ...Rest]&gt;]
+            : [B, ...Sort&lt;[A, ...Rest]&gt;]
+        : T;
+
+// 2. Type-Level Find
+type Find&lt;T extends any[], Predicate&gt; = 
+    T extends [infer Head, ...infer Tail]
+        ? Head extends Predicate
+            ? Head
+            : Find&lt;Tail, Predicate&gt;
+        : never;
+
+// 3. Type-Level Binary Search (Advanced)
+// ...</code></pre>
+
+        <h3>Resources</h3>
+        <ul>
+          <li>TypeScript Compiler Source Code</li>
+          <li>TypeScript Performance Benchmarks</li>
+          <li>TypeScript GitHub Issues</li>
+        </ul>
+      </section>
+
+      <!-- Summary: Weekly Breakdown -->
+      <section id="summary-breakdown">
+        <h2>📊 Summary: Weekly Breakdown</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th>Phase</th>
+              <th>Focus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Foundations</td>
+              <td>Generics, Conditionals</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Foundations</td>
+              <td>Unions, Intersections</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Core Mechanisms</td>
+              <td>Mapped Types, keyof</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Core Mechanisms</td>
+              <td>Template Literals</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Inference</td>
+              <td>infer, Recursion</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>Inference</td>
+              <td>Distribution, Type Guards</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>Advanced</td>
+              <td>Variadic Tuples</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>Advanced</td>
+              <td>Type Arithmetic, Strings</td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>Applications</td>
+              <td>Utility Types, APIs</td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td>Applications</td>
+              <td>Validation, State Machines</td>
+            </tr>
+            <tr>
+              <td>11</td>
+              <td>Mastery</td>
+              <td>Algorithms, Performance</td>
+            </tr>
+            <tr>
+              <td>12</td>
+              <td>Mastery</td>
+              <td>Publishing, Compiler Internals</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Daily Practice Plan -->
+      <section id="daily-practice">
+        <h2>🎯 Daily Practice Plan</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Activity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>30 min</td>
+              <td>Read documentation / watch tutorial</td>
+            </tr>
+            <tr>
+              <td>30 min</td>
+              <td>Solve 2-3 type challenges</td>
+            </tr>
+            <tr>
+              <td>30 min</td>
+              <td>Build a small project using the day's concept</td>
+            </tr>
+            <tr>
+              <td>15 min</td>
+              <td>Review and refactor previous code</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Milestones -->
+      <section id="milestones">
+        <h2>🏆 Milestones</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Milestone</th>
+              <th>When</th>
+              <th>What You Can Do</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Beginner</td>
+              <td>Week 2</td>
+              <td>Write simple conditional types</td>
+            </tr>
+            <tr>
+              <td>Intermediate</td>
+              <td>Week 4</td>
+              <td>Build custom utility types</td>
+            </tr>
+            <tr>
+              <td>Advanced</td>
+              <td>Week 6</td>
+              <td>Use infer and recursion</td>
+            </tr>
+            <tr>
+              <td>Expert</td>
+              <td>Week 8</td>
+              <td>Build type-level algorithms</td>
+            </tr>
+            <tr>
+              <td>Master</td>
+              <td>Week 10</td>
+              <td>Create type-safe APIs</td>
+            </tr>
+            <tr>
+              <td>Guru</td>
+              <td>Week 12</td>
+              <td>Publish type libraries</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Recommended Resources -->
+      <section id="recommended-resources">
+        <h2>📚 Recommended Resources</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Resource</th>
+              <th>Type</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TypeScript Handbook</td>
+              <td>Official Docs</td>
+              <td>All phases</td>
+            </tr>
+            <tr>
+              <td>Type-Challenges</td>
+              <td>GitHub Repo</td>
+              <td>Practice</td>
+            </tr>
+            <tr>
+              <td>Type-Level TypeScript</td>
+              <td>Online Course</td>
+              <td>Deep dives</td>
+            </tr>
+            <tr>
+              <td>TypeScript Release Notes</td>
+              <td>Official Blog</td>
+              <td>New features</td>
+            </tr>
+            <tr>
+              <td>TypeScript Source Code</td>
+              <td>GitHub</td>
+              <td>Internals</td>
+            </tr>
+            <tr>
+              <td>Advanced TypeScript</td>
+              <td>Book</td>
+              <td>Deep understanding</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Key Takeaway -->
+      <section id="key-takeaway">
+        <h2>🔥 Key Takeaway</h2>
+        <p>
+          Mastering type-level programming is a journey. Start with the
+          fundamentals, practice daily, build projects, and gradually tackle
+          more complex challenges. In 12 weeks, you'll be among the top 1% of
+          TypeScript developers.
+        </p>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

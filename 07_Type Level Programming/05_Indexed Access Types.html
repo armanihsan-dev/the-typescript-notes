@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What Are Indexed Access Types?</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#definition" class="nav-link">What Are Indexed Access Types?</a>
+        <a href="#part-1" class="nav-link">Part 1: Basic Syntax</a>
+        <a href="#part-2" class="nav-link">Part 2: How It Works</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Advanced Access</div>
+        <a href="#part-3" class="nav-link">Part 3: Access with Unions</a>
+        <a href="#part-4" class="nav-link">Part 4: Access with keyof</a>
+        <a href="#part-5" class="nav-link">Part 5: Access with Arrays</a>
+        <a href="#part-6" class="nav-link">Part 6: Nested Objects</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Generics &amp; Use Cases</div>
+        <a href="#part-7" class="nav-link">Part 7: Generic Constraints</a>
+        <a href="#part-8" class="nav-link">Part 8: Access with typeof</a>
+        <a href="#part-9" class="nav-link">Part 9: Practical Use Cases</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Type Operators</span>
+        <h1>WHAT ARE INDEXED ACCESS TYPES?</h1>
+      </section>
+
+      <!-- Definition & Mental Model -->
+      <section id="definition">
+        <h2>Definition:</h2>
+        <p>Indexed Access Types let you look up the type of a specific property inside another type. It's like using [] to access a property on an object — but at the type level.</p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type ValueType = SomeType["propertyName"];
+// Gets the type of "propertyName" inside SomeType</code></pre>
+
+        <h3>🧠 The Mental Model</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    INDEXED ACCESS TYPES                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  VALUE LEVEL:              TYPE LEVEL:                          │
+│  ─────────────            ────────────                          │
+│                                                                  │
+│  const user = {            type User = {                        │
+│      name: "Alice",            name: string;                    │
+│      age: 25                   age: number;                     │
+│  };                        };                                   │
+│                                                                  │
+│  user["name"]              User["name"]                         │
+│  → "Alice"                 → string                             │
+│                                                                  │
+│  You access a VALUE.       You access a TYPE.                   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 1 -->
+      <section id="part-1">
+        <h2>Part 1: Basic Syntax</h2>
+        <pre><code class="language-typescript">type ValueType = SomeType["key"];</code></pre>
+
+        <h3>Simple Example</h3>
+        <pre><code class="language-typescript">type User = {
+    name: string;
+    age: number;
+    email: string;
+};
+
+type NameType = User["name"];
+// NameType = string
+
+type AgeType = User["age"];
+// AgeType = number
+
+type EmailType = User["email"];
+// EmailType = string</code></pre>
+      </section>
+
+      <!-- Part 2 -->
+      <section id="part-2">
+        <h2>Part 2: How It Works</h2>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-typescript">// Step 1: Define an object type
+type User = {
+    name: string;
+    age: number;
+    isActive: boolean;
+};
+
+// Step 2: Access a specific property type
+type NameType = User["name"];     // string
+type AgeType = User["age"];       // number
+type ActiveType = User["isActive"]; // boolean
+
+// Step 3: Use it anywhere
+const name: NameType = "Alice";   // ✅ Works
+const age: AgeType = 25;          // ✅ Works
+const active: ActiveType = true;  // ✅ Works</code></pre>
+
+        <h3>Visual</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW IT WORKS                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  type User = {                                                 │
+│      name: string;      ← User["name"] = string                │
+│      age: number;       ← User["age"] = number                 │
+│      isActive: boolean; ← User["isActive"] = boolean           │
+│  };                                                            │
+│                                                                  │
+│  You access the TYPE of each property using ["property"].     │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 3 -->
+      <section id="part-3">
+        <h2>Part 3: Indexed Access with Unions</h2>
+        <pre><code class="language-typescript">type User = {
+    name: string;
+    age: number;
+    email: string;
+};
+
+// Union of keys
+type StringOrNumber = User["name" | "age"];
+// StringOrNumber = string | number
+
+type AllTypes = User["name" | "age" | "email"];
+// AllTypes = string | number | string = string | number</code></pre>
+      </section>
+
+      <!-- Part 4 -->
+      <section id="part-4">
+        <h2>Part 4: Indexed Access with keyof</h2>
+
+        <h3>T[keyof T] = All Value Types</h3>
+        <pre><code class="language-typescript">type User = {
+    name: string;
+    age: number;
+    isActive: boolean;
+};
+
+type AllValues = User[keyof User];
+// AllValues = string | number | boolean</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    T[keyof T]                                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: keyof User                                            │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "name" | "age" | "isActive"                            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: User["name" | "age" | "isActive"]                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  User["name"] | User["age"] | User["isActive"]          │   │
+│  │  = string | number | boolean                             │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 5 -->
+      <section id="part-5">
+        <h2>Part 5: Indexed Access with Arrays</h2>
+
+        <h3>Array Element Type</h3>
+        <pre><code class="language-typescript">type Colors = string[];
+
+type ColorType = Colors[number];
+// ColorType = string</code></pre>
+
+        <h3>Tuple Element Types</h3>
+        <pre><code class="language-typescript">type Point = [number, number];
+
+type X = Point[0]; // number
+type Y = Point[1]; // number
+
+type Mixed = [string, number, boolean];
+
+type First = Mixed[0];  // string
+type Second = Mixed[1]; // number
+type Third = Mixed[2];  // boolean</code></pre>
+
+        <h3>Array of Objects</h3>
+        <pre><code class="language-typescript">type Users = { name: string; age: number }[];
+
+type UserType = Users[number];
+// UserType = { name: string; age: number }</code></pre>
+      </section>
+
+      <!-- Part 6 -->
+      <section id="part-6">
+        <h2>Part 6: Indexed Access with Nested Objects</h2>
+        <pre><code class="language-typescript">type User = {
+    name: string;
+    address: {
+        street: string;
+        city: string;
+        zip: string;
+    };
+};
+
+// Access nested types
+type AddressType = User["address"];
+// AddressType = { street: string; city: string; zip: string }
+
+type StreetType = User["address"]["street"];
+// StreetType = string
+
+type CityType = User["address"]["city"];
+// CityType = string</code></pre>
+
+        <h3>Visual</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    NESTED ACCESS                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  User = {                                                       │
+│      name: string;                                              │
+│      address: {           ← User["address"]                     │
+│          street: string;  ← User["address"]["street"]           │
+│          city: string;    ← User["address"]["city"]             │
+│          zip: string;     ← User["address"]["zip"]              │
+│      };                                                         │
+│  };                                                            │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 7 -->
+      <section id="part-7">
+        <h2>Part 7: Indexed Access with Generic Constraints</h2>
+
+        <h3>The Classic Pattern</h3>
+        <pre><code class="language-typescript">function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}
+
+const user = { name: "Alice", age: 25 };
+
+const name = getProperty(user, "name"); // string
+const age = getProperty(user, "age");   // number
+// getProperty(user, "email"); // ❌ Error</code></pre>
+
+        <h3>Why T[K] Works</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    T[K] EXPLAINED                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  T = { name: string; age: number }                             │
+│  K = "name"                                                    │
+│                                                                  │
+│  T[K] = T["name"] = string                                     │
+│                                                                  │
+│  The return type DEPENDS on the key you pass.                  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 8 -->
+      <section id="part-8">
+        <h2>Part 8: Indexed Access with typeof</h2>
+        <pre><code class="language-typescript">const user = {
+    name: "Alice",
+    age: 25,
+    email: "alice@email.com"
+};
+
+// Get type of a property from a value
+type NameType = (typeof user)["name"];
+// NameType = string
+
+type AgeType = (typeof user)["age"];
+// AgeType = number
+
+type UserType = typeof user;
+// UserType = { name: string; age: number; email: string }
+
+type AllValues = (typeof user)[keyof typeof user];
+// AllValues = string | number</code></pre>
+      </section>
+
+      <!-- Part 9 -->
+      <section id="part-9">
+        <h2>Part 9: Practical Use Cases</h2>
+
+        <h3>Use Case 1: Type-Safe Getters</h3>
+        <pre><code class="language-typescript">function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}
+
+const user = { name: "Alice", age: 25 };
+const name = getProperty(user, "name"); // string
+const age = getProperty(user, "age");   // number</code></pre>
+
+        <h3>Use Case 2: Extract Specific Types</h3>
+        <pre><code class="language-typescript">type ApiResponse = {
+    status: number;
+    data: {
+        user: {
+            id: number;
+            name: string;
+        };
+        posts: {
+            id: number;
+            title: string;
+        }[];
+    };
+};
+
+// Extract the user type
+type User = ApiResponse["data"]["user"];
+// User = { id: number; name: string }
+
+// Extract the posts type
+type Posts = ApiResponse["data"]["posts"];
+// Posts = { id: number; title: string }[]</code></pre>
+
+        <h3>Use Case 3: Array Element Type Extraction</h3>
+        <pre><code class="language-typescript">type Users = {
+    id: number;
+    name: string;
+}[];
+
+type UserType = Users[number];</code></pre>
+        <p>Users is an array type. Each element must be an object with a numeric id and a string name.<br />type UserType = Users[number];</p>
+        <p>The [number] is TypeScript’s indexed access type syntax. Here, number represents any numeric array index, so Users[number] means “the type of an element at a numeric index in this array.”</p>
+        <p>Therefore, UserType is the element type of Users:</p>
+        <pre><code class="language-typescript">// UserType = { id: number; name: string }
+
+// Real-world use:
+function processUsers(users: Users): UserType[] {
+    return users.map(user =&gt; ({ id: user.id, name: user.name }));
+}</code></pre>
+
+        <h3>Use Case 4: Type-Safe Object Updates</h3>
+        <pre><code class="language-typescript">function updateProperty&lt;T, K extends keyof T&gt;(
+    obj: T,
+    key: K,
+    value: T[K]
+): T {
+    return { ...obj, [key]: value };
+}
+
+const user = { name: "Alice", age: 25 };
+
+const updated = updateProperty(user, "name", "Bob"); // ✅
+// updated = { name: "Bob", age: 25 }
+
+// ❌ Error: value must be number for "age"
+updateProperty(user, "age", "old");</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

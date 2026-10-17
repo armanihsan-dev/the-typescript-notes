@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The keyof Operator — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Introduction</div>
+        <a href="#what-is-keyof" class="nav-link">🎯 What is keyof?</a>
+        <a href="#basic-syntax" class="nav-link">Part 1: Basic Syntax</a>
+        <a href="#how-it-works" class="nav-link">Part 2: How It Works</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Usage &amp; Combinations</div>
+        <a href="#real-world-use-cases" class="nav-link">Part 3: Real-World Use Cases</a>
+        <a href="#role-and-benefit" class="nav-link">📘 The Role &amp; Benefit of keyof</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. The &lt;T, K extends keyof T&gt; Pattern</div>
+        <a href="#tk-explanation" class="nav-link">The Logic Behind &lt;T, K extends keyof T&gt;</a>
+        <a href="#tk-breakdown" class="nav-link">Constraint Breakdown &amp; T[K]</a>
+        <a href="#tk-execution" class="nav-link">Execution Flow &amp; Errors</a>
+        <a href="#tk-advanced" class="nav-link">Multiple Keys &amp; Misconceptions</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">IV. Wrap-up</div>
+        <a href="#summary" class="nav-link">📝 Summary &amp; Takeaways</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Type Operators</span>
+        <h1>THE KEYOF OPERATOR — COMPLETE GUIDE</h1>
+      </section>
+
+      <!-- What is keyof? -->
+      <section id="what-is-keyof">
+        <h2>🎯 What is keyof?</h2>
+        
+        <h3>Definition:</h3>
+        <p>keyof is a TypeScript type operator that takes an object type and produces a union of its property names (as string/number literal types).</p>
+        <p>OR</p>
+        <p>The keyof operator is takes a type as input and returns:</p>
+        <p>a union of all property keys that TypeScript allows you to access on the value of that type using bracket notation syntax without producing a type error.</p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type Keys = keyof SomeObjectType;
+// Keys becomes a union of all property names</code></pre>
+
+        <h3>🧠 The Mental Model</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    keyof MENTAL MODEL                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  You have a TYPE:                                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  type User = {                                          │   │
+│  │      name: string;                                      │   │
+│  │      age: number;                                       │   │
+│  │      email: string;                                     │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  keyof gives you the KEYS as a union:                           │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  type UserKeys = keyof User;                            │   │
+│  │  // "name" | "age" | "email"                            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Think of it like Object.keys() but for TYPES!                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 1: Basic Syntax -->
+      <section id="basic-syntax">
+        <h2>Part 1: Basic Syntax</h2>
+        <pre><code class="language-typescript">type Keys = keyof SomeType;</code></pre>
+
+        <h3>Simple Example</h3>
+        <pre><code class="language-typescript">type User = {
+    name: string;
+    age: number;
+    email: string;
+};
+
+type UserKeys = keyof User;
+// UserKeys = "name" | "age" | "email"</code></pre>
+      </section>
+
+      <!-- Part 2: How It Works -->
+      <section id="how-it-works">
+        <h2>Part 2: How It Works</h2>
+
+        <h3>With Interfaces</h3>
+        <pre><code class="language-typescript">interface Product {
+    id: number;
+    name: string;
+    price: number;
+    inStock: boolean;
+}
+
+type ProductKeys = keyof Product;
+// "id" | "name" | "price" | "inStock"</code></pre>
+
+        <h3>With Type Aliases</h3>
+        <pre><code class="language-typescript">type Config = {
+    apiUrl: string;
+    timeout: number;
+    retries: number;
+};
+
+type ConfigKeys = keyof Config;
+// "apiUrl" | "timeout" | "retries"</code></pre>
+
+        <h3>With Index Signatures</h3>
+        <pre><code class="language-typescript">type Dictionary = {
+    [key: string]: string;
+};
+
+type DictKeys = keyof Dictionary;
+// string | number
+// (Because index signatures accept both string and number keys)</code></pre>
+
+        <h3>With Arrays</h3>
+        <pre><code class="language-typescript">type Arr = string[];
+
+type ArrKeys = keyof Arr;
+// number | "length" | "push" | "pop" | ... (all array methods)</code></pre>
+
+        <h3>With Tuples</h3>
+        <pre><code class="language-typescript">type Tuple = [string, number, boolean];
+
+type TupleKeys = keyof Tuple;
+// "0" | "1" | "2" | "length" | "push" | "pop" | ...</code></pre>
+      </section>
+
+      <!-- Part 3: Real-World Use Cases -->
+      <section id="real-world-use-cases">
+        <h2>Part 3: Real-World Use Cases</h2>
+
+        <h3>Use Case 1: Type-Safe Property Access</h3>
+        <pre><code class="language-typescript">function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}
+
+const user = { name: "Alice", age: 25, email: "alice@email.com" };
+
+getProperty(user, "name");  // ✅ "Alice"
+getProperty(user, "age");   // ✅ 25
+getProperty(user, "email"); // ✅ "alice@email.com"
+getProperty(user, "phone"); // ❌ Error: "phone" is not a key of user</code></pre>
+
+        <h3>keyof with typeof</h3>
+        <h4>The Powerful Combination</h4>
+        <pre><code class="language-typescript">const user = {
+    name: "Alice",
+    age: 25,
+    email: "alice@email.com"
+};
+
+type UserKeys = keyof typeof user;
+// "name" | "age" | "email"
+
+// Without typeof:
+type UserKeys2 = keyof { name: string; age: number; email: string };
+// Same result</code></pre>
+
+        <h3>keyof with Numbers and Symbols</h3>
+        <h4>Numeric Keys</h4>
+        <pre><code class="language-typescript">type NumericKeys = {
+    0: string;
+    1: number;
+    2: boolean;
+};
+
+type Keys = keyof NumericKeys;
+// 0 | 1 | 2 (number literal types)</code></pre>
+
+        <h4>Symbol Keys</h4>
+        <pre><code class="language-typescript">const sym = Symbol("key");
+
+type WithSymbol = {
+    [sym]: string;
+    name: string;
+};
+
+type Keys = keyof WithSymbol;
+// typeof sym | "name"</code></pre>
+
+        <h3>keyof with Union Types</h3>
+        <h4>How keyof Handles Unions</h4>
+        <pre><code class="language-typescript">type A = { a: string; shared: boolean };
+type B = { b: number; shared: boolean };
+
+type Keys = keyof (A | B);
+// "shared"
+// Only common keys!
+
+// ❌ Not "a" | "b" | "shared"</code></pre>
+
+        <h4>Why?</h4>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    keyof WITH UNIONS                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  A = { a: string; shared: boolean }                             │
+│  B = { b: number; shared: boolean }                             │
+│                                                                  │
+│  A | B means "either A or B"                                    │
+│                                                                  │
+│  keyof (A | B) means: "what keys are GUARANTEED in both?"       │
+│                                                                  │
+│  ✅ "shared" exists in both                                     │
+│  ❌ "a" only exists in A                                        │
+│  ❌ "b" only exists in B                                        │
+│                                                                  │
+│  Result: "shared"                                               │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h4>Getting Union of All Keys</h4>
+        <pre><code class="language-typescript">// To get ALL keys from both:
+type AllKeys = keyof A | keyof B;
+// "a" | "shared" | "b"</code></pre>
+
+        <h3>keyof with Intersection Types</h3>
+        <pre><code class="language-typescript">type A = { a: string; shared: boolean };
+type B = { b: number; shared: boolean };
+
+type Keys = keyof (A &amp; B);
+// "a" | "b" | "shared"
+// ALL keys from both!</code></pre>
+
+        <h4>Why?</h4>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    keyof WITH INTERSECTIONS                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  A &amp; B means "BOTH A and B"                                     │
+│                                                                  │
+│  keyof (A &amp; B) means: "what keys exist in the combined object?" │
+│                                                                  │
+│  ✅ "a" from A                                                  │
+│  ✅ "b" from B                                                  │
+│  ✅ "shared" from both                                          │
+│                                                                  │
+│  Result: "a" | "b" | "shared"                                   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Role & Benefit -->
+      <section id="role-and-benefit">
+        <h2>📘 The Role &amp; Benefit of keyof in Type-Level Programming</h2>
+
+        <h3>🎯 The Core Answer</h3>
+        <p>keyof is the "reflection" mechanism of type-level programming. It lets you inspect and extract the structure of object types, turning them into unions of keys. Without keyof, you cannot write generic code that operates on object shapes.</p>
+        <p>In value-level programming, you use Object.keys() to reflect on an object at runtime.<br />In type-level programming, keyof is Object.keys() for types — but with far more power because it's computed at compile time.</p>
+
+        <h3>Why keyof Matters at the Type Level</h3>
+        <h4>The Problem Without keyof</h4>
+        <pre><code class="language-typescript">// ❌ You have to hardcode every key
+function getProperty(obj: any, key: string): any {
+    return obj[key];
+}
+// No type safety. Any string allowed. Return type is any.
+
+// ✅ With keyof:
+function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}
+// key must be a real key. Return type is exact.</code></pre>
+
+        <h4>The Key Insight</h4>
+        <p>keyof turns object types into union types, which can then be transformed, filtered, mapped, and manipulated at the type level.</p>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    keyof AS A TRANSFORMER                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Object Type                  Union of Keys                     │
+│  ────────────                 ─────────────                     │
+│                                                                  │
+│  { name: string;          →   "name" | "age" | "email"         │
+│    age: number;                                                 │
+│    email: string }                                              │
+│                                                                  │
+│  keyof CONVERTS a structured type into a flat union.           │
+│  Then you can manipulate that union with type-level tools.     │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- The Logic Behind <T, K extends keyof T> -->
+      <section id="tk-explanation">
+        <h2>The Logic Behind &lt;T, K extends keyof T&gt; — Complete Explanation</h2>
+
+        <h3>🎯 The Core Question</h3>
+        <p>You want to understand why this works:</p>
+        <pre><code class="language-typescript">function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}</code></pre>
+        <p>Let's break down every single piece and the logic behind each.</p>
+
+        <h3>Part 1: The Two Type Parameters</h3>
+        <h4>T — The Object Type</h4>
+        <pre><code class="language-typescript">&lt;T, ...&gt;</code></pre>
+        <ul>
+          <li>T is a generic type parameter</li>
+          <li>It represents the type of the object you pass in</li>
+          <li>It can be any type</li>
+        </ul>
+
+        <h4>K — The Key Type</h4>
+        <pre><code class="language-typescript">&lt;..., K extends keyof T&gt;</code></pre>
+        <ul>
+          <li>K is a second generic type parameter</li>
+          <li>It represents the key you want to access</li>
+          <li>It is constrained to be a key of T</li>
+        </ul>
+      </section>
+
+      <!-- Part 2 & 3 & 4: Breakdown -->
+      <section id="tk-breakdown">
+        <h2>Part 2: Breaking Down K extends keyof T</h2>
+        <p>Let's go from right to left:</p>
+        <pre><code class="language-typescript">K extends keyof T</code></pre>
+
+        <h3>Step 1: T (The Object Type)</h3>
+        <pre><code class="language-typescript">// Suppose T = { name: string; age: number; email: string }</code></pre>
+
+        <h3>Step 2: keyof T (The Keys as a Union)</h3>
+        <pre><code class="language-typescript">// keyof { name: string; age: number; email: string }
+// = "name" | "age" | "email"</code></pre>
+        <p>keyof T produces a union of all property names.</p>
+
+        <h3>Step 3: K extends keyof T (The Constraint)</h3>
+        <pre><code class="language-typescript">// K must be a subtype of "name" | "age" | "email"
+// So K can be:
+//   - "name"
+//   - "age"
+//   - "email"
+//   - "name" | "age"
+//   - "name" | "email"
+//   - "age" | "email"
+//   - "name" | "age" | "email"</code></pre>
+        <p>K extends keyof T means K must be one of the keys of T.</p>
+
+        <h2>Part 3: Visual: The Constraint Logic</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    THE CONSTRAINT LOGIC                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  T = { name: string; age: number; email: string }              │
+│                                                                  │
+│  Step 1: keyof T                                                │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  keyof T = "name" | "age" | "email"                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: K extends keyof T                                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  K must be assignable to: "name" | "age" | "email"      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: What K can be                                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  ✅ K = "name"                                          │   │
+│  │  ✅ K = "age"                                           │   │
+│  │  ✅ K = "email"                                         │   │
+│  │  ✅ K = "name" | "age"                                  │   │
+│  │  ❌ K = "phone"  (not in the union)                     │   │
+│  │  ❌ K = "unknown" (not in the union)                    │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h2>Part 4: The Return Type T[K]</h2>
+        <pre><code class="language-typescript">: T[K]</code></pre>
+        <ul>
+          <li>T[K] is an indexed access type</li>
+          <li>It means: "the type of the property at key K in object T"</li>
+        </ul>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">// If T = { name: string; age: number; email: string }
+
+// T["name"] = string
+// T["age"] = number
+// T["email"] = string
+
+// So:
+// T[K] where K = "name" → string
+// T[K] where K = "age"  → number
+// T[K] where K = "email" → string</code></pre>
+
+        <h3>Visual</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    T[K] LOGIC                                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  T = { name: string; age: number; email: string }              │
+│                                                                  │
+│  K = "name"  →  T[K] = string                                  │
+│  K = "age"   →  T[K] = number                                  │
+│  K = "email" →  T[K] = string                                  │
+│                                                                  │
+│  The return type DEPENDS on K.                                 │
+│  This is the power of generics!                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 5 & 6: Execution & Error Flow -->
+      <section id="tk-execution">
+        <h2>Part 5: The Full Function Logic</h2>
+        <pre><code class="language-typescript">function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}</code></pre>
+
+        <h3>Step-by-Step Execution</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    EXECUTION FLOW                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Call getProperty(user, "name")                        │
+│                                                                  │
+│  Step 2: TypeScript infers:                                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  T = typeof user = { name: string; age: number }         │   │
+│  │  K = "name"                                              │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: Check constraint                                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Does "name" extend keyof T?                             │   │
+│  │  keyof T = "name" | "age"                                │   │
+│  │  "name" extends "name" | "age"? YES ✅                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 4: Compute return type                                    │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  T[K] = T["name"] = string                               │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 5: Return value                                           │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  return obj["name"] = "Alice"                            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: "Alice" (type: string)                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h2>Part 6: What Happens with Invalid Keys</h2>
+        <pre><code class="language-typescript">getProperty(user, "phone");</code></pre>
+
+        <h3>Step-by-Step Error</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    INVALID KEY ERROR                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Call getProperty(user, "phone")                       │
+│                                                                  │
+│  Step 2: TypeScript infers:                                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  T = typeof user = { name: string; age: number }         │   │
+│  │  K = "phone"                                             │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: Check constraint                                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Does "phone" extend keyof T?                            │   │
+│  │  keyof T = "name" | "age"                                │   │
+│  │  "phone" extends "name" | "age"? NO ❌                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 4: TypeScript throws an error                            │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Error: Argument of type '"phone"' is not assignable     │   │
+│  │  to parameter of type '"name" | "age"'                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <!-- Part 7, 8, 9, 10 -->
+      <section id="tk-advanced">
+        <h2>Part 7: Why This Is Type-Level Programming</h2>
+        
+        <h3>The Compile-Time Logic</h3>
+        <pre><code class="language-typescript">function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}</code></pre>
+
+        <p>This function does type-level computation:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Type-Level Operation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Extract keys of T with keyof T</td></tr>
+            <tr><td>2</td><td>Constrain K to those keys</td></tr>
+            <tr><td>3</td><td>Use K to look up value type T[K]</td></tr>
+            <tr><td>4</td><td>Link input T, K to output T[K]</td></tr>
+          </tbody>
+        </table>
+        <p>This is a type-level function!</p>
+
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    TYPE-LEVEL FUNCTION                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Input:                    Output:                              │
+│  ┌───────────────────┐    ┌───────────────────┐                │
+│  │  T (object type)  │    │  T[K] (value type)│                │
+│  │  K (key type)     │    │                   │                │
+│  └───────────────────┘    └───────────────────┘                │
+│                                                                  │
+│  The return type is COMPUTED from the input types.             │
+│                                                                  │
+│  getProperty&lt;User, "name"&gt;  →  string                          │
+│  getProperty&lt;User, "age"&gt;   →  number                          │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h2>Part 8: The Logic in Plain English</h2>
+        <p>"Give me any object type T, and any key K that belongs to T. I promise to return the exact value type at that key."</p>
+        <ul>
+          <li>T = the object you're working with</li>
+          <li>K extends keyof T = the key must be valid</li>
+          <li>T[K] = the return type is the value at that key</li>
+        </ul>
+
+        <h2>Part 9: Multiple Keys</h2>
+        <pre><code class="language-typescript">function getProperties&lt;T, K extends keyof T&gt;(obj: T, keys: K[]): T[K][] {
+    return keys.map(key =&gt; obj[key]);
+}
+
+const user = { name: "Alice", age: 25, email: "alice@email.com" };
+
+const values = getProperties(user, ["name", "email"]);
+// values = ["Alice", "alice@email.com"]
+// Type: (string | string)[] = string[]
+
+// ❌ Invalid:
+getProperties(user, ["name", "phone"]); // Error</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    MULTIPLE KEYS LOGIC                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  K = "name" | "email"                                           │
+│  T[K] = T["name"] | T["email"] = string | string = string      │
+│                                                                  │
+│  keys: K[] = ("name" | "email")[]                              │
+│  returns: T[K][] = string[]                                     │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h2>Part 10: Common Misconceptions</h2>
+        
+        <h3>Misconception 1: K is a Value</h3>
+        <pre><code class="language-typescript">// ❌ Wrong: K is NOT a value
+getProperty(user, "name"); // "name" is a VALUE
+// But K is a TYPE that represents "name"</code></pre>
+
+        <h3>Misconception 2: keyof T is Runtime</h3>
+        <pre><code class="language-typescript">// ❌ Wrong: keyof T is NOT runtime
+// keyof T is computed at COMPILE TIME
+// It doesn't exist at runtime</code></pre>
+
+        <h3>Misconception 3: T[K] is Runtime Access</h3>
+        <pre><code class="language-typescript">// ❌ Wrong: T[K] is NOT runtime property access
+// T[K] is a TYPE computed at COMPILE TIME
+// The actual access `obj[key]` is runtime</code></pre>
+      </section>
+
+      <!-- Summary -->
+      <section id="summary">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Meaning</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>T</td>
+              <td>Object type</td>
+              <td><code>{ name: string; age: number }</code></td>
+            </tr>
+            <tr>
+              <td>keyof T</td>
+              <td>Union of keys</td>
+              <td><code>"name" | "age"</code></td>
+            </tr>
+            <tr>
+              <td>K extends keyof T</td>
+              <td>K must be a key</td>
+              <td><code>K = "name" ✅</code></td>
+            </tr>
+            <tr>
+              <td>T[K]</td>
+              <td>Value type at key</td>
+              <td><code>T["name"] → string</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Two parameters</td>
+              <td>T for object, K for key</td>
+            </tr>
+            <tr>
+              <td>Constraint</td>
+              <td>K extends keyof T restricts K</td>
+            </tr>
+            <tr>
+              <td>Return type</td>
+              <td>T[K] is computed from T and K</td>
+            </tr>
+            <tr>
+              <td>Type-level function</td>
+              <td>Links input types to output type</td>
+            </tr>
+            <tr>
+              <td>Compile-time</td>
+              <td>All of this happens at compile time</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>The One-Sentence Answer</h3>
+        <p>&lt;T, K extends keyof T&gt; means: "T is any object type, K is any key of T, and the return type is the value type at that key — computed entirely at compile time."</p>
+        <p>You now understand the logic behind &lt;T, K extends keyof T&gt;. 🚀</p>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>
