@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>String Manipulation Utility Types in TypeScript</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-are-string-manipulation-utility-types" class="nav-link"
+          >🎯 What Are String Manipulation Utility Types?</a
+        >
+        <a href="#mental-model" class="nav-link">🧠 The Mental Model</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. The Four Utility Types</div>
+        <a href="#uppercase" class="nav-link">1. 🔠 Uppercase&lt;T&gt;</a>
+        <a href="#lowercase" class="nav-link">2. 🔡 Lowercase&lt;T&gt;</a>
+        <a href="#capitalize" class="nav-link">3. 🔤 Capitalize&lt;T&gt;</a>
+        <a href="#uncapitalize" class="nav-link">4. 🔤 Uncapitalize&lt;T&gt;</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Advanced &amp; Summary</div>
+        <a href="#combining-types" class="nav-link">🧠 Combining Types</a>
+        <a href="#api-route-builder" class="nav-link">🧠 API Route Builder</a>
+        <a href="#event-emitter" class="nav-link">🧠 Type-Safe Event Emitter</a>
+        <a href="#summary-table" class="nav-link">📝 Summary Table</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>String Manipulation Utility Types in TypeScript</h1>
+      </section>
+
+      <section id="what-are-string-manipulation-utility-types">
+        <h2>🎯 What Are String Manipulation Utility Types?</h2>
+
+        <h3>Definition:</h3>
+        <p>
+          String manipulation utility types are built-in TypeScript types that
+          transform string literal types by changing their case. They work at
+          the type level — no runtime code, just types.
+        </p>
+
+        <h3>The Four Utility Types</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Utility Type</th>
+              <th>What It Does</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Uppercase&lt;T&gt;</td>
+              <td>Converts to UPPERCASE</td>
+              <td>Uppercase&lt;"hello"&gt; → "HELLO"</td>
+            </tr>
+            <tr>
+              <td>Lowercase&lt;T&gt;</td>
+              <td>Converts to lowercase</td>
+              <td>Lowercase&lt;"HELLO"&gt; → "hello"</td>
+            </tr>
+            <tr>
+              <td>Capitalize&lt;T&gt;</td>
+              <td>Capitalizes first letter</td>
+              <td>Capitalize&lt;"hello"&gt; → "Hello"</td>
+            </tr>
+            <tr>
+              <td>Uncapitalize&lt;T&gt;</td>
+              <td>Uncapitalizes first letter</td>
+              <td>Uncapitalize&lt;"Hello"&gt; → "hello"</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="mental-model">
+        <h2>🧠 The Mental Model</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    STRING MANIPULATION                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  These types work on STRING LITERAL TYPES only:                │
+│                                                                  │
+│  ✅ "hello"  → works                                           │
+│  ❌ string   → doesn't work (too broad)                        │
+│                                                                  │
+│  They transform the literal at the TYPE level.                 │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Uppercase&lt;"hello"&gt;    → "HELLO"                        │   │
+│  │  Lowercase&lt;"HELLO"&gt;    → "hello"                        │   │
+│  │  Capitalize&lt;"hello"&gt;   → "Hello"                        │   │
+│  │  Uncapitalize&lt;"Hello"&gt; → "hello"                        │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="uppercase">
+        <h2>1. 🔠 Uppercase&lt;T&gt; — Convert to UPPERCASE</h2>
+
+        <h3>Definition</h3>
+        <p>
+          Uppercase&lt;T&gt; converts a string literal type to ALL UPPERCASE.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Result = Uppercase&lt;"hello"&gt;;
+// "HELLO"</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-typescript">type A = Uppercase&lt;"hello"&gt;;      // "HELLO"
+type B = Uppercase&lt;"Hello World"&gt;; // "HELLO WORLD"
+type C = Uppercase&lt;"abc123"&gt;;     // "ABC123"
+type D = Uppercase&lt;""&gt;;           // ""
+
+// ❌ Doesn't work with general string
+// type E = Uppercase&lt;string&gt;;    // string (not transformed)</code></pre>
+
+        <h3>Use Case: Constant Names</h3>
+        <pre><code class="language-typescript">type ConstantName&lt;T extends string&gt; = Uppercase&lt;T&gt;;
+
+type APIKey = ConstantName&lt;"apiKey"&gt;;      // "APIKEY"
+type DatabaseURL = ConstantName&lt;"databaseUrl"&gt;; // "DATABASEURL"
+
+// Use in objects
+const config = {
+    APIKEY: "secret",
+    DATABASEURL: "postgres://..."
+} as const;</code></pre>
+      </section>
+
+      <section id="lowercase">
+        <h2>2. 🔡 Lowercase&lt;T&gt; — Convert to lowercase</h2>
+
+        <h3>Definition</h3>
+        <p>
+          Lowercase&lt;T&gt; converts a string literal type to all lowercase.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Result = Lowercase&lt;"HELLO"&gt;;
+// "hello"</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-typescript">type A = Lowercase&lt;"HELLO"&gt;;      // "hello"
+type B = Lowercase&lt;"Hello World"&gt;; // "hello world"
+type C = Lowercase&lt;"ABC123"&gt;;     // "abc123"
+type D = Lowercase&lt;""&gt;;           // ""</code></pre>
+
+        <h3>Use Case: CSS Class Names</h3>
+        <pre><code class="language-typescript">type CssClass&lt;T extends string&gt; = Lowercase&lt;T&gt;;
+
+type ButtonClass = CssClass&lt;"PRIMARY"&gt;;    // "primary"
+type DangerClass = CssClass&lt;"DANGER"&gt;;     // "danger"
+
+// Use in components
+const button = document.createElement("button");
+button.className = "primary"; // ✅</code></pre>
+      </section>
+
+      <section id="capitalize">
+        <h2>3. 🔤 Capitalize&lt;T&gt; — Capitalize First Letter</h2>
+
+        <h3>Definition</h3>
+        <p>
+          Capitalize&lt;T&gt; converts the first letter of a string literal type
+          to uppercase.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Result = Capitalize&lt;"hello"&gt;;
+// "Hello"</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-typescript">type A = Capitalize&lt;"hello"&gt;;      // "Hello"
+type B = Capitalize&lt;"hello world"&gt;; // "Hello world"
+type C = Capitalize&lt;"helloWorld"&gt;; // "HelloWorld"
+type D = Capitalize&lt;""&gt;;           // ""</code></pre>
+
+        <h3>Use Case: Event Handler Names</h3>
+        <pre><code class="language-typescript">type EventHandlerName&lt;T extends string&gt; = `on${Capitalize&lt;T&gt;}`;
+
+type ClickHandler = EventHandlerName&lt;"click"&gt;;   // "onClick"
+type HoverHandler = EventHandlerName&lt;"hover"&gt;;   // "onHover"
+type FocusHandler = EventHandlerName&lt;"focus"&gt;;   // "onFocus"
+
+// Use in React components
+interface ButtonProps {
+    onClick?: () => void;
+    onHover?: () => void;
+    onFocus?: () => void;
+}</code></pre>
+
+        <h3>Use Case: Getter Names</h3>
+        <pre><code class="language-typescript">type GetterName&lt;T extends string&gt; = `get${Capitalize&lt;T&gt;}`;
+
+type NameGetter = GetterName&lt;"name"&gt;;   // "getName"
+type AgeGetter = GetterName&lt;"age"&gt;;     // "getAge"
+type EmailGetter = GetterName&lt;"email"&gt;; // "getEmail"</code></pre>
+      </section>
+
+      <section id="uncapitalize">
+        <h2>4. 🔤 Uncapitalize&lt;T&gt; — Uncapitalize First Letter</h2>
+
+        <h3>Definition</h3>
+        <p>
+          Uncapitalize&lt;T&gt; converts the first letter of a string literal
+          type to lowercase.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Result = Uncapitalize&lt;"Hello"&gt;;
+// "hello"</code></pre>
+
+        <h3>Examples</h3>
+        <pre><code class="language-typescript">type A = Uncapitalize&lt;"Hello"&gt;;      // "hello"
+type B = Uncapitalize&lt;"Hello World"&gt;; // "hello World"
+type C = Uncapitalize&lt;"HelloWorld"&gt;; // "helloWorld"
+type D = Uncapitalize&lt;""&gt;;           // ""</code></pre>
+
+        <h3>Use Case: Setter Names</h3>
+        <pre><code class="language-typescript">type SetterName&lt;T extends string&gt; = `set${Capitalize&lt;Uncapitalize&lt;T&gt;&gt;}`;
+
+type NameSetter = SetterName&lt;"Name"&gt;;   // "setName"
+type AgeSetter = SetterName&lt;"Age"&gt;;     // "setAge"
+type EmailSetter = SetterName&lt;"Email"&gt;; // "setEmail"</code></pre>
+      </section>
+
+      <section id="combining-types">
+        <h2>🧠 Combining String Manipulation Types</h2>
+
+        <h3>Example 1: Event Handler System</h3>
+        <pre><code class="language-typescript">type EventName = "click" | "hover" | "focus";
+
+type EventHandler&lt;T extends string&gt; = {
+    [K in T as `on${Capitalize&lt;K&gt;}`]: () => void;
+};
+
+type Handlers = EventHandler&lt;EventName&gt;;
+// {
+//     onClick: () => void;
+//     onHover: () => void;
+//     onFocus: () => void;
+// }
+
+const handlers: Handlers = {
+    onClick: () => console.log("Clicked"),
+    onHover: () => console.log("Hovered"),
+    onFocus: () => console.log("Focused")
+};</code></pre>
+
+        <h3>Example 2: Type-Safe Getters</h3>
+        <pre><code class="language-typescript">type Getters&lt;T&gt; = {
+    [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () => T[K];
+};
+
+interface User {
+    name: string;
+    age: number;
+    email: string;
+}
+
+type UserGetters = Getters&lt;User&gt;;
+// {
+//     getName: () => string;
+//     getAge: () => number;
+//     getEmail: () => string;
+// }</code></pre>
+
+        <h3>Example 3: Type-Safe Setters</h3>
+        <pre><code class="language-typescript">type Setters&lt;T&gt; = {
+    [K in keyof T as `set${Capitalize&lt;string &amp; K&gt;}`]: (value: T[K]) => void;
+};
+
+type UserSetters = Setters&lt;User&gt;;
+// {
+//     setName: (value: string) => void;
+//     setAge: (value: number) => void;
+//     setEmail: (value: string) => void;
+// }</code></pre>
+
+        <h3>Example 4: CSS Class Names</h3>
+        <pre><code class="language-typescript">type Size = "sm" | "md" | "lg";
+type Color = "primary" | "secondary" | "danger";
+
+type ButtonClass = `btn-${Lowercase&lt;Color&gt;}-${Lowercase&lt;Size&gt;}`;
+// "btn-primary-sm" | "btn-primary-md" | "btn-primary-lg" |
+// "btn-secondary-sm" | ...
+
+function getButtonClass(color: Color, size: Size): ButtonClass {
+    return `btn-${color.toLowerCase()}-${size.toLowerCase()}` as ButtonClass;
+}</code></pre>
+      </section>
+
+      <section id="api-route-builder">
+        <h2>🧠 Real-World Example: API Route Builder</h2>
+        <pre><code class="language-typescript">type HttpMethod = "get" | "post" | "put" | "delete";
+
+type RouteBuilder&lt;Method extends HttpMethod, Path extends string&gt; = {
+    [K in Method as `${Uppercase&lt;K&gt;}_${Uppercase&lt;Path&gt;}`]: () => void;
+};
+
+type GetUsers = RouteBuilder&lt;"get", "users"&gt;;
+// { GET_USERS: () => void }
+
+type PostUsers = RouteBuilder&lt;"post", "users"&gt;;
+// { POST_USERS: () => void }</code></pre>
+      </section>
+
+      <section id="event-emitter">
+        <h2>🧠 Real-World Example: Type-Safe Event Emitter</h2>
+        <pre><code class="language-typescript">type EventName = "user:login" | "user:logout" | "post:create";
+
+type EventHandlerMap = {
+    [K in EventName as `on${Capitalize&lt;K extends `${string}:${infer E}` ? E : never&gt;}`]: 
+        (payload: any) => void;
+};
+
+type Handlers = EventHandlerMap;
+// {
+//     onLogin: (payload: any) => void;
+//     onLogout: (payload: any) => void;
+//     onCreate: (payload: any) => void;
+// }</code></pre>
+      </section>
+
+      <section id="summary-table">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Utility Type</th>
+              <th>What It Does</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Uppercase&lt;T&gt;</td>
+              <td>Converts to UPPERCASE</td>
+              <td>Uppercase&lt;"hello"&gt; → "HELLO"</td>
+            </tr>
+            <tr>
+              <td>Lowercase&lt;T&gt;</td>
+              <td>Converts to lowercase</td>
+              <td>Lowercase&lt;"HELLO"&gt; → "hello"</td>
+            </tr>
+            <tr>
+              <td>Capitalize&lt;T&gt;</td>
+              <td>Capitalizes first letter</td>
+              <td>Capitalize&lt;"hello"&gt; → "Hello"</td>
+            </tr>
+            <tr>
+              <td>Uncapitalize&lt;T&gt;</td>
+              <td>Uncapitalizes first letter</td>
+              <td>Uncapitalize&lt;"Hello"&gt; → "hello"</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>String manipulation types</td>
+              <td>Transform string literal types</td>
+            </tr>
+            <tr>
+              <td>Uppercase</td>
+              <td>All uppercase</td>
+            </tr>
+            <tr>
+              <td>Lowercase</td>
+              <td>All lowercase</td>
+            </tr>
+            <tr>
+              <td>Capitalize</td>
+              <td>First letter uppercase</td>
+            </tr>
+            <tr>
+              <td>Uncapitalize</td>
+              <td>First letter lowercase</td>
+            </tr>
+            <tr>
+              <td>When to use</td>
+              <td>Event handlers, getters/setters, CSS classes, API routes</td>
+            </tr>
+            <tr>
+              <td>Limitations</td>
+              <td>Only works on string literals, not string</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

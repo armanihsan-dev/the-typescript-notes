@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Property Selection Utility Types — Pick and Omit</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-are-property-selection-utility-types" class="nav-link"
+          >🎯 What Are Property Selection Utility Types?</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Selection Types</div>
+        <a href="#pick" class="nav-link">1. 🎯 Pick&lt;T, K&gt;</a>
+        <a href="#omit" class="nav-link">2. 🎯 Omit&lt;T, K&gt;</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Comparison &amp; Summary</div>
+        <a href="#pick-vs-omit" class="nav-link">🧠 Pick vs Omit</a>
+        <a href="#summary-table" class="nav-link">📝 Summary Table</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+        <a href="#practice-exercises" class="nav-link">🧪 Practice Exercises</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Property Selection Utility Types — Pick and Omit</h1>
+      </section>
+
+      <section id="what-are-property-selection-utility-types">
+        <h2>🎯 What Are Property Selection Utility Types?</h2>
+
+        <h3>Definition:</h3>
+        <p>
+          Property selection utility types let you create a new type by
+          selecting or removing specific properties from an existing type.
+        </p>
+        <p>They are:</p>
+        <ul>
+          <li>Pick&lt;T, K&gt; — selects specific properties</li>
+          <li>Omit&lt;T, K&gt; — removes specific properties</li>
+        </ul>
+
+        <h3>The Core Idea</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    PROPERTY SELECTION                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Original Type:                                                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  type User = {                                          │   │
+│  │      id: number;                                        │   │
+│  │      name: string;                                      │   │
+│  │      email: string;                                     │   │
+│  │      password: string;                                  │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Pick&lt;User, "id" | "name"&gt;:                                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { id: number; name: string }                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Omit&lt;User, "password"&gt;:                                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { id: number; name: string; email: string }            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="pick">
+        <h2>1. 🎯 Pick&lt;T, K&gt; — Select Specific Properties</h2>
+
+        <h3>Definition</h3>
+        <p>
+          Pick&lt;T, K&gt; creates a new type by selecting only the properties K
+          from type T.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Pick&lt;T, K extends keyof T&gt; = {
+    [P in K]: T[P];
+};</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+}
+
+type UserBasic = Pick&lt;User, "id" | "name"&gt;;
+// {
+//     id: number;
+//     name: string;
+// }</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW Pick WORKS                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Pick&lt;User, "id" | "name"&gt;                                      │
+│                                                                  │
+│  Step 1: keyof User = "id" | "name" | "email" | "password"     │
+│                                                                  │
+│  Step 2: K = "id" | "name"                                     │
+│                                                                  │
+│  Step 3: For each key in K, include it                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "id"   → id: number                                    │   │
+│  │  "name" → name: string                                  │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 4: Exclude all other keys                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "email"    → ❌ Not included                            │   │
+│  │  "password" → ❌ Not included                            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: { id: number; name: string }                          │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+}
+
+// Pick only id and name
+type UserBasic = Pick&lt;User, "id" | "name"&gt;;
+// { id: number; name: string }
+
+// Pick only email
+type UserEmail = Pick&lt;User, "email"&gt;;
+// { email: string }
+
+// ✅ Works
+const basicUser: UserBasic = {
+    id: 1,
+    name: "Alice"
+};
+
+// ❌ Error: email is not in UserBasic
+const invalid: UserBasic = {
+    id: 1,
+    name: "Alice",
+    email: "alice@email.com" // Error
+};</code></pre>
+
+        <h3>Use Case: Public API Response</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+// Only expose public fields
+type PublicUser = Pick&lt;User, "id" | "name" | "email"&gt;;
+
+function getPublicUser(user: User): PublicUser {
+    return {
+        id: user.id,
+        name: user.name,
+        email: user.email
+    };
+}
+
+// ✅ No password exposed!</code></pre>
+
+        <h3>Use Case: Form Fields</h3>
+        <pre><code class="language-typescript">interface Product {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    category: string;
+    inStock: boolean;
+}
+
+// Only fields for the form
+type ProductForm = Pick&lt;Product, "name" | "price" | "description"&gt;;
+
+const form: ProductForm = {
+    name: "Laptop",
+    price: 999.99,
+    description: "Powerful laptop"
+};</code></pre>
+      </section>
+
+      <section id="omit">
+        <h2>2. 🎯 Omit&lt;T, K&gt; — Remove Specific Properties</h2>
+
+        <h3>Definition</h3>
+        <p>
+          Omit&lt;T, K&gt; creates a new type by removing the properties K from
+          type T.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Omit&lt;T, K extends keyof any&gt; = Pick&lt;T, Exclude&lt;keyof T, K&gt;&gt;;</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+}
+
+type UserWithoutPassword = Omit&lt;User, "password"&gt;;
+// {
+//     id: number;
+//     name: string;
+//     email: string;
+// }</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW Omit WORKS                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Omit&lt;User, "password"&gt;                                         │
+│                                                                  │
+│  Step 1: keyof User = "id" | "name" | "email" | "password"     │
+│                                                                  │
+│  Step 2: K = "password"                                        │
+│                                                                  │
+│  Step 3: Remove "password" from keys                           │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "id"       → keep                                      │   │
+│  │  "name"     → keep                                      │   │
+│  │  "email"    → keep                                      │   │
+│  │  "password" → ❌ Remove                                 │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 4: Build new type with remaining keys                   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { id: number; name: string; email: string }            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+}
+
+// Omit password
+type UserWithoutPassword = Omit&lt;User, "password"&gt;;
+// { id: number; name: string; email: string }
+
+// ✅ Works
+const safeUser: UserWithoutPassword = {
+    id: 1,
+    name: "Alice",
+    email: "alice@email.com"
+};
+
+// ❌ Error: password is not allowed
+const invalid: UserWithoutPassword = {
+    id: 1,
+    name: "Alice",
+    email: "alice@email.com",
+    password: "secret" // Error
+};</code></pre>
+
+        <h3>Use Case: Form Data (Without ID)</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+// For creating a new user (no id or timestamps)
+type CreateUserData = Omit&lt;User, "id" | "createdAt" | "updatedAt"&gt;;
+
+const newUser: CreateUserData = {
+    name: "Alice",
+    email: "alice@email.com",
+    password: "secret123"
+};
+
+// ✅ No id needed
+// ✅ No timestamps needed</code></pre>
+
+        <h3>Use Case: Update Payload</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+}
+
+// For updating (no id, all other fields optional)
+type UpdateUserData = Partial&lt;Omit&lt;User, "id"&gt;&gt;;
+
+const updates: UpdateUserData = {
+    name: "Bob"
+    // email and password optional
+};</code></pre>
+      </section>
+
+      <section id="pick-vs-omit">
+        <h2>🧠 Pick vs Omit — When to Use Which</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    Pick vs Omit                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Pick&lt;T, K&gt;:                                                    │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "I only want THESE properties"                          │   │
+│  │                                                         │   │
+│  │  Use when you know exactly what you need               │   │
+│  │  Example: Pick&lt;User, "id" | "name"&gt;                    │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Omit&lt;T, K&gt;:                                                    │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "I want EVERYTHING EXCEPT these properties"            │   │
+│  │                                                         │   │
+│  │  Use when you know what you DON'T need                 │   │
+│  │  Example: Omit&lt;User, "password"&gt;                       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>When to Use Pick</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Use Pick When</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>You need a small subset of properties</td>
+              <td>Pick&lt;User, "id" | "name"&gt;</td>
+            </tr>
+            <tr>
+              <td>The original type has many properties</td>
+              <td>Picking 2 out of 20</td>
+            </tr>
+            <tr>
+              <td>You want explicit control</td>
+              <td>List exactly what you need</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>When to Use Omit</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Use Omit When</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>You need most properties except a few</td>
+              <td>Omit&lt;User, "password"&gt;</td>
+            </tr>
+            <tr>
+              <td>You want to remove sensitive data</td>
+              <td>Omit password, token</td>
+            </tr>
+            <tr>
+              <td>The original type has few properties</td>
+              <td>Omit 2 out of 5</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="summary-table">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Utility Type</th>
+              <th>What It Does</th>
+              <th>Syntax</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pick&lt;T, K&gt;</td>
+              <td>Selects specific properties</td>
+              <td>Pick&lt;T, K extends keyof T&gt;</td>
+              <td>Pick&lt;User, "id" | "name"&gt;</td>
+            </tr>
+            <tr>
+              <td>Omit&lt;T, K&gt;</td>
+              <td>Removes specific properties</td>
+              <td>Omit&lt;T, K extends keyof any&gt;</td>
+              <td>Omit&lt;User, "password"&gt;</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pick</td>
+              <td>Keeps only specified properties</td>
+            </tr>
+            <tr>
+              <td>Omit</td>
+              <td>Removes specified properties</td>
+            </tr>
+            <tr>
+              <td>How they work</td>
+              <td>Built with mapped types + keyof</td>
+            </tr>
+            <tr>
+              <td>When to use Pick</td>
+              <td>Need a small subset</td>
+            </tr>
+            <tr>
+              <td>When to use Omit</td>
+              <td>Need most properties, remove a few</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="practice-exercises">
+        <h2>🧪 Practice Exercises</h2>
+        <pre><code class="language-typescript">// 1. Pick only id and name
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+}
+type UserBasic = Pick&lt;User, "id" | "name"&gt;;
+// { id: number; name: string }
+
+// 2. Omit password
+type UserSafe = Omit&lt;User, "password"&gt;;
+// { id: number; name: string; email: string }
+
+// 3. Combine Pick and Omit
+type UserNameAndEmail = Pick&lt;Omit&lt;User, "password"&gt;, "name" | "email"&gt;;
+// { name: string; email: string }
+
+// 4. Pick only specific form fields
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    category: string;
+}
+type ProductForm = Pick&lt;Product, "name" | "price" | "description"&gt;;
+// { name: string; price: number; description: string }
+
+// 5. Omit id and timestamps for create
+interface Post {
+    id: number;
+    title: string;
+    body: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+type CreatePost = Omit&lt;Post, "id" | "createdAt" | "updatedAt"&gt;;
+// { title: string; body: string }</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

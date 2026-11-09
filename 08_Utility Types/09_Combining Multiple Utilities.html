@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Combining Multiple Utility Types — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-does-combining-mean" class="nav-link"
+          >🎯 What Does "Combining Utility Types" Mean?</a
+        >
+        <a href="#why-do-we-combine" class="nav-link"
+          >🧠 Why Do We Combine Utility Types?</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Combinations</div>
+        <a href="#pick-readonly" class="nav-link">1. 🔒 Pick + Readonly</a>
+        <a href="#omit-partial" class="nav-link">2. ✂️ Omit + Partial</a>
+        <a href="#record-readonly" class="nav-link">3. 🧾 Record + Readonly</a>
+        <a href="#exclude-record" class="nav-link">4. 🔀 Exclude + Record</a>
+        <a href="#extract-record" class="nav-link">5. 🧠 Extract + Record</a>
+        <a href="#returntype-readonly" class="nav-link"
+          >6. ⚙️ ReturnType + Readonly</a
+        >
+        <a href="#parameters-partial" class="nav-link"
+          >7. ⚙️ Parameters + Partial</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Pattern &amp; Summary</div>
+        <a href="#composition-pattern" class="nav-link"
+          >🧠 The Composition Pattern</a
+        >
+        <a href="#summary-table" class="nav-link">📝 Summary Table</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+        <a href="#practice-exercises" class="nav-link">🧪 Practice Exercises</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Combining Multiple Utility Types — Complete Guide</h1>
+      </section>
+
+      <section id="what-does-combining-mean">
+        <h2>🎯 What Does "Combining Utility Types" Mean?</h2>
+
+        <h3>Definition:</h3>
+        <p>
+          Combining utility types means using the output of one utility type as
+          the input of another. Since utility types are just type
+          transformations, you can chain them together to build exactly the type
+          you need.
+        </p>
+
+        <h3>The Core Idea</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    COMBINING UTILITY TYPES                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Single utility type:                                           │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  User  →  Pick&lt;User, "id" | "name"&gt;  →  Final Type      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Combined utility types:                                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  User  →  Pick&lt;User, ...&gt;  →  Readonly&lt;...&gt;  →  Final   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Each utility type takes the previous result as input.         │
+│  This is called COMPOSITION.                                   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="why-do-we-combine">
+        <h2>🧠 Why Do We Combine Utility Types?</h2>
+        <p>Because one utility type is often not enough.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Goal</th>
+              <th>Single Utility</th>
+              <th>Combined</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pick properties AND make readonly</td>
+              <td>❌ Not possible</td>
+              <td>✅ Readonly&lt;Pick&lt;T, K&gt;&gt;</td>
+            </tr>
+            <tr>
+              <td>Remove properties AND make optional</td>
+              <td>❌ Not possible</td>
+              <td>✅ Partial&lt;Omit&lt;T, K&gt;&gt;</td>
+            </tr>
+            <tr>
+              <td>Get return type AND make readonly</td>
+              <td>❌ Not possible</td>
+              <td>✅ Readonly&lt;ReturnType&lt;T&gt;&gt;</td>
+            </tr>
+            <tr>
+              <td>Remove union member AND create record</td>
+              <td>❌ Not possible</td>
+              <td>✅ Record&lt;Exclude&lt;T, U&gt;, V&gt;</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="pick-readonly">
+        <h2>1. 🔒 Pick + Readonly</h2>
+
+        <h3>Goal</h3>
+        <p>Pick only id and name, and make them readonly.</p>
+
+        <h3>The Code</h3>
+        <pre><code class="language-typescript">type User = {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+};
+
+type ReadonlyPublicUser = Readonly&lt;Pick&lt;User, "id" | "name"&gt;&gt;;</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    Pick + Readonly                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Pick&lt;User, "id" | "name"&gt;                             │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { id: number; name: string }                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Readonly&lt;...&gt;                                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { readonly id: number; readonly name: string }         │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Result</h3>
+        <pre><code class="language-typescript">type ReadonlyPublicUser = {
+    readonly id: number;
+    readonly name: string;
+};</code></pre>
+
+        <h3>Use Case</h3>
+        <p>
+          Public API response where only id and name are exposed, and they can't
+          be modified.
+        </p>
+      </section>
+
+      <section id="omit-partial">
+        <h2>2. ✂️ Omit + Partial</h2>
+
+        <h3>Goal</h3>
+        <p>Remove id and make all remaining properties optional.</p>
+
+        <h3>The Code</h3>
+        <pre><code class="language-typescript">type PartialUserUpdate = Partial&lt;Omit&lt;User, "id"&gt;&gt;;</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    Omit + Partial                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Omit&lt;User, "id"&gt;                                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { name: string; email: string; password: string }      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Partial&lt;...&gt;                                          │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { name?: string; email?: string; password?: string }   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Result</h3>
+        <pre><code class="language-typescript">type PartialUserUpdate = {
+    name?: string;
+    email?: string;
+    password?: string;
+};</code></pre>
+
+        <h3>Use Case</h3>
+        <p>
+          Update payloads where you only send the fields that changed, and id is
+          never sent.
+        </p>
+      </section>
+
+      <section id="record-readonly">
+        <h2>3. 🧾 Record + Readonly</h2>
+
+        <h3>Goal</h3>
+        <p>Create a readonly permissions object.</p>
+
+        <h3>The Code</h3>
+        <pre><code class="language-typescript">type Role = "admin" | "user" | "guest";
+
+type Permissions = Readonly&lt;Record&lt;Role, boolean&gt;&gt;;</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    Record + Readonly                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Record&lt;Role, boolean&gt;                                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { admin: boolean; user: boolean; guest: boolean }      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Readonly&lt;...&gt;                                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { readonly admin: boolean; readonly user: boolean;     │   │
+│  │    readonly guest: boolean }                            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Result</h3>
+        <pre><code class="language-typescript">type Permissions = {
+    readonly admin: boolean;
+    readonly user: boolean;
+    readonly guest: boolean;
+};</code></pre>
+
+        <h3>Use Case</h3>
+        <p>
+          Configuration objects that should never be modified after creation.
+        </p>
+      </section>
+
+      <section id="exclude-record">
+        <h2>4. 🔀 Exclude + Record</h2>
+
+        <h3>Goal</h3>
+        <p>
+          Remove guest and create a permissions object only for admin and user.
+        </p>
+
+        <h3>The Code</h3>
+        <pre><code class="language-typescript">type Role = "admin" | "user" | "guest";
+
+type Permissions = Record&lt;Exclude&lt;Role, "guest"&gt;, boolean&gt;;</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    Exclude + Record                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Exclude&lt;Role, "guest"&gt;                                │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "admin" | "user"                                       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Record&lt;"admin" | "user", boolean&gt;                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { admin: boolean; user: boolean }                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Result</h3>
+        <pre><code class="language-typescript">type Permissions = {
+    admin: boolean;
+    user: boolean;
+};</code></pre>
+
+        <h3>Use Case</h3>
+        <p>Excluding roles that don't have certain permissions.</p>
+      </section>
+
+      <section id="extract-record">
+        <h2>5. 🧠 Extract + Record</h2>
+
+        <h3>Goal</h3>
+        <p>Keep only admin and user, and create a settings object.</p>
+
+        <h3>The Code</h3>
+        <pre><code class="language-typescript">type Role = "admin" | "user" | "guest";
+
+type Settings = Record&lt;Extract&lt;Role, "admin" | "user"&gt;, string&gt;;</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    Extract + Record                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Extract&lt;Role, "admin" | "user"&gt;                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "admin" | "user"                                       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Record&lt;"admin" | "user", string&gt;                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { admin: string; user: string }                        │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Result</h3>
+        <pre><code class="language-typescript">type Settings = {
+    admin: string;
+    user: string;
+};</code></pre>
+
+        <h3>Use Case</h3>
+        <p>Selecting only specific roles for a settings page.</p>
+      </section>
+
+      <section id="returntype-readonly">
+        <h2>6. ⚙️ ReturnType + Readonly</h2>
+
+        <h3>Goal</h3>
+        <p>Get the return type of a function and make it readonly.</p>
+
+        <h3>The Code</h3>
+        <pre><code class="language-typescript">function createUser() {
+    return {
+        id: 1,
+        name: "Anurag"
+    };
+}
+
+type ReadonlyUser = Readonly&lt;ReturnType&lt;typeof createUser&gt;&gt;;</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    ReturnType + Readonly                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: ReturnType&lt;typeof createUser&gt;                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { id: number; name: string }                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Readonly&lt;...&gt;                                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { readonly id: number; readonly name: string }         │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Result</h3>
+        <pre><code class="language-typescript">type ReadonlyUser = {
+    readonly id: number;
+    readonly name: string;
+};</code></pre>
+
+        <h3>Use Case</h3>
+        <p>Factory functions that return immutable objects.</p>
+      </section>
+
+      <section id="parameters-partial">
+        <h2>7. ⚙️ Parameters + Partial</h2>
+
+        <h3>Goal</h3>
+        <p>Get the function parameter type and make all properties optional.</p>
+
+        <h3>The Code</h3>
+        <pre><code class="language-typescript">function createUser(user: {
+    name: string;
+    age: number;
+}) {}
+
+type PartialUser = Partial&lt;Parameters&lt;typeof createUser&gt;[0]&gt;;</code></pre>
+
+        <h3>why the [0] at last ?</h3>
+        <p>
+          Parameters&lt;typeof createUser2&gt; gives you a tuple of the
+          function’s parameter types:
+        </p>
+        <pre><code class="language-typescript">[{ name: string; age: number }]</code></pre>
+        <p>
+          The [0] selects the type of the first parameter from that tuple. Then
+          Partial makes its properties optional:
+        </p>
+        <pre><code class="language-typescript">type PartialUser = Partial&lt;{ name: string; age: number }&gt;
+// { name?: string; age?: number }</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    Parameters + Partial                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 1: Parameters&lt;typeof createUser&gt;                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  [{ name: string; age: number }]                        │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Parameters&lt;typeof createUser&gt;[0]                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { name: string; age: number }                          │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 3: Partial&lt;...&gt;                                          │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { name?: string; age?: number }                        │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Result</h3>
+        <pre><code class="language-typescript">type PartialUser = {
+    name?: string;
+    age?: number;
+};</code></pre>
+
+        <h3>Use Case</h3>
+        <p>Reusing function parameter types for update payloads.</p>
+      </section>
+
+      <section id="composition-pattern">
+        <h2>🧠 The Composition Pattern</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    COMPOSITION PATTERN                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Original Type                                                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  User                                                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                              │                                  │
+│                              ▼                                  │
+│  Step 1: Pick&lt;User, "id" | "name"&gt;                            │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { id: number; name: string }                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                              │                                  │
+│                              ▼                                  │
+│  Step 2: Readonly&lt;...&gt;                                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  { readonly id: number; readonly name: string }         │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                              │                                  │
+│                              ▼                                  │
+│  Final Type                                                    │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  ReadonlyPublicUser                                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="summary-table">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Combination</th>
+              <th>What It Does</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pick + Readonly</td>
+              <td>Pick properties and make readonly</td>
+              <td>Readonly&lt;Pick&lt;User, "id" | "name"&gt;&gt;</td>
+            </tr>
+            <tr>
+              <td>Omit + Partial</td>
+              <td>Remove properties and make optional</td>
+              <td>Partial&lt;Omit&lt;User, "id"&gt;&gt;</td>
+            </tr>
+            <tr>
+              <td>Record + Readonly</td>
+              <td>Create readonly record</td>
+              <td>Readonly&lt;Record&lt;Role, boolean&gt;&gt;</td>
+            </tr>
+            <tr>
+              <td>Exclude + Record</td>
+              <td>Remove union member and create record</td>
+              <td>Record&lt;Exclude&lt;Role, "guest"&gt;, boolean&gt;</td>
+            </tr>
+            <tr>
+              <td>Extract + Record</td>
+              <td>Keep union members and create record</td>
+              <td>
+                Record&lt;Extract&lt;Role, "admin" | "user"&gt;, string&gt;
+              </td>
+            </tr>
+            <tr>
+              <td>ReturnType + Readonly</td>
+              <td>Get return type and make readonly</td>
+              <td>Readonly&lt;ReturnType&lt;typeof fn&gt;&gt;</td>
+            </tr>
+            <tr>
+              <td>Parameters + Partial</td>
+              <td>Get params and make optional</td>
+              <td>Partial&lt;Parameters&lt;typeof fn&gt;[0]&gt;</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Composition</td>
+              <td>Output of one utility type is input to another</td>
+            </tr>
+            <tr>
+              <td>Order matters</td>
+              <td>
+                Readonly&lt;Pick&lt;T, K&gt;&gt; ≠ Pick&lt;Readonly&lt;T&gt;,
+                K&gt;
+              </td>
+            </tr>
+            <tr>
+              <td>When to combine</td>
+              <td>When one utility type isn't enough</td>
+            </tr>
+            <tr>
+              <td>Common patterns</td>
+              <td>Pick + Readonly, Omit + Partial, Record + Readonly</td>
+            </tr>
+            <tr>
+              <td>Real-world use</td>
+              <td>API responses, update payloads, config objects</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="practice-exercises">
+        <h2>🧪 Practice Exercises</h2>
+        <pre><code class="language-typescript">// 1. Pick + Readonly
+type ReadonlyPublicUser = Readonly&lt;Pick&lt;User, "id" | "name"&gt;&gt;;
+
+// 2. Omit + Partial
+type PartialUserUpdate = Partial&lt;Omit&lt;User, "id"&gt;&gt;;
+
+// 3. Record + Readonly
+type Permissions = Readonly&lt;Record&lt;"admin" | "user" | "guest", boolean&gt;&gt;;
+
+// 4. Exclude + Record
+type AdminPermissions = Record&lt;Exclude&lt;"admin" | "user" | "guest", "guest"&gt;, boolean&gt;;
+
+// 5. Extract + Record
+type Settings = Record&lt;Extract&lt;"admin" | "user" | "guest", "admin" | "user"&gt;, string&gt;;
+
+// 6. ReturnType + Readonly
+function createUser() {
+    return { id: 1, name: "Anurag" };
+}
+type ReadonlyUser = Readonly&lt;ReturnType&lt;typeof createUser&gt;&gt;;
+
+// 7. Parameters + Partial
+function updateUser(user: { name: string; age: number }) {}
+type PartialUpdate = Partial&lt;Parameters&lt;typeof updateUser&gt;[0]&gt;;
+
+// 8. Three-level combination
+type DeepReadonlyPublicUser = Readonly&lt;Pick&lt;User, "id" | "name"&gt;&gt;;</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

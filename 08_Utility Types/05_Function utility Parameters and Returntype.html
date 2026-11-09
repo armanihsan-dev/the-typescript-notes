@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript Notes: Function Utility Types — Parameters&lt;T&gt; and ReturnType&lt;T&gt;</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width:24px; height:24px;"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-are-function-utility-types" class="nav-link">🎯 What Are Function Utility Types?</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Utility Types</div>
+        <a href="#parameters" class="nav-link">📦 1. Parameters&lt;T&gt;</a>
+        <a href="#return-type" class="nav-link">📦 2. ReturnType&lt;T&gt;</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Advanced &amp; Summary</div>
+        <a href="#parameters-and-return-type-together" class="nav-link">🧠 Parameters + ReturnType Together</a>
+        <a href="#summary-table" class="nav-link">📊 Summary Table</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent);"
+        ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a>
+        <div style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px;">
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-github fa-lg"></i></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary);"
+          ><i class="fa-brands fa-linkedin fa-lg"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Notes</span>
+        <h1>Function Utility Types</h1>
+        <p>Parameters&lt;T&gt; and ReturnType&lt;T&gt;</p>
+      </section>
+
+      <section id="what-are-function-utility-types">
+        <h2>🎯 What Are Function Utility Types?</h2>
+        <p>Definition: Built-in TypeScript types that extract information from function types at the type level.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Utility Type</th>
+              <th>What It Does</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Parameters&lt;T&gt;</td>
+              <td>Gets the parameter types of a function as a tuple</td>
+            </tr>
+            <tr>
+              <td>ReturnType&lt;T&gt;</td>
+              <td>Gets the return type of a function</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="parameters">
+        <h2>📦 1. Parameters&lt;T&gt; — Get Function Parameters</h2>
+        <p>Definition: Extracts the parameter types of function type T as a tuple type.</p>
+
+        <h3>Syntax (Internal Implementation)</h3>
+        <pre><code class="language-typescript">type Parameters&lt;T extends (...args: any) =&gt; any&gt; = 
+    T extends (...args: infer P) =&gt; any ? P : never;</code></pre>
+
+        <h3>Basic Example</h3>
+        <pre><code class="language-typescript">function greet(name: string, age: number): string {
+    return `Hello ${name}, ${age}`;
+}
+
+type GreetParams = Parameters&lt;typeof greet&gt;;
+// [string, number]</code></pre>
+
+        <h3>How It Works (Mental Model)</h3>
+        <pre><code class="language-text">Parameters&lt;typeof greet&gt;
+  Step 1: typeof greet = (name: string, age: number) =&gt; string
+  Step 2: Match against (...args: infer P) =&gt; any
+          → P = [string, number]
+  Step 3: Return P → [string, number]</code></pre>
+
+        <h3>⚠️ Key: Use typeof for Functions</h3>
+        <p>You must pass typeof greet, not greet — because Parameters&lt;T&gt; expects a type, not a value.</p>
+
+        <h3>📋 Examples by Function Type</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Function Type</th>
+              <th>Example</th>
+              <th>Result of Parameters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic</td>
+              <td>add(a: number, b: number)</td>
+              <td>[number, number]</td>
+            </tr>
+            <tr>
+              <td>Optional param</td>
+              <td>greet(name: string, age?: number)</td>
+              <td>[string, number?]</td>
+            </tr>
+            <tr>
+              <td>Rest params</td>
+              <td>sum(...numbers: number[])</td>
+              <td>number[]</td>
+            </tr>
+            <tr>
+              <td>No params</td>
+              <td>noParams()</td>
+              <td>[]</td>
+            </tr>
+            <tr>
+              <td>Arrow fn</td>
+              <td>multiply = (a: number, b: number) =&gt; a * b</td>
+              <td>[number, number]</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>🔧 Use Cases</h3>
+
+        <h4>1. Wrapper Functions</h4>
+        <pre><code class="language-typescript">function logAndCall&lt;T extends (...args: any[]) =&gt; any&gt;(
+    fn: T,
+    ...args: Parameters&lt;T&gt;
+): ReturnType&lt;T&gt; {
+    console.log(`Calling ${fn.name} with:`, args);
+    return fn(...args);
+}
+
+const result = logAndCall(add, 5, 10);
+// ✅ args must be [number, number], result is number</code></pre>
+
+        <h4>2. Higher-Order Functions (Debounce)</h4>
+        <pre><code class="language-typescript">function createDebounced&lt;T extends (...args: any[]) =&gt; any&gt;(
+    fn: T, delay: number
+): (...args: Parameters&lt;T&gt;) =&gt; void {
+    // ...
+}</code></pre>
+
+        <h4>3. Type-Safe Event Handlers</h4>
+        <pre><code class="language-typescript">type EventHandler = (event: MouseEvent, data: { x: number; y: number }) =&gt; void;
+// Reuse Parameters&lt;EventHandler&gt; to preserve signature</code></pre>
+      </section>
+
+      <section id="return-type">
+        <h2>📦 2. ReturnType&lt;T&gt; — Get Function Return Type</h2>
+        <p>Definition: Extracts the return type of function type T.</p>
+
+        <h3>Syntax (Internal Implementation)</h3>
+        <pre><code class="language-typescript">type ReturnType&lt;T extends (...args: any) =&gt; any&gt; = 
+    T extends (...args: any) =&gt; infer R ? R : any;</code></pre>
+
+        <h3>Basic Example</h3>
+        <pre><code class="language-typescript">function greet(name: string): string {
+    return `Hello ${name}`;
+}
+
+type GreetReturn = ReturnType&lt;typeof greet&gt;;
+// string</code></pre>
+
+        <h3>How It Works (Mental Model)</h3>
+        <pre><code class="language-text">ReturnType&lt;typeof greet&gt;
+  Step 1: typeof greet = (name: string) =&gt; string
+  Step 2: Match against (...args: any) =&gt; infer R
+          → R = string
+  Step 3: Return R → string</code></pre>
+
+        <h3>📋 Examples by Return Type</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Function Returns</th>
+              <th>Example</th>
+              <th>Result of ReturnType</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Primitive</td>
+              <td>add(a, b): number</td>
+              <td>number</td>
+            </tr>
+            <tr>
+              <td>Object</td>
+              <td>createUser() (inferred)</td>
+              <td>{ id: number; name: string; createdAt: Date }</td>
+            </tr>
+            <tr>
+              <td>Async</td>
+              <td>async fetchUser(): Promise&lt;{name:string}&gt;</td>
+              <td>Promise&lt;{ name: string }&gt;</td>
+            </tr>
+            <tr>
+              <td>Union</td>
+              <td>getStatus(): "pending" | "success" | "failed"</td>
+              <td>"pending" | "success" | "failed"</td>
+            </tr>
+            <tr>
+              <td>Void</td>
+              <td>log(message: string): void</td>
+              <td>void</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>🔧 Use Cases</h3>
+
+        <h4>1. Extract API Response Types</h4>
+        <pre><code class="language-typescript">async function fetchUsers(): Promise&lt;User[]&gt; { /* ... */ }
+
+// ReturnType alone gives Promise&lt;User[]&gt;, so combine with Awaited:
+type Users = Awaited&lt;ReturnType&lt;typeof fetchUsers&gt;&gt;;
+// User[]</code></pre>
+        <p>💡 Note: For async functions, wrap in Awaited&lt;&gt; to unwrap the Promise.</p>
+
+        <h4>2. Redux Action Types</h4>
+        <pre><code class="language-typescript">const actions = {
+    increment: (amount: number) =&gt; ({ type: "INCREMENT", payload: amount }),
+    decrement: (amount: number) =&gt; ({ type: "DECREMENT", payload: amount }),
+    reset: () =&gt; ({ type: "RESET" })
+};
+
+type ActionCreators = typeof actions;
+type Action = ReturnType&lt;ActionCreators[keyof ActionCreators]&gt;;
+// { type: "INCREMENT"; payload: number }
+// | { type: "DECREMENT"; payload: number }
+// | { type: "RESET" }</code></pre>
+
+        <h4>3. Type-Safe Factory</h4>
+        <pre><code class="language-typescript">function createUser(name: string, age: number) {
+    return { id: /*...*/, name, age, createdAt: new Date() };
+}
+
+type User = ReturnType&lt;typeof createUser&gt;;
+
+function processUser(user: User): void { /* ... */ }</code></pre>
+      </section>
+
+      <section id="parameters-and-return-type-together">
+        <h2>🧠 Parameters + ReturnType Together</h2>
+
+        <h3>Function Wrapper</h3>
+        <pre><code class="language-typescript">function withLogging&lt;T extends (...args: any[]) =&gt; any&gt;(
+    fn: T
+): (...args: Parameters&lt;T&gt;) =&gt; ReturnType&lt;T&gt; {
+    return (...args: Parameters&lt;T&gt;): ReturnType&lt;T&gt; =&gt; {
+        console.log(`Calling ${fn.name} with:`, args);
+        const result = fn(...args);
+        console.log(`Result:`, result);
+        return result;
+    };
+}
+// ✅ Preserves both args and return types perfectly</code></pre>
+
+        <h3>Type-Safe Curry</h3>
+        <pre><code class="language-typescript">function curry&lt;T extends (...args: any[]) =&gt; any&gt;(
+    fn: T
+): (arg: Parameters&lt;T&gt;[0]) =&gt; (
+    ...args: Parameters&lt;T&gt; extends [any, ...infer Rest] ? Rest : never
+) =&gt; ReturnType&lt;T&gt; {
+    return (arg) => (...rest) => fn(arg, ...rest);
+}</code></pre>
+      </section>
+
+      <section id="summary-table">
+        <h2>📊 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Utility Type</th>
+              <th>Purpose</th>
+              <th>Syntax</th>
+              <th>Example Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Parameters&lt;T&gt;</td>
+              <td>Get parameter types</td>
+              <td>Parameters&lt;typeof fn&gt;</td>
+              <td>[string, number]</td>
+            </tr>
+            <tr>
+              <td>ReturnType&lt;T&gt;</td>
+              <td>Get return type</td>
+              <td>ReturnType&lt;typeof fn&gt;</td>
+              <td>string</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

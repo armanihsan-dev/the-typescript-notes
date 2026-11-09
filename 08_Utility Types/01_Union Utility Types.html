@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Union Utility Types — Simplified</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-are-union-utility-types" class="nav-link"
+          >🎯 What Are Union Utility Types?</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Utility Types</div>
+        <a href="#exclude" class="nav-link">1. 🚫 Exclude&lt;T, U&gt;</a>
+        <a href="#extract" class="nav-link">2. 🎯 Extract&lt;T, U&gt;</a>
+        <a href="#nonnullable" class="nav-link">3. 🧹 NonNullable&lt;T&gt;</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Deep Dive &amp; Summary</div>
+        <a href="#internal-workings" class="nav-link"
+          >🧠 How They All Work Internally</a
+        >
+        <a href="#summary-table" class="nav-link">📝 Summary Table</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+        <a href="#practice-exercises" class="nav-link">🧪 Practice Exercises</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Union Utility Types — Simplified</h1>
+      </section>
+
+      <section id="what-are-union-utility-types">
+        <h2>🎯 What Are Union Utility Types?</h2>
+
+        <h3>Definition:</h3>
+        <p>
+          Union utility types are built-in TypeScript types that filter union
+          types. They let you remove, keep, or clean members of a union.
+        </p>
+
+        <h3>The Core Idea</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    UNION UTILITY TYPES                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  A union type is a list of possibilities:                      │
+│  "pending" | "success" | "failed" | "cancelled"                │
+│                                                                  │
+│  Union utility types let you:                                  │
+│  • REMOVE some possibilities (Exclude)                         │
+│  • KEEP only some possibilities (Extract)                      │
+│  • CLEAN nullable values (NonNullable)                         │
+│                                                                  │
+│  Input Union → Utility Type → New Union                        │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="exclude">
+        <h2>1. 🚫 Exclude&lt;T, U&gt; — Remove Types</h2>
+
+        <h3>Definition</h3>
+        <p>
+          Exclude&lt;T, U&gt; removes from T any type that is assignable to U.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Result = Exclude&lt;T, U&gt;;</code></pre>
+        <p>T = the original union</p>
+        <p>U = the types to remove</p>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">type Status = "pending" | "success" | "failed" | "cancelled";
+
+type ActiveStatus = Exclude&lt;Status, "cancelled"&gt;;
+// Result: "pending" | "success" | "failed"</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW Exclude WORKS                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Exclude&lt;"pending" | "success" | "failed" | "cancelled",       │
+│          "cancelled"&gt;                                          │
+│                                                                  │
+│  Step 1: Split the union                                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "pending"    → is it "cancelled"? NO → keep "pending"  │   │
+│  │  "success"    → is it "cancelled"? NO → keep "success"  │   │
+│  │  "failed"     → is it "cancelled"? NO → keep "failed"   │   │
+│  │  "cancelled"  → is it "cancelled"? YES → remove it      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Combine what's left                                   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "pending" | "success" | "failed"                       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Internal Implementation</h3>
+        <pre><code class="language-typescript">// Exclude is built with a conditional type
+type MyExclude&lt;T, U&gt; = T extends U ? never : T;</code></pre>
+        <p>Why it works:</p>
+        <ul>
+          <li>
+            T extends U ? never : T means: "If T is in U, remove it (never).
+            Otherwise, keep it."
+          </li>
+          <li>Conditional types distribute over unions.</li>
+          <li>never disappears from unions.</li>
+        </ul>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">// Remove "cancelled" from the status union
+type Status = "pending" | "success" | "failed" | "cancelled";
+type ActiveStatus = Exclude&lt;Status, "cancelled"&gt;;
+// ActiveStatus = "pending" | "success" | "failed"
+
+// Now you can't use "cancelled"
+let status: ActiveStatus;
+status = "success";     // ✅ Works
+status = "cancelled";   // ❌ Error</code></pre>
+      </section>
+
+      <section id="extract">
+        <h2>2. 🎯 Extract&lt;T, U&gt; — Keep Only Matching Types</h2>
+
+        <h3>Definition</h3>
+        <p>
+          Extract&lt;T, U&gt; keeps from T only the types that are assignable to
+          U.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Result = Extract&lt;T, U&gt;;</code></pre>
+        <p>T = the original union</p>
+        <p>U = the types to keep</p>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">type Status = "pending" | "success" | "failed" | "cancelled";
+
+type FinalStatus = Extract&lt;Status, "success" | "failed"&gt;;
+// Result: "success" | "failed"</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW Extract WORKS                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Extract&lt;"pending" | "success" | "failed" | "cancelled",       │
+│          "success" | "failed"&gt;                                 │
+│                                                                  │
+│  Step 1: Split the union                                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "pending"    → is it "success" | "failed"? NO → remove  │   │
+│  │  "success"    → is it "success" | "failed"? YES → keep   │   │
+│  │  "failed"     → is it "success" | "failed"? YES → keep   │   │
+│  │  "cancelled"  → is it "success" | "failed"? NO → remove  │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Combine what's left                                   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "success" | "failed"                                   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Internal Implementation</h3>
+        <pre><code class="language-typescript">// Extract is built with a conditional type
+type MyExtract&lt;T, U&gt; = T extends U ? T : never;</code></pre>
+        <p>Why it works:</p>
+        <ul>
+          <li>
+            T extends U ? T : never means: "If T is in U, keep it. Otherwise,
+            remove it (never)."
+          </li>
+          <li>Conditional types distribute over unions.</li>
+          <li>never disappears from unions.</li>
+        </ul>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">// Keep only "success" and "failed"
+type Status = "pending" | "success" | "failed" | "cancelled";
+type FinalStatus = Extract&lt;Status, "success" | "failed"&gt;;
+// FinalStatus = "success" | "failed"
+
+// Works with string patterns too!
+type UserEvent =
+    | "user:create"
+    | "user:update"
+    | "user:delete"
+    | "order:create"
+    | "order:update"
+    | "payment:success"
+    | "payment:failed";
+
+type UserOnlyEvents = Extract&lt;UserEvent, `user:${string}`&gt;;
+// UserOnlyEvents = "user:create" | "user:update" | "user:delete"
+
+// Works with object types too!
+type Response =
+    | { type: "success"; data: string }
+    | { type: "error"; message: string }
+    | { type: "loading" };
+
+type SuccessResponse = Extract&lt;Response, { type: "success" }&gt;;
+// SuccessResponse = { type: "success"; data: string }</code></pre>
+      </section>
+
+      <section id="nonnullable">
+        <h2>3. 🧹 NonNullable&lt;T&gt; — Remove null and undefined</h2>
+
+        <h3>Definition</h3>
+        <p>NonNullable&lt;T&gt; removes null and undefined from T.</p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Result = NonNullable&lt;T&gt;;</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">type UserName = string | null | undefined;
+
+type ValidUserName = NonNullable&lt;UserName&gt;;
+// Result: string</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW NonNullable WORKS                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  NonNullable&lt;string | null | undefined&gt;                        │
+│                                                                  │
+│  Step 1: Split the union                                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  string     → is it null | undefined? NO → keep string  │   │
+│  │  null       → is it null | undefined? YES → remove      │   │
+│  │  undefined  → is it null | undefined? YES → remove      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Combine what's left                                   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  string                                                 │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Internal Implementation</h3>
+        <pre><code class="language-typescript">// NonNullable is built with Exclude
+type NonNullable&lt;T&gt; = Exclude&lt;T, null | undefined&gt;;</code></pre>
+        <p>Why it works:</p>
+        <p>It's just Exclude that removes null and undefined.</p>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">// Remove null and undefined from a name
+type UserName = string | null | undefined;
+type ValidUserName = NonNullable&lt;UserName&gt;;
+// ValidUserName = string
+
+// Now you can't assign null or undefined
+let name: ValidUserName;
+name = "Anurag";     // ✅ Works
+name = null;         // ❌ Error
+name = undefined;    // ❌ Error
+
+// Works with complex types too
+type User = {
+    name: string | null;
+    email: string | undefined;
+};
+
+type ValidUser = {
+    [K in keyof User]: NonNullable&lt;User[K]&gt;;
+};
+// ValidUser = {
+//     name: string;
+//     email: string;
+// }</code></pre>
+      </section>
+
+      <section id="internal-workings">
+        <h2>🧠 How They All Work Internally</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    INTERNAL IMPLEMENTATIONS                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Exclude&lt;T, U&gt; = T extends U ? never : T                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "If T is in U, remove it. Otherwise, keep it."         │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Extract&lt;T, U&gt; = T extends U ? T : never                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "If T is in U, keep it. Otherwise, remove it."         │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  NonNullable&lt;T&gt; = Exclude&lt;T, null | undefined&gt;                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "Remove null and undefined from T."                    │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  All three use CONDITIONAL TYPES and DISTRIBUTION.             │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="summary-table">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Utility Type</th>
+              <th>What It Does</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Exclude&lt;T, U&gt;</td>
+              <td>Removes matching types</td>
+              <td>Exclude&lt;"a" | "b" | "c", "a"&gt; → "b" | "c"</td>
+            </tr>
+            <tr>
+              <td>Extract&lt;T, U&gt;</td>
+              <td>Keeps matching types</td>
+              <td>Extract&lt;"a" | "b" | "c", "a" | "b"&gt; → "a" | "b"</td>
+            </tr>
+            <tr>
+              <td>NonNullable&lt;T&gt;</td>
+              <td>Removes null/undefined</td>
+              <td>NonNullable&lt;string | null&gt; → string</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Exclude</td>
+              <td>Removes types from a union</td>
+            </tr>
+            <tr>
+              <td>Extract</td>
+              <td>Keeps only matching types</td>
+            </tr>
+            <tr>
+              <td>NonNullable</td>
+              <td>Removes null and undefined</td>
+            </tr>
+            <tr>
+              <td>How they work</td>
+              <td>Built with conditional types and distribution</td>
+            </tr>
+            <tr>
+              <td>never disappears</td>
+              <td>Removed types become never, which vanishes in unions</td>
+            </tr>
+            <tr>
+              <td>When to use</td>
+              <td>Filtering unions, cleaning data, narrowing types</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="practice-exercises">
+        <h2>🧪 Practice Exercises</h2>
+        <pre><code class="language-typescript">// 1. Remove "cancelled" from status
+type Status = "pending" | "success" | "failed" | "cancelled";
+type ActiveStatus = Exclude&lt;Status, "cancelled"&gt;;
+// "pending" | "success" | "failed"
+
+// 2. Keep only "success" and "failed"
+type FinalStatus = Extract&lt;Status, "success" | "failed"&gt;;
+// "success" | "failed"
+
+// 3. Remove null and undefined
+type UserName = string | null | undefined;
+type ValidName = NonNullable&lt;UserName&gt;;
+// string
+
+// 4. Extract user events
+type Event = "user:create" | "user:update" | "order:create";
+type UserEvents = Extract&lt;Event, `user:${string}`&gt;;
+// "user:create" | "user:update"
+
+// 5. Remove specific object types
+type Response =
+    | { type: "success"; data: string }
+    | { type: "error"; message: string }
+    | { type: "loading" };
+type SuccessOnly = Extract&lt;Response, { type: "success" }&gt;;
+// { type: "success"; data: string }</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

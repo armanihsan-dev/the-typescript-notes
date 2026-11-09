@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Record&lt;K, T&gt; — Object Mapping Utility Type</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-is-record" class="nav-link"
+          >🎯 What is Record&lt;K, T&gt;?</a
+        >
+        <a href="#mental-model" class="nav-link">🧠 The Mental Model</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Syntax &amp; Mechanics</div>
+        <a href="#part-1" class="nav-link">Part 1: Basic Syntax</a>
+        <a href="#part-2" class="nav-link">Part 2: How It Works</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Examples &amp; Comparison</div>
+        <a href="#part-3" class="nav-link">Part 3: Real-World Examples</a>
+        <a href="#record-vs-index-signatures" class="nav-link"
+          >Record vs Index Signatures</a
+        >
+        <a href="#key-takeaways" class="nav-link">Key Takeaways</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Record&lt;K, T&gt; — Object Mapping Utility Type</h1>
+      </section>
+
+      <section id="what-is-record">
+        <h2>🎯 What is Record&lt;K, T&gt;?</h2>
+
+        <h3>Definition:</h3>
+        <p>Record&lt;K, T&gt; creates an object type where:</p>
+        <p>keys are of type K</p>
+        <p>values are of type T</p>
+        <p>It's like a dictionary or map at the type level.</p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type Record&lt;K, T&gt; = {
+    [P in K]: T;
+};</code></pre>
+      </section>
+
+      <section id="mental-model">
+        <h2>🧠 The Mental Model</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    RECORD&lt;K, T&gt;                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Record&lt;string, number&gt;                                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Any string key → number value                          │   │
+│  │                                                         │   │
+│  │  {                                                      │   │
+│  │      [anyString]: number;                               │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Record&lt;"a" | "b" | "c", number&gt;                                │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Specific keys → number values                          │   │
+│  │                                                         │   │
+│  │  {                                                      │   │
+│  │      a: number;                                         │   │
+│  │      b: number;                                         │   │
+│  │      c: number;                                         │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-1">
+        <h2>Part 1: Basic Syntax</h2>
+        <pre><code class="language-typescript">type RecordType = Record&lt;K, T&gt;;</code></pre>
+        <p>
+          K = the type of keys (string, number, symbol, or union of literals)
+        </p>
+        <p>T = the type of values</p>
+
+        <h3>Example 1: String Keys</h3>
+        <pre><code class="language-typescript">type NumberDictionary = Record&lt;string, number&gt;;
+
+const scores: NumberDictionary = {
+    alice: 100,
+    bob: 90,
+    charlie: 85
+};
+
+// ✅ Access works
+console.log(scores.alice); // 100
+console.log(scores["bob"]); // 90</code></pre>
+
+        <h3>Example 2: Union of Literal Keys</h3>
+        <pre><code class="language-typescript">type UserRoles = Record&lt;"admin" | "editor" | "viewer", string&gt;;
+
+const roles: UserRoles = {
+    admin: "Administrator",
+    editor: "Editor",
+    viewer: "Viewer"
+};
+
+// ✅ All keys required
+// ❌ Missing key error:
+// const badRoles: UserRoles = {
+//     admin: "Administrator",
+//     editor: "Editor"
+//     // Error: missing viewer
+// };</code></pre>
+
+        <h3>Example 3: Number Keys</h3>
+        <pre><code class="language-typescript">type NumberMap = Record&lt;number, string&gt;;
+
+const fruits: NumberMap = {
+    0: "apple",
+    1: "banana",
+    2: "orange"
+};</code></pre>
+      </section>
+
+      <section id="part-2">
+        <h2>Part 2: How It Works</h2>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW RECORD WORKS                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Record&lt;"a" | "b" | "c", number&gt;                                │
+│                                                                  │
+│  Step 1: K = "a" | "b" | "c"                                   │
+│  Step 2: T = number                                            │
+│                                                                  │
+│  Step 3: For each key in K, create a property with type T      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  "a" → a: number                                        │   │
+│  │  "b" → b: number                                        │   │
+│  │  "c" → c: number                                        │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result:                                                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  {                                                      │   │
+│  │      a: number;                                         │   │
+│  │      b: number;                                         │   │
+│  │      c: number;                                         │   │
+│  │  }                                                      │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Internal Implementation</h3>
+        <pre><code class="language-typescript">type Record&lt;K extends keyof any, T&gt; = {
+    [P in K]: T;
+};</code></pre>
+        <p>Why it works:</p>
+        <p>It's a mapped type.</p>
+        <p>It iterates over each key in K.</p>
+        <p>For each key, it assigns type T.</p>
+      </section>
+
+      <section id="part-3">
+        <h2>Part 3: Real-World Examples</h2>
+
+        <h3>Example 1: Translation Dictionary</h3>
+        <pre><code class="language-typescript">type Language = "en" | "es" | "fr";
+type Translation = Record&lt;Language, string&gt;;
+
+const greetings: Translation = {
+    en: "Hello",
+    es: "Hola",
+    fr: "Bonjour"
+};
+
+// ✅ Type-safe access
+console.log(greetings.en); // "Hello"
+console.log(greetings.es); // "Hola"</code></pre>
+
+        <h3>Example 2: User Roles with Permissions</h3>
+        <pre><code class="language-typescript">type Role = "admin" | "editor" | "viewer";
+
+type Permissions = {
+    canRead: boolean;
+    canWrite: boolean;
+    canDelete: boolean;
+};
+
+type RolePermissions = Record&lt;Role, Permissions&gt;;
+
+const permissions: RolePermissions = {
+    admin: { canRead: true, canWrite: true, canDelete: true },
+    editor: { canRead: true, canWrite: true, canDelete: false },
+    viewer: { canRead: true, canWrite: false, canDelete: false }
+};</code></pre>
+
+        <h3>Example 3: API Response Cache</h3>
+        <pre><code class="language-typescript">type Endpoint = "/users" | "/posts" | "/comments";
+
+type CacheEntry = {
+    data: unknown;
+    timestamp: number;
+};
+
+type ApiCache = Record&lt;Endpoint, CacheEntry&gt;;
+
+const cache: ApiCache = {
+    "/users": { data: [], timestamp: Date.now() },
+    "/posts": { data: [], timestamp: Date.now() },
+    "/comments": { data: [], timestamp: Date.now() }
+};</code></pre>
+      </section>
+
+      <section id="record-vs-index-signatures">
+        <h2>Record vs Index Signatures</h2>
+
+        <h3>Comparison</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Record&lt;K, T&gt;</th>
+              <th>Index Signature</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Syntax</td>
+              <td>Record&lt;string, number&gt;</td>
+              <td>{ [key: string]: number }</td>
+            </tr>
+            <tr>
+              <td>Keys</td>
+              <td>Can be specific union</td>
+              <td>Any string/number</td>
+            </tr>
+            <tr>
+              <td>Readability</td>
+              <td>More explicit</td>
+              <td>Less explicit</td>
+            </tr>
+            <tr>
+              <td>When to use</td>
+              <td>Known keys</td>
+              <td>Unknown keys</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">// These are equivalent:
+type A = Record&lt;string, number&gt;;
+type B = { [key: string]: number };
+
+// But Record is better for specific keys:
+type Status = "pending" | "success" | "failed";
+type StatusMessages = Record&lt;Status, string&gt;;
+// Same as:
+// {
+//     pending: string;
+//     success: string;
+//     failed: string;
+// }</code></pre>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Record&lt;K, T&gt;</td>
+              <td>Creates object type with keys K and values T</td>
+            </tr>
+            <tr>
+              <td>When to use</td>
+              <td>Dictionaries, maps, lookup tables</td>
+            </tr>
+            <tr>
+              <td>Specific keys</td>
+              <td>Use union of literals for exact keys</td>
+            </tr>
+            <tr>
+              <td>All keys required</td>
+              <td>Unlike index signatures, all keys are required</td>
+            </tr>
+            <tr>
+              <td>Internal</td>
+              <td>Built with mapped types</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

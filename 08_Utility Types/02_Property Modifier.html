@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Property Modifier Utility Types — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-are-property-modifier-utility-types" class="nav-link"
+          >🎯 What Are Property Modifier Utility Types?</a
+        >
+        <a href="#mental-model" class="nav-link">🧠 The Mental Model</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Utility Types</div>
+        <a href="#partial" class="nav-link">1. 📦 Partial&lt;T&gt;</a>
+        <a href="#required" class="nav-link">2. 📦 Required&lt;T&gt;</a>
+        <a href="#readonly" class="nav-link">3. 📦 Readonly&lt;T&gt;</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Deep Dive &amp; Summary</div>
+        <a href="#how-they-work-internally" class="nav-link"
+          >🧠 How They Work Internally</a
+        >
+        <a href="#summary-table" class="nav-link">📝 Summary Table</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+        <a href="#practice-exercises" class="nav-link">🧪 Practice Exercises</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Property Modifier Utility Types — Complete Guide</h1>
+      </section>
+
+      <section id="what-are-property-modifier-utility-types">
+        <h2>🎯 What Are Property Modifier Utility Types?</h2>
+
+        <h3>Definition:</h3>
+        <p>
+          Property modifier utility types are built-in TypeScript types that
+          change the modifiers (optional ? and readonly readonly) on properties
+          of an object type.
+        </p>
+        <p>They let you:</p>
+        <ul>
+          <li>Add or remove the ? (optional) modifier</li>
+          <li>Add or remove the readonly modifier</li>
+        </ul>
+
+        <h3>The Two Utility Types</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Utility Type</th>
+              <th>What It Does</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Partial&lt;T&gt;</td>
+              <td>Makes all properties optional</td>
+            </tr>
+            <tr>
+              <td>Required&lt;T&gt;</td>
+              <td>Makes all properties required</td>
+            </tr>
+            <tr>
+              <td>Readonly&lt;T&gt;</td>
+              <td>Makes all properties readonly</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="mental-model">
+        <h2>🧠 The Mental Model</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    PROPERTY MODIFIERS                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  You can ADD or REMOVE two modifiers:                          │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  MODIFIER    ADD          REMOVE                         │   │
+│  │  ────────    ───          ──────                         │   │
+│  │  Optional    ?            -?                            │   │
+│  │  Readonly    readonly     -readonly                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Utility types wrap these modifiers:                           │
+│  • Partial    → adds ?                                         │
+│  • Required   → removes ?                                      │
+│  • Readonly   → adds readonly                                  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="partial">
+        <h2>1. 📦 Partial&lt;T&gt; — Make Everything Optional</h2>
+
+        <h3>Definition</h3>
+        <p>Partial&lt;T&gt; makes all properties of T optional.</p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Partial&lt;T&gt; = {
+    [K in keyof T]?: T[K];
+};</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+type PartialUser = Partial&lt;User&gt;;
+// {
+//     id?: number;
+//     name?: string;
+//     email?: string;
+// }</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW Partial WORKS                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Partial&lt;User&gt;                                                  │
+│                                                                  │
+│  Step 1: keyof User = "id" | "name" | "email"                  │
+│                                                                  │
+│  Step 2: For each key, add ? modifier                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  id    → id?: number                                    │   │
+│  │  name  → name?: string                                  │   │
+│  │  email → email?: string                                 │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: All properties become optional!                      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+// Full object required
+const user1: User = {
+    id: 1,
+    name: "Alice",
+    email: "alice@email.com"
+};
+
+// Partial object allowed
+const user2: Partial&lt;User&gt; = {
+    name: "Alice"
+}; // ✅ Works! All other properties are optional
+
+const user3: Partial&lt;User&gt; = {}; // ✅ Works! Empty object is valid</code></pre>
+
+        <h3>Use Case: Update Payloads</h3>
+        <pre><code class="language-typescript">function updateUser(id: number, updates: Partial&lt;User&gt;): void {
+    // Only update provided fields
+}
+
+updateUser(1, { name: "Bob" });          // ✅
+updateUser(2, { email: "bob@email.com" }); // ✅
+updateUser(3, {});                        // ✅</code></pre>
+      </section>
+
+      <section id="required">
+        <h2>2. 📦 Required&lt;T&gt; — Make Everything Required</h2>
+
+        <h3>Definition</h3>
+        <p>Required&lt;T&gt; makes all properties of T required (removes ?).</p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Required&lt;T&gt; = {
+    [K in keyof T]-?: T[K];
+};</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">interface Config {
+    apiUrl?: string;
+    timeout?: number;
+    retries?: number;
+}
+
+type RequiredConfig = Required&lt;Config&gt;;
+// {
+//     apiUrl: string;
+//     timeout: number;
+//     retries: number;
+// }</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW Required WORKS                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Required&lt;Config&gt;                                               │
+│                                                                  │
+│  Step 1: keyof Config = "apiUrl" | "timeout" | "retries"       │
+│                                                                  │
+│  Step 2: For each key, remove ? modifier                       │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  apiUrl?  → apiUrl: string                              │   │
+│  │  timeout? → timeout: number                             │   │
+│  │  retries? → retries: number                             │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: All properties become required!                      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">interface Config {
+    apiUrl?: string;
+    timeout?: number;
+}
+
+// All optional
+const config1: Config = {}; // ✅
+
+// All required
+const config2: Required&lt;Config&gt; = {
+    apiUrl: "https://api.com",
+    timeout: 5000
+}; // ✅ Works
+
+// ❌ Error: missing timeout
+const config3: Required&lt;Config&gt; = {
+    apiUrl: "https://api.com"
+}; // ❌ Error: Property 'timeout' is missing</code></pre>
+
+        <h3>Use Case: After Validation</h3>
+        <pre><code class="language-typescript">function processConfig(config: Config): void {
+    // After validation, we know all fields exist
+    const validated: Required&lt;Config&gt; = {
+        apiUrl: config.apiUrl ?? "default",
+        timeout: config.timeout ?? 5000
+    };
+    // Now we can safely use all fields
+}</code></pre>
+      </section>
+
+      <section id="readonly">
+        <h2>3. 📦 Readonly&lt;T&gt; — Make Everything Readonly</h2>
+
+        <h3>Definition</h3>
+        <p>Readonly&lt;T&gt; makes all properties of T readonly (immutable).</p>
+
+        <h3>Syntax</h3>
+        <pre><code class="language-typescript">type Readonly&lt;T&gt; = {
+    readonly [K in keyof T]: T[K];
+};</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+type ReadonlyUser = Readonly&lt;User&gt;;
+// {
+//     readonly id: number;
+//     readonly name: string;
+//     readonly email: string;
+// }</code></pre>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW Readonly WORKS                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Readonly&lt;User&gt;                                                 │
+│                                                                  │
+│  Step 1: keyof User = "id" | "name" | "email"                  │
+│                                                                  │
+│  Step 2: For each key, add readonly modifier                   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  id    → readonly id: number                            │   │
+│  │  name  → readonly name: string                          │   │
+│  │  email → readonly email: string                         │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: All properties become readonly!                      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Example</h3>
+        <pre><code class="language-typescript">interface User {
+    id: number;
+    name: string;
+}
+
+const user: Readonly&lt;User&gt; = {
+    id: 1,
+    name: "Alice"
+};
+
+// ✅ Read allowed
+console.log(user.name); // "Alice"
+
+// ❌ Write not allowed
+user.name = "Bob"; // Error: Cannot assign to 'name' because it is a read-only property
+user.id = 2;       // Error: Cannot assign to 'id' because it is a read-only property</code></pre>
+
+        <h3>Use Case: Immutable State</h3>
+        <pre><code class="language-typescript">type AppState = Readonly&lt;{
+    user: User | null;
+    posts: Post[];
+    loading: boolean;
+}&gt;;
+
+const state: AppState = {
+    user: null,
+    posts: [],
+    loading: false
+};
+
+// ❌ Can't mutate state directly
+state.loading = true; // Error
+
+// ✅ Must create a new state
+const newState: AppState = {
+    ...state,
+    loading: true
+};</code></pre>
+      </section>
+
+      <section id="how-they-work-internally">
+        <h2>🧠 How They Work Internally</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    INTERNAL IMPLEMENTATIONS                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Partial&lt;T&gt; = {                                                │
+│      [K in keyof T]?: T[K]          // ← Add ?                │
+│  };                                                             │
+│                                                                  │
+│  Required&lt;T&gt; = {                                               │
+│      [K in keyof T]-?: T[K]         // ← Remove ?             │
+│  };                                                             │
+│                                                                  │
+│  Readonly&lt;T&gt; = {                                               │
+│      readonly [K in keyof T]: T[K]  // ← Add readonly         │
+│  };                                                             │
+│                                                                  │
+│  All three use MAPPED TYPES + PROPERTY MODIFIERS.              │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="summary-table">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Utility Type</th>
+              <th>What It Does</th>
+              <th>Syntax</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Partial&lt;T&gt;</td>
+              <td>Makes all properties optional</td>
+              <td>[K in keyof T]?: T[K]</td>
+              <td>Partial&lt;User&gt;</td>
+            </tr>
+            <tr>
+              <td>Required&lt;T&gt;</td>
+              <td>Makes all properties required</td>
+              <td>[K in keyof T]-?: T[K]</td>
+              <td>Required&lt;Config&gt;</td>
+            </tr>
+            <tr>
+              <td>Readonly&lt;T&gt;</td>
+              <td>Makes all properties readonly</td>
+              <td>readonly [K in keyof T]: T[K]</td>
+              <td>Readonly&lt;User&gt;</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Partial</td>
+              <td>Adds ? to all properties</td>
+            </tr>
+            <tr>
+              <td>Required</td>
+              <td>Removes ? from all properties</td>
+            </tr>
+            <tr>
+              <td>Readonly</td>
+              <td>Adds readonly to all properties</td>
+            </tr>
+            <tr>
+              <td>How they work</td>
+              <td>Built with mapped types + modifiers</td>
+            </tr>
+            <tr>
+              <td>When to use</td>
+              <td>Update payloads, validation, immutable state</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="practice-exercises">
+        <h2>🧪 Practice Exercises</h2>
+        <pre><code class="language-typescript">// 1. Make all properties optional
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+type PartialUser = Partial&lt;User&gt;;
+// { id?: number; name?: string; email?: string }
+
+// 2. Make all properties required
+interface Config {
+    apiUrl?: string;
+    timeout?: number;
+}
+type RequiredConfig = Required&lt;Config&gt;;
+// { apiUrl: string; timeout: number }
+
+// 3. Make all properties readonly
+interface State {
+    count: number;
+    name: string;
+}
+type ReadonlyState = Readonly&lt;State&gt;;
+// { readonly count: number; readonly name: string }
+
+// 4. Combine with other utility types
+type PartialReadonlyUser = Readonly&lt;Partial&lt;User&gt;&gt;;
+// { readonly id?: number; readonly name?: string; readonly email?: string }</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

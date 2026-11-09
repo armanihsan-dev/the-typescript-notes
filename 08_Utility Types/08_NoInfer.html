@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript NoInfer&lt;Type&gt; — Learn It From Zero</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#type-inference" class="nav-link"
+          >1. What is Type Inference?</a
+        >
+        <a href="#what-is-noinfer" class="nav-link"
+          >What is NoInfer&lt;T&gt;?</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Mechanics &amp; Problem Solved</div>
+        <a href="#the-problem-it-solves" class="nav-link"
+          >🧠 The Problem It Solves</a
+        >
+        <a href="#simple-analogy" class="nav-link">Simple Analogy</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. In-Depth Walkthrough</div>
+        <a href="#step-by-step" class="nav-link">Step by Step</a>
+        <a href="#the-one-line-rule" class="nav-link">The One-Line Rule</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>TypeScript NoInfer&lt;Type&gt; — Learn It From Zero</h1>
+        <p>
+          Let's understand NoInfer step by step, with simple examples. The key
+          is understanding how TypeScript infers types before learning what
+          NoInfer changes.
+        </p>
+      </section>
+
+      <section id="type-inference">
+        <h2>1. First, what is type inference?</h2>
+        <p>
+          Type inference means TypeScript figures out a type for you without
+          requiring you to write it explicitly.
+        </p>
+        <p>For example:</p>
+        <pre><code class="language-typescript">let color = "red";</code></pre>
+        <p>TypeScript can infer that color is a string.</p>
+        <p>It can also infer types for generic functions:</p>
+        <pre><code class="language-typescript">function identity&lt;T&gt;(value: T): T {
+  return value;
+}
+
+identity("hello"); // T is inferred as string
+identity(123);     // T is inferred as number</code></pre>
+        <p>
+          Here, T is a generic type parameter. TypeScript looks at the argument
+          you pass and decides what T should be.
+        </p>
+        <ul>
+          <li>Pass "hello" → T becomes string.</li>
+          <li>Pass 123 → T becomes number.</li>
+        </ul>
+        <p>This is useful because you don't need to specify T manually.</p>
+      </section>
+
+      <section id="what-is-noinfer">
+        <h2>Think of NoInfer&lt;T&gt; as a sign that says:</h2>
+        <p>
+          "NoInfer&lt;T&gt; is a built-in utility type (introduced in TypeScript
+          5.4) that prevents TypeScript from inferring a type parameter from a
+          specific position. It tells the compiler: "This is type T, but don't
+          use this argument to figure out what T is."
+        </p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">function example&lt;T&gt;(value: NoInfer&lt;T&gt;): void {}
+// TypeScript won't infer T from 'value'</code></pre>
+      </section>
+
+      <section id="the-problem-it-solves">
+        <h2>🧠 The Problem It Solves</h2>
+
+        <h3>The Scenario: Multiple Inference Candidates</h3>
+        <p>
+          When a generic type parameter appears in multiple places in a function
+          signature, TypeScript tries to infer it from all of them. Sometimes
+          this is not what you want.
+        </p>
+
+        <h3>The FSM Example</h3>
+        <pre><code class="language-typescript">declare function createFSM&lt;TState extends string&gt;(config: {
+    initial: TState;
+    states: TState[];
+}): void;
+
+createFSM({
+    initial: "not-allowed",
+    states: ["open", "closed"]
+});</code></pre>
+        <p>
+          What happens: TypeScript infers TState from both initial and states.
+          So TState becomes "not-allowed" | "open" | "closed", and no error
+          occurs — even though "not-allowed" is not a valid state
+        </p>
+
+        <h3>The Solution: NoInfer</h3>
+        <pre><code class="language-typescript">declare function createFSM&lt;TState extends string&gt;(config: {
+    initial: NoInfer&lt;TState&gt;;  // ← Don't infer from here
+    states: TState[];           // ← Infer only from here
+}): void;
+
+createFSM({
+    initial: "not-allowed",  // ❌ Error!
+    states: ["open", "closed"]
+});</code></pre>
+        <p>
+          Now TState is inferred only from states ("open" | "closed"), and
+          initial is checked against that type. Since "not-allowed" isn't in the
+          union, TypeScript throws an error.
+        </p>
+      </section>
+
+      <section id="simple-analogy">
+        <p>OR</p>
+        <p>
+          “Use this value to check the type, but do not use it to decide the
+          type.”
+        </p>
+        <p>
+          TypeScript normally looks at all generic arguments to figure out what
+          T should be. NoInfer&lt;T&gt; removes one argument from that
+          decision-making process.
+        </p>
+
+        <h2>Simple analogy</h2>
+        <p>Imagine you are choosing a dress code:</p>
+        <pre><code class="language-typescript">function party&lt;T&gt;(guests: T[], host: NoInfer&lt;T&gt;) {}</code></pre>
+        <p>guests says: “These people decide the party’s type.”</p>
+        <p>host says: “This person must already fit the party’s type.”</p>
+        <p>
+          So if guests are "Ali" | "Sara", the host must be either "Ali" or
+          "Sara".
+        </p>
+        <p>
+          Without NoInfer, TypeScript might say: “The host is a new kind of
+          person too, so add them to the allowed type.” That is usually not what
+          you want.
+        </p>
+      </section>
+
+      <section id="step-by-step">
+        <h2>Step by step</h2>
+        <pre><code class="language-typescript">function register&lt;Role extends string&gt;(
+  allowedRoles: Role[],
+  selectedRole: NoInfer&lt;Role&gt;,
+) {
+  return { selectedRole };
+}</code></pre>
+        <p>When you call:</p>
+        <pre><code class="language-typescript">register(["admin", "manager", "worker"], "admin");</code></pre>
+        <p>TypeScript does this:</p>
+        <p>Look at allowedRoles.</p>
+        <p>Infer Role from it:</p>
+        <pre><code class="language-typescript">Role = "admin" | "manager" | "worker"</code></pre>
+        <p>Look at selectedRole.</p>
+        <p>
+          Because it is NoInfer&lt;Role&gt;, do not use "admin" to change Role.
+        </p>
+        <p>Only check whether "admin" fits the already-decided Role.</p>
+        <p>It does, so the call works.</p>
+
+        <h3>Why the invalid one fails</h3>
+        <pre><code class="language-typescript">register(["admin", "manager", "worker"], "Normal user");</code></pre>
+        <p>Step by step:</p>
+        <p>allowedRoles decides:</p>
+        <pre><code class="language-typescript">Role = "admin" | "manager" | "worker"</code></pre>
+        <p>selectedRole must be one of those roles.</p>
+        <p>"Normal user" is not one of them.</p>
+        <p>TypeScript gives an error.</p>
+        <p>Without NoInfer, TypeScript might infer:</p>
+        <pre><code class="language-typescript">Role = "admin" | "manager" | "worker" | "Normal user"</code></pre>
+        <p>
+          Then the invalid value would incorrectly be accepted. NoInfer prevents
+          that.
+        </p>
+      </section>
+
+      <section id="the-one-line-rule">
+        <h2>The one-line rule</h2>
+        <p>
+          Put NoInfer&lt;T&gt; on the argument that should follow the type, not
+          the argument that should create the type.
+        </p>
+        <pre><code class="language-typescript">function example&lt;T&gt;(
+  source: T[],          // this decides T
+  checked: NoInfer&lt;T&gt;,  // this must match T
+) {}</code></pre>
+
+        <h3>Tiny mental model</h3>
+        <pre><code class="language-typescript">allowedRoles: Role[]          // “I define the allowed roles.”
+selectedRole: NoInfer&lt;Role&gt;   // “I must be one of those roles.”</code></pre>
+        <p>So:</p>
+        <pre><code class="language-typescript">register(["admin", "manager"], "admin");       // ✅ admin is allowed
+register(["admin", "manager"], "guest");       // ❌ guest was not allowed</code></pre>
+        <p>
+          NoInfer is simply TypeScript’s way of saying: “Do not let this
+          argument expand the generic type.”
+        </p>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

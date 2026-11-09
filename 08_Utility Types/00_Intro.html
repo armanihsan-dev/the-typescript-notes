@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🧰 Introduction to Utility Types in TypeScript</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#intro" class="nav-link">Introduction</a>
+        <a href="#what-are-utility-types" class="nav-link"
+          >🧠 What Are Utility Types?</a
+        >
+        <a href="#why-need-utility-types" class="nav-link"
+          >🛠️ Why Do We Need Utility Types?</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Mechanics</div>
+        <a href="#transform-types" class="nav-link"
+          >🔄 Utility Types Transform Types</a
+        >
+        <a href="#how-built" class="nav-link"
+          >🧱 How Are Utility Types Built?</a
+        >
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Categories &amp; Summary</div>
+        <a href="#types-of-utility-types" class="nav-link"
+          >📦 Types of Utility Types</a
+        >
+        <a href="#main-idea" class="nav-link">🎯 Main Idea</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>🧰 Introduction to Utility Types in TypeScript</h1>
+      </section>
+
+      <section id="intro">
+        <p>TypeScript gives us many built-in types.</p>
+        <p>Some are basic types like:</p>
+        <pre><code class="language-typescript">string;
+number;
+boolean;
+null;
+undefined;
+symbol;
+bigint;</code></pre>
+        <p>These are primitive types.</p>
+        <p>
+          But TypeScript also allows us to create special helper types that
+          transform one type into another type.
+        </p>
+        <p>These helper types are called utility types.</p>
+      </section>
+
+      <section id="what-are-utility-types">
+        <h2>🧠 What Are Utility Types?</h2>
+        <p>
+          Utility types are reusable generic types that help us create new types
+          from existing types.
+        </p>
+        <p>Think of them as:</p>
+        <p>Type-level helper functions.</p>
+        <p>There are mainly two ways we use utility types:</p>
+        <ul>
+          <li>✅ Built-in Utility Types</li>
+          <li>✅ Custom Utility Types</li>
+        </ul>
+        <p>Built-in utility types are already provided by TypeScript.</p>
+        <p>Examples:</p>
+        <ul>
+          <li>Readonly</li>
+          <li>Partial</li>
+          <li>Pick</li>
+          <li>Omit</li>
+          <li>ReturnType</li>
+          <li>Uppercase</li>
+          <li>Lowercase</li>
+        </ul>
+        <p>
+          For example, if we have an object type, we can make all its properties
+          read-only using Readonly.
+        </p>
+        <pre><code class="language-typescript">type User = {
+  name: string;
+  age: number;
+};
+
+type ReadonlyUser = Readonly&lt;User&gt;;</code></pre>
+        <p>Now all properties of ReadonlyUser become read-only.</p>
+        <p>
+          Custom utility types are created by us when we need our own type
+          transformation logic.
+        </p>
+        <p>
+          So in this section, we will first understand TypeScript’s built-in
+          utility types, and then we will also learn how to build our own
+          utility types.
+        </p>
+      </section>
+
+      <section id="why-need-utility-types">
+        <h2>🛠️ Why Do We Need Utility Types?</h2>
+        <p>
+          Utility types help us avoid writing repetitive type definitions
+          manually.
+        </p>
+        <p>They make our types:</p>
+        <ul>
+          <li>✅ cleaner</li>
+          <li>✅ reusable</li>
+          <li>✅ easier to maintain</li>
+          <li>✅ more type-safe</li>
+        </ul>
+        <p>
+          Instead of creating similar types again and again, we can transform
+          existing types.
+        </p>
+      </section>
+
+      <section id="transform-types">
+        <h2>🔄 Utility Types Transform Types</h2>
+        <p>A normal function works on values.</p>
+        <pre><code class="language-text">value → function → new value</code></pre>
+        <p>A utility type works on types.</p>
+        <pre><code class="language-text">type → utility type → new type</code></pre>
+        <p>Example:</p>
+        <pre><code class="language-typescript">type ReadonlyUser = Readonly&lt;User&gt;;</code></pre>
+        <p>Here:</p>
+        <pre><code class="language-text">User → Readonly → ReadonlyUser</code></pre>
+      </section>
+
+      <section id="how-built">
+        <h2>🧱 How Are Utility Types Built?</h2>
+        <p>Utility types are not magic.</p>
+        <p>They are built using TypeScript’s type-level features, such as:</p>
+        <ul>
+          <li>🧩 Generics</li>
+          <li>🧩 keyof</li>
+          <li>🧩 Mapped Types</li>
+          <li>🧩 Conditional Types</li>
+          <li>🧩 infer</li>
+          <li>🧩 Indexed Access Types</li>
+          <li>🧩 Template Literal Types</li>
+        </ul>
+        <p>
+          Most utility types are built using TypeScript’s type-level features.
+        </p>
+        <p>
+          But a few special string utility types, such as Uppercase, Lowercase,
+          Capitalize, and Uncapitalize, are implemented directly inside the
+          TypeScript compiler.
+        </p>
+        <p>These are called intrinsic utility types.</p>
+      </section>
+
+      <section id="types-of-utility-types">
+        <h2>📦 Types of Utility Types</h2>
+        <p>
+          There are different categories of utility types based on the kind of
+          type transformation they perform:
+        </p>
+
+        <h3>🔀 Union Utility Types</h3>
+        <pre><code class="language-typescript">Exclude&lt;Union, ExcludedMembers&gt;
+Extract&lt;Type, Union&gt;
+NonNullable&lt;T&gt;</code></pre>
+
+        <h3>🏗️ Object Utility Types</h3>
+        <pre><code class="language-typescript">Partial&lt;T&gt;
+Required&lt;T&gt;
+Readonly&lt;T&gt;
+Pick&lt;T, Keys&gt;
+Omit&lt;T, Keys&gt;
+Record&lt;Keys, Type&gt;</code></pre>
+
+        <h3>⚙️ Function Utility Types</h3>
+        <pre><code class="language-typescript">Parameters&lt;T&gt;
+ReturnType&lt;T&gt;</code></pre>
+
+        <h3>⏳ Promise Utility Types</h3>
+        <pre><code class="language-typescript">Awaited&lt;T&gt;</code></pre>
+
+        <h3>🔤 String Manipulation Utility Types</h3>
+        <pre><code class="language-typescript">Uppercase&lt;StringType&gt;
+Lowercase&lt;StringType&gt;
+Capitalize&lt;StringType&gt;
+Uncapitalize&lt;StringType&gt;</code></pre>
+
+        <h3>🧠 Inference Control Utility Types</h3>
+        <pre><code class="language-typescript">NoInfer&lt;T&gt;</code></pre>
+
+        <h3>🏛️ Class and this Utility Types</h3>
+        <pre><code class="language-typescript">ConstructorParameters&lt;T&gt;
+InstanceType&lt;T&gt;
+ThisParameterType&lt;T&gt;
+OmitThisParameter&lt;T&gt;
+ThisType&lt;T&gt;</code></pre>
+
+        <h3>🧩 Custom Utility Types</h3>
+        <p>Creating our own utility types using:</p>
+        <ul>
+          <li>Conditional Types</li>
+          <li>Mapped Types</li>
+          <li>infer</li>
+          <li>Template Literal Types</li>
+          <li>Indexed Access Types</li>
+          <li>Recursive Types</li>
+        </ul>
+        <p>
+          Each category helps us solve a different kind of type transformation
+          problem.
+        </p>
+      </section>
+
+      <section id="main-idea">
+        <h2>🎯 Main Idea</h2>
+        <p>Utility types help us transform, reuse, and compose types.</p>
+        <p>
+          Some utility types are already provided by TypeScript, and some
+          utility types we can create ourselves.
+        </p>
+        <p>In simple words:</p>
+        <p>Utility types are reusable tools for type-level transformation.</p>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awaited&lt;T&gt; — Complete Guide</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Overview</div>
+        <a href="#what-is-awaited" class="nav-link"
+          >🎯 What is Awaited&lt;T&gt;?</a
+        >
+        <a href="#mental-model" class="nav-link">🧠 The Mental Model</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Syntax &amp; Mechanics</div>
+        <a href="#part-1" class="nav-link">Part 1: Basic Syntax</a>
+        <a href="#part-2" class="nav-link">Part 2: How It Works</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Examples &amp; Implementation</div>
+        <a href="#part-3" class="nav-link">Part 3: Real-World Examples</a>
+        <a href="#part-4" class="nav-link">Part 4: Internal Implementation</a>
+        <a href="#part-5" class="nav-link">Part 5: Awaited vs ReturnType</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript</span>
+        <h1>Awaited&lt;T&gt; — Complete Guide</h1>
+      </section>
+
+      <section id="what-is-awaited">
+        <h2>🎯 What is Awaited&lt;T&gt;?</h2>
+
+        <h3>Definition:</h3>
+        <p>
+          Awaited&lt;T&gt; is a built-in utility type that extracts the resolved
+          type from a Promise. It "unwraps" the Promise to reveal what's inside
+          — and it does this recursively for nested Promises.
+        </p>
+
+        <h3>The One-Line Summary</h3>
+        <pre><code class="language-typescript">type Result = Awaited&lt;Promise&lt;string&gt;&gt;;
+// Result = string</code></pre>
+      </section>
+
+      <section id="mental-model">
+        <h2>🧠 The Mental Model</h2>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    Awaited&lt;T&gt;                                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Think of a Promise as a "box" that holds a value.             │
+│  Awaited&lt;T&gt; opens the box and gives you the value.             │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Promise&lt;string&gt;  →  open the box  →  string            │   │
+│  │  Promise&lt;number&gt;  →  open the box  →  number            │   │
+│  │  Promise&lt;User&gt;    →  open the box  →  User              │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  For nested promises, it opens ALL the boxes:                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Promise&lt;Promise&lt;string&gt;&gt;  →  string                    │   │
+│  │  Promise&lt;Promise&lt;Promise&lt;number&gt;&gt;&gt;  →  number           │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-1">
+        <h2>Part 1: Basic Syntax</h2>
+        <pre><code class="language-typescript">type Result = Awaited&lt;Promise&lt;T&gt;&gt;;</code></pre>
+
+        <h3>Simple Examples</h3>
+        <pre><code class="language-typescript">type A = Awaited&lt;Promise&lt;string&gt;&gt;;  // string
+type B = Awaited&lt;Promise&lt;number&gt;&gt;;  // number
+type C = Awaited&lt;Promise&lt;boolean&gt;&gt;; // boolean
+type D = Awaited&lt;Promise&lt;User&gt;&gt;;    // User</code></pre>
+
+        <h3>With Non-Promise Types</h3>
+        <pre><code class="language-typescript">// If T is not a Promise, Awaited returns T unchanged
+type E = Awaited&lt;string&gt;;  // string
+type F = Awaited&lt;number&gt;;  // number
+type G = Awaited&lt;boolean&gt;; // boolean</code></pre>
+      </section>
+
+      <section id="part-2">
+        <h2>Part 2: How It Works</h2>
+
+        <h3>Step by Step</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    HOW Awaited WORKS                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Awaited&lt;Promise&lt;string&gt;&gt;                                       │
+│                                                                  │
+│  Step 1: Is it a Promise?                                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Promise&lt;string&gt; extends Promise&lt;infer U&gt;?             │   │
+│  │  YES → U = string                                       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Step 2: Is U also a Promise? (recursion)                     │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  string extends Promise&lt;infer V&gt;?                       │   │
+│  │  NO → return string                                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  Result: string                                                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Nested Promises</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    NESTED PROMISES                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Awaited&lt;Promise&lt;Promise&lt;string&gt;&gt;&gt;                              │
+│                                                                  │
+│  Step 1: Outer Promise → U = Promise&lt;string&gt;                   │
+│  Step 2: Inner Promise → V = string                            │
+│  Step 3: string is not a Promise → return string              │
+│                                                                  │
+│  Result: string                                                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+      </section>
+
+      <section id="part-3">
+        <h2>Part 3: Real-World Examples</h2>
+
+        <h3>Example 1: Async Function Return Type</h3>
+        <pre><code class="language-typescript">async function fetchUser(): Promise&lt;{ id: number; name: string }&gt; {
+    return { id: 1, name: "Alice" };
+}
+
+// ❌ ReturnType gives Promise&lt;{ id: number; name: string }&gt;
+type RawReturn = ReturnType&lt;typeof fetchUser&gt;;
+
+// ✅ Awaited unwraps it
+type User = Awaited&lt;ReturnType&lt;typeof fetchUser&gt;&gt;;
+// { id: number; name: string }
+
+// Now you can use it
+const user: User = { id: 1, name: "Alice" };</code></pre>
+
+        <h3>Example 2: API Client</h3>
+        <pre><code class="language-typescript">interface ApiClient {
+    get&lt;T&gt;(url: string): Promise&lt;T&gt;;
+    post&lt;T&gt;(url: string, body: unknown): Promise&lt;T&gt;;
+}
+
+async function fetchUsers(): Promise&lt;User[]&gt; {
+    return [];
+}
+
+// Extract the resolved type
+type Users = Awaited&lt;ReturnType&lt;typeof fetchUsers&gt;&gt;;
+// User[]</code></pre>
+
+        <h3>Example 3: Nested Async Operations</h3>
+        <pre><code class="language-typescript">async function getData(): Promise&lt;Promise&lt;string&gt;&gt; {
+    return Promise.resolve("hello");
+}
+
+type Data = Awaited&lt;ReturnType&lt;typeof getData&gt;&gt;;
+// string (unwraps BOTH promises)</code></pre>
+
+        <h3>Example 4: Promise.all with Awaited</h3>
+        <pre><code class="language-typescript">async function fetchUser(): Promise&lt;User&gt; {
+    return {} as User;
+}
+
+async function fetchPosts(): Promise&lt;Post[]&gt; {
+    return [];
+}
+
+async function fetchAll() {
+    const [user, posts] = await Promise.all([
+        fetchUser(),
+        fetchPosts()
+    ]);
+    return { user, posts };
+}
+
+type AllData = Awaited&lt;ReturnType&lt;typeof fetchAll&gt;&gt;;
+// { user: User; posts: Post[] }</code></pre>
+      </section>
+
+      <section id="part-4">
+        <h2>Part 4: Internal Implementation</h2>
+
+        <h3>Simplified Version</h3>
+        <pre><code class="language-typescript">type MyAwaited&lt;T&gt; = T extends Promise&lt;infer U&gt; ? MyAwaited&lt;U&gt; : T;</code></pre>
+
+        <h3>How It Works</h3>
+        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────────┐
+│                    INTERNAL IMPLEMENTATION                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  type MyAwaited&lt;T&gt; =                                           │
+│      T extends Promise&lt;infer U&gt;                                │
+│          ? MyAwaited&lt;U&gt;    // ← Recursive case                 │
+│          : T;               // ← Base case                     │
+│                                                                  │
+│  For Promise&lt;string&gt;:                                          │
+│  1. Promise&lt;string&gt; extends Promise&lt;infer U&gt; → U = string      │
+│  2. string extends Promise&lt;infer U&gt; → NO                       │
+│  3. Return string                                              │
+│                                                                  │
+│  For Promise&lt;Promise&lt;string&gt;&gt;:                                 │
+│  1. Promise&lt;Promise&lt;string&gt;&gt; extends Promise&lt;infer U&gt;          │
+│     → U = Promise&lt;string&gt;                                      │
+│  2. Promise&lt;string&gt; extends Promise&lt;infer U&gt; → U = string      │
+│  3. string extends Promise&lt;infer U&gt; → NO                       │
+│  4. Return string                                              │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+
+        <h3>Full TypeScript Implementation</h3>
+        <pre><code class="language-typescript">// The actual TypeScript implementation is more complex
+// because it handles thenables, null, undefined, etc.
+
+type Awaited&lt;T&gt; = T extends null | undefined 
+    ? T 
+    : T extends object &amp; { then(onfulfilled: infer F, ...args: infer _): any }
+        ? F extends ((value: infer V, ...args: infer _) =&gt; any)
+            ? Awaited&lt;V&gt;
+            : never
+        : T;</code></pre>
+      </section>
+
+      <section id="part-5">
+        <h2>Part 5: Awaited vs ReturnType</h2>
+
+        <h3>The Difference</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Utility Type</th>
+              <th>What It Does</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ReturnType&lt;T&gt;</td>
+              <td>Gets the return type of a function</td>
+              <td>ReturnType&lt;typeof fn&gt; → Promise&lt;User&gt;</td>
+            </tr>
+            <tr>
+              <td>Awaited&lt;T&gt;</td>
+              <td>Unwraps a Promise</td>
+              <td>Awaited&lt;Promise&lt;User&gt;&gt; → User</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Together</h3>
+        <pre><code class="language-typescript">async function fetchUser(): Promise&lt;User&gt; {
+    return {} as User;
+}
+
+// Step 1: Get return type
+type RawReturn = ReturnType&lt;typeof fetchUser&gt;;
+// Promise&lt;User&gt;
+
+// Step 2: Unwrap the Promise
+type UserType = Awaited&lt;RawReturn&gt;;
+// User
+
+// Or in one line:
+type UserType2 = Awaited&lt;ReturnType&lt;typeof fetchUser&gt;&gt;;
+// User</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zod, Type-Fest, ts-essentials, and ts-toolbelt</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Syntax Highlighting (PrismJS Theme: Tomorrow Night) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS & JS -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+          style="width: 24px; height: 24px"
+          alt="TS Logo"
+        />
+        TYPESCRIPT
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">I. Runtime Validation</div>
+        <a href="#part-1" class="nav-link">Part 1: Zod</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">II. Type Utility Libraries</div>
+        <a href="#part-2" class="nav-link">Part 2: Type-Fest</a>
+        <a href="#part-3" class="nav-link">Part 3: ts-essentials</a>
+        <a href="#part-4" class="nav-link">Part 4: ts-toolbelt</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">III. Integration &amp; Summary</div>
+        <a href="#part-5" class="nav-link">Part 5: Real-World Project</a>
+        <a href="#summary-table" class="nav-link">📝 Summary Table</a>
+        <a href="#key-takeaways" class="nav-link">🎯 Key Takeaways</a>
+        <a href="#practice-exercises" class="nav-link">🧪 Practice Exercises</a>
+      </div>
+
+      <!-- Author Links (Exactly as Requested) -->
+      <div
+        class="nav-section"
+        style="
+          margin-top: 3rem;
+          border-top: 1px solid var(--border);
+          padding-top: 1.5rem;
+        "
+      >
+        <div class="nav-title">Author</div>
+        <a
+          href="https://pro.armanihsan.com"
+          target="_blank"
+          class="nav-link"
+          style="color: var(--accent)"
+          ><i class="fa-solid fa-globe"></i> pro.armanihsan.com</a
+        >
+        <div
+          style="display: flex; gap: 10px; margin-top: 10px; padding-left: 12px"
+        >
+          <a
+            href="https://github.com/armanihsan-dev"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-github fa-lg"></i
+          ></a>
+          <a
+            href="https://www.linkedin.com/in/arman-ihsan-5a790430a/"
+            style="color: var(--text-secondary)"
+            ><i class="fa-brands fa-linkedin fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section id="header">
+        <span class="badge">TypeScript Libraries &amp; Utilities</span>
+        <h1>Zod, Type-Fest, ts-essentials, and ts-toolbelt</h1>
+      </section>
+
+      <!-- Part 1: Zod -->
+      <section id="part-1">
+        <h2>Part 1: Zod — Runtime Validation + Type Inference</h2>
+
+        <h3>Setup</h3>
+        <pre><code class="language-bash">npm install zod</code></pre>
+
+        <h3>Practice 1: Basic Schema &amp; Type Inference</h3>
+        <pre><code class="language-typescript">import { z } from "zod";
+
+// Define the schema
+const UserSchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    email: z.string().email(),
+    age: z.number().min(0).max(120)
+});
+
+// Extract the TypeScript type
+type User = z.infer&lt;typeof UserSchema&gt;;
+
+// Now you have BOTH:
+// 1. Runtime validation (UserSchema.parse)
+// 2. Compile-time type (User)
+
+const validData = {
+    id: 1,
+    name: "Alice",
+    email: "alice@email.com",
+    age: 25
+};
+
+const user: User = UserSchema.parse(validData); // ✅ Works
+console.log(user.name); // "Alice"
+
+// ❌ Runtime error (caught by Zod)
+try {
+    UserSchema.parse({
+        id: "not a number", // Wrong type
+        name: "Bob",
+        email: "invalid-email", // Invalid format
+        age: 200 // Too old
+    });
+} catch (error) {
+    console.log("Validation failed!");
+}</code></pre>
+
+        <h3>Practice 2: Nested Objects</h3>
+        <pre><code class="language-typescript">const AddressSchema = z.object({
+    street: z.string(),
+    city: z.string(),
+    zip: z.string().regex(/^\d{5}$/)
+});
+
+const PersonSchema = z.object({
+    name: z.string(),
+    address: AddressSchema, // ← Nested schema
+    hobbies: z.array(z.string())
+});
+
+type Person = z.infer&lt;typeof PersonSchema&gt;;
+// {
+//     name: string;
+//     address: { street: string; city: string; zip: string };
+//     hobbies: string[];
+// }
+
+const person: Person = PersonSchema.parse({
+    name: "Alice",
+    address: {
+        street: "123 Main St",
+        city: "NYC",
+        zip: "10001"
+    },
+    hobbies: ["reading", "coding"]
+});</code></pre>
+
+        <h3>Practice 3: API Response Validation</h3>
+        <pre><code class="language-typescript">const ApiResponseSchema = z.discriminatedUnion("status", [
+    z.object({
+        status: z.literal("success"),
+        data: z.object({ id: z.number(), name: z.string() })
+    }),
+    z.object({
+        status: z.literal("error"),
+        message: z.string()
+    })
+]);
+
+type ApiResponse = z.infer&lt;typeof ApiResponseSchema&gt;;
+
+async function fetchUser(id: number): Promise&lt;ApiResponse&gt; {
+    const response = await fetch(`/api/users/${id}`);
+    const data = await response.json();
+    
+    // ✅ Validates at runtime AND narrows the type
+    return ApiResponseSchema.parse(data);
+}
+
+// Usage
+const result = await fetchUser(1);
+if (result.status === "success") {
+    console.log(result.data.name); // ✅ TypeScript knows this exists
+} else {
+    console.log(result.message); // ✅ TypeScript knows this exists
+}</code></pre>
+
+        <h3>Practice 4: Transformations</h3>
+        <pre><code class="language-typescript">const DateSchema = z.string().transform((str) =&gt; new Date(str));
+
+type DateType = z.infer&lt;typeof DateSchema&gt;; // Date
+
+const date = DateSchema.parse("2024-01-01");
+console.log(date instanceof Date); // true
+
+// More complex transformation
+const NumberFromStringSchema = z.string().transform((str) =&gt; {
+    const num = parseInt(str, 10);
+    if (isNaN(num)) throw new Error("Not a number");
+    return num;
+});
+
+const num = NumberFromStringSchema.parse("42"); // 42 (as number)</code></pre>
+
+        <h3>Practice 5: Form Validation</h3>
+        <pre><code class="language-typescript">const FormSchema = z.object({
+    email: z.string().email("Invalid email"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+    age: z.number().min(18, "Must be 18 or older")
+}).refine((data) =&gt; data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"]
+});
+
+type FormData = z.infer&lt;typeof FormSchema&gt;;
+
+function validateForm(data: FormData) {
+    const result = FormSchema.safeParse(data);
+    if (!result.success) {
+        console.log(result.error.issues); // Detailed errors
+        return;
+    }
+    // result.data is validated
+}</code></pre>
+      </section>
+
+      <!-- Part 2: Type-Fest -->
+      <section id="part-2">
+        <h2>Part 2: Type-Fest — Deep Utility Types</h2>
+
+        <h3>Setup</h3>
+        <pre><code class="language-bash">npm install type-fest</code></pre>
+
+        <h3>Practice 1: Merge — Deep Merge Two Types</h3>
+        <pre><code class="language-typescript">import type { Merge } from "type-fest";
+
+type User = {
+    id: number;
+    name: string;
+    settings: {
+        theme: string;
+        notifications: boolean;
+    };
+};
+
+type UserUpdate = {
+    name: string;
+    settings: {
+        theme: string;
+    };
+};
+
+type MergedUser = Merge&lt;User, UserUpdate&gt;;
+// {
+//     id: number;
+//     name: string;
+//     settings: {
+//         theme: string;
+//         notifications: boolean;
+//     };
+// }
+// Note: settings are MERGED, not replaced</code></pre>
+
+        <h3>Practice 2: PartialDeep — Deep Optional</h3>
+        <pre><code class="language-typescript">import type { PartialDeep } from "type-fest";
+
+type User = {
+    id: number;
+    profile: {
+        name: string;
+        email: string;
+        address: {
+            street: string;
+            city: string;
+        };
+    };
+};
+
+type PartialUser = PartialDeep&lt;User&gt;;
+// All properties (including nested) become optional
+// {
+//     id?: number;
+//     profile?: {
+//         name?: string;
+//         email?: string;
+//         address?: {
+//             street?: string;
+//             city?: string;
+//         };
+//     };
+// }</code></pre>
+
+        <h3>Practice 3: ReadonlyDeep — Deep Immutability</h3>
+        <pre><code class="language-typescript">import type { ReadonlyDeep } from "type-fest";
+
+type Config = {
+    server: {
+        host: string;
+        port: number;
+    };
+    database: {
+        url: string;
+        poolSize: number;
+    };
+};
+
+type ReadonlyConfig = ReadonlyDeep&lt;Config&gt;;
+// {
+//     readonly server: {
+//         readonly host: string;
+//         readonly port: number;
+//     };
+//     readonly database: {
+//         readonly url: string;
+//         readonly poolSize: number;
+//     };
+// }</code></pre>
+
+        <h3>Practice 4: SetOptional and SetRequired</h3>
+        <pre><code class="language-typescript">import type { SetOptional, SetRequired } from "type-fest";
+
+type User = {
+    id: number;
+    name: string;
+    email: string;
+    age: number;
+};
+
+// Make 'age' optional
+type UserWithOptionalAge = SetOptional&lt;User, "age"&gt;;
+// { id: number; name: string; email: string; age?: number }
+
+// Make 'id' required (if it was optional)
+type PartialUser = Partial&lt;User&gt;;
+type UserWithRequiredId = SetRequired&lt;PartialUser, "id"&gt;;
+// { id: number; name?: string; email?: string; age?: number }</code></pre>
+
+        <h3>Practice 5: Paths — Get All Object Paths</h3>
+        <pre><code class="language-typescript">import type { Paths } from "type-fest";
+
+type User = {
+    id: number;
+    profile: {
+        name: string;
+        address: {
+            street: string;
+            city: string;
+        };
+    };
+};
+
+type UserPaths = Paths&lt;User&gt;;
+// "id" | "profile" | "profile.name" | "profile.address" |
+// "profile.address.street" | "profile.address.city"
+
+// Use case: Type-safe path getter
+function getValueAtPath&lt;T, P extends Paths&lt;T&gt;&gt;(obj: T, path: P): unknown {
+    // Implementation
+}</code></pre>
+
+        <h3>Practice 6: JsonValue — JSON Type</h3>
+        <pre><code class="language-typescript">import type { JsonValue } from "type-fest";
+
+// JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue }
+
+function parseJson(json: string): JsonValue {
+    return JSON.parse(json);
+}
+
+const value = parseJson('{"name": "Alice", "age": 25}');
+// value is JsonValue (type-safe representation of any JSON)</code></pre>
+      </section>
+
+      <!-- Part 3: ts-essentials -->
+      <section id="part-3">
+        <h2>Part 3: ts-essentials — Practical Utilities</h2>
+
+        <h3>Setup</h3>
+        <pre><code class="language-bash">npm install ts-essentials</code></pre>
+
+        <h3>Practice 1: DeepPartial and DeepReadonly</h3>
+        <pre><code class="language-typescript">import type { DeepPartial, DeepReadonly } from "ts-essentials";
+
+type User = {
+    id: number;
+    profile: {
+        name: string;
+        settings: {
+            theme: string;
+            notifications: boolean;
+        };
+    };
+};
+
+type PartialUser = DeepPartial&lt;User&gt;;
+type ReadonlyUser = DeepReadonly&lt;User&gt;;</code></pre>
+
+        <h3>Practice 2: Opaque — Branded Types</h3>
+        <pre><code class="language-typescript">import type { Opaque } from "ts-essentials";
+
+type UserId = Opaque&lt;"UserId", string&gt;;
+type ProductId = Opaque&lt;"ProductId", string&gt;;
+
+function createUserId(id: string): UserId {
+    return id as UserId;
+}
+
+function createProductId(id: string): ProductId {
+    return id as ProductId;
+}
+
+const userId = createUserId("user-123");
+const productId = createProductId("prod-456");
+
+// ✅ Works
+function getUser(id: UserId) {}
+getUser(userId);
+
+// ❌ Error: ProductId is not UserId
+// getUser(productId);</code></pre>
+
+        <h3>Practice 3: ValuesType — Get All Value Types</h3>
+        <pre><code class="language-typescript">import type { ValuesType } from "ts-essentials";
+
+type User = {
+    id: number;
+    name: string;
+    isActive: boolean;
+};
+
+type UserValues = ValuesType&lt;User&gt;;
+// number | string | boolean</code></pre>
+
+        <h3>Practice 4: Mutable — Remove Readonly</h3>
+        <pre><code class="language-typescript">import type { Mutable } from "ts-essentials";
+
+type ReadonlyUser = {
+    readonly id: number;
+    readonly name: string;
+};
+
+type MutableUser = Mutable&lt;ReadonlyUser&gt;;
+// { id: number; name: string }</code></pre>
+      </section>
+
+      <!-- Part 4: ts-toolbelt -->
+      <section id="part-4">
+        <h2>Part 4: ts-toolbelt — Advanced Type Programming</h2>
+
+        <h3>Setup</h3>
+        <pre><code class="language-bash">npm install ts-toolbelt</code></pre>
+
+        <h3>Practice 1: Object.Merge — Deep Merge</h3>
+        <pre><code class="language-typescript">import { Object } from "ts-toolbelt";
+
+type A = { a: string; nested: { x: number } };
+type B = { b: number; nested: { y: string } };
+
+type Merged = Object.Merge&lt;A, B&gt;;
+// { a: string; b: number; nested: { x: number; y: string } }</code></pre>
+
+        <h3>Practice 2: Union.Intersect — Intersect Unions</h3>
+        <pre><code class="language-typescript">import { Union } from "ts-toolbelt";
+
+type A = "a" | "b" | "c";
+type B = "b" | "c" | "d";
+
+type Intersection = Union.Intersect&lt;A, B&gt;;
+// "b" | "c"</code></pre>
+
+        <h3>Practice 3: List.Head and List.Tail</h3>
+        <pre><code class="language-typescript">import { List } from "ts-toolbelt";
+
+type Tuple = [string, number, boolean];
+
+type Head = List.Head&lt;Tuple&gt;; // string
+type Tail = List.Tail&lt;Tuple&gt;; // [number, boolean]</code></pre>
+
+        <h3>Practice 4: String.Split — Split Strings at Type Level</h3>
+        <pre><code class="language-typescript">import { String } from "ts-toolbelt";
+
+type Path = "users/123/posts/456";
+type Parts = String.Split&lt;Path, "/"&gt;;
+// ["users", "123", "posts", "456"]</code></pre>
+      </section>
+
+      <!-- Part 5: Putting It All Together -->
+      <section id="part-5">
+        <h2>Part 5: Putting It All Together — Real-World Project</h2>
+
+        <h3>Scenario: Type-Safe API Client</h3>
+        <pre><code class="language-typescript">import { z } from "zod";
+import type { Merge, PartialDeep } from "type-fest";
+
+// ─────────────────────────────────────────────
+// 1. Define schemas (runtime + type)
+// ─────────────────────────────────────────────
+const UserSchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    email: z.string().email(),
+    profile: z.object({
+        bio: z.string(),
+        avatar: z.string().url()
+    })
+});
+
+type User = z.infer&lt;typeof UserSchema&gt;;
+
+// ─────────────────────────────────────────────
+// 2. Create update payload type (deep partial)
+// ─────────────────────────────────────────────
+type UserUpdate = PartialDeep&lt;Omit&lt;User, "id"&gt;&gt;;
+
+// ─────────────────────────────────────────────
+// 3. API client with validation
+// ─────────────────────────────────────────────
+async function fetchUser(id: number): Promise&lt;User&gt; {
+    const response = await fetch(`/api/users/${id}`);
+    const data = await response.json();
+    return UserSchema.parse(data); // ✅ Validates
+}
+
+async function updateUser(id: number, updates: UserUpdate): Promise&lt;User&gt; {
+    const response = await fetch(`/api/users/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates)
+    });
+    const data = await response.json();
+    return UserSchema.parse(data); // ✅ Validates
+}
+
+// ─────────────────────────────────────────────
+// 4. Usage
+// ─────────────────────────────────────────────
+const user = await fetchUser(1);
+console.log(user.profile.bio); // ✅ Type-safe
+
+// Update only the bio
+await updateUser(1, {
+    profile: {
+        bio: "New bio" // ✅ PartialDeep allows nested partial
+    }
+});</code></pre>
+      </section>
+
+      <!-- Summary Table -->
+      <section id="summary-table">
+        <h2>📝 Summary Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Library</th>
+              <th>Best For</th>
+              <th>Key Types</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Zod</td>
+              <td>Runtime validation + type inference</td>
+              <td>z.object, z.infer, z.parse</td>
+            </tr>
+            <tr>
+              <td>Type-Fest</td>
+              <td>Deep utilities</td>
+              <td>Merge, PartialDeep, ReadonlyDeep, Paths</td>
+            </tr>
+            <tr>
+              <td>ts-essentials</td>
+              <td>Practical utilities</td>
+              <td>DeepPartial, DeepReadonly, Opaque</td>
+            </tr>
+            <tr>
+              <td>ts-toolbelt</td>
+              <td>Advanced type programming</td>
+              <td>Object.Merge, Union.Intersect, List.Head</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Key Takeaways -->
+      <section id="key-takeaways">
+        <h2>🎯 Key Takeaways</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Explanation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Zod</td>
+              <td>Define schema → get runtime validation + TypeScript type</td>
+            </tr>
+            <tr>
+              <td>Type-Fest</td>
+              <td>Deep merge, deep partial, deep readonly, paths</td>
+            </tr>
+            <tr>
+              <td>ts-essentials</td>
+              <td>Branded types, deep utilities</td>
+            </tr>
+            <tr>
+              <td>ts-toolbelt</td>
+              <td>Advanced type-level programming</td>
+            </tr>
+            <tr>
+              <td>Combining</td>
+              <td>Use Zod for validation + Type-Fest for type manipulation</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Practice Exercises -->
+      <section id="practice-exercises">
+        <h2>🧪 Practice Exercises</h2>
+        <pre><code class="language-typescript">// 1. Zod: Create a schema for a product
+const ProductSchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    price: z.number().positive(),
+    tags: z.array(z.string())
+});
+type Product = z.infer&lt;typeof ProductSchema&gt;;
+
+// 2. Type-Fest: Merge two types
+type A = { a: string; nested: { x: number } };
+type B = { b: number; nested: { y: string } };
+type Merged = Merge&lt;A, B&gt;;
+
+// 3. ts-essentials: Create branded type
+type UserId = Opaque&lt;"UserId", string&gt;;
+
+// 4. Zod: Discriminated union
+const ResultSchema = z.discriminatedUnion("status", [
+    z.object({ status: z.literal("success"), data: z.string() }),
+    z.object({ status: z.literal("error"), message: z.string() })
+]);
+type Result = z.infer&lt;typeof ResultSchema&gt;;
+
+// 5. Type-Fest: Deep partial
+type User = { id: number; profile: { name: string; email: string } };
+type PartialUser = PartialDeep&lt;User&gt;;</code></pre>
+      </section>
+    </main>
+
+    <!-- Syntax Highlight Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  </body>
+</html>
